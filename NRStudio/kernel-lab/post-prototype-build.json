@@ -1,5 +1,7 @@
 {
   "input_sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+  "helper_sha256": "88e499ae86106a05d2b5f62a5543edd200a8967ad3c4a151df53a037d3aa2e4d",
+  "inline_helpers": true,
   "transformed": {
     "encode": 388,
     "decode": 40,

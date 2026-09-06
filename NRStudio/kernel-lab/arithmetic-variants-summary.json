@@ -1,0 +1,104 @@
+{
+  "status": "rejected_for_deployment",
+  "comparisons": [
+    {
+      "variant": "reverse-interleaved",
+      "pattern": 1,
+      "mismatches": 74348,
+      "max_abs": 0.001373291015625,
+      "values": 262144
+    },
+    {
+      "variant": "reverse-interleaved",
+      "pattern": 2,
+      "mismatches": 119972,
+      "max_abs": 0.000732421875,
+      "values": 262144
+    },
+    {
+      "variant": "reverse-interleaved",
+      "pattern": 5,
+      "mismatches": 0,
+      "max_abs": 0.0,
+      "values": 262144
+    },
+    {
+      "variant": "reverse-contiguous",
+      "pattern": 1,
+      "mismatches": 79042,
+      "max_abs": 0.0013427734375,
+      "values": 262144
+    },
+    {
+      "variant": "reverse-contiguous",
+      "pattern": 2,
+      "mismatches": 113386,
+      "max_abs": 0.000946044921875,
+      "values": 262144
+    },
+    {
+      "variant": "reverse-contiguous",
+      "pattern": 5,
+      "mismatches": 0,
+      "max_abs": 0.0,
+      "values": 262144
+    },
+    {
+      "variant": "packed-reverse",
+      "pattern": 1,
+      "mismatches": 74348,
+      "max_abs": 0.001373291015625,
+      "values": 262144
+    },
+    {
+      "variant": "packed-reverse",
+      "pattern": 2,
+      "mismatches": 119972,
+      "max_abs": 0.000732421875,
+      "values": 262144
+    },
+    {
+      "variant": "packed-reverse",
+      "pattern": 5,
+      "mismatches": 0,
+      "max_abs": 0.0,
+      "values": 262144
+    },
+    {
+      "variant": "inline-packed-reverse",
+      "pattern": 1,
+      "mismatches": 74348,
+      "max_abs": 0.001373291015625,
+      "values": 262144
+    },
+    {
+      "variant": "inline-packed-reverse",
+      "pattern": 2,
+      "mismatches": 119972,
+      "max_abs": 0.000732421875,
+      "values": 262144
+    },
+    {
+      "variant": "inline-packed-reverse",
+      "pattern": 5,
+      "mismatches": 0,
+      "max_abs": 0.0,
+      "values": 262144
+    }
+  ],
+  "timings": {
+    "post-current-batched-1440.txt": {
+      "samples": 9,
+      "median_ms": 5.210889,
+      "min_ms": 5.155639,
+      "max_ms": 5.305913
+    },
+    "post-inline-batched-1440.txt": {
+      "samples": 9,
+      "median_ms": 7.23178,
+      "min_ms": 7.16007,
+      "max_ms": 7.331933
+    }
+  },
+  "limitations": "Synthetic tensors/weights. Small-output numerical comparisons and separate uniform 1440p timing runs. No in-game FPS improvement. Reversing accumulation fixes the weights-only case but not combined inputs."
+}

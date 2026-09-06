@@ -319,6 +319,47 @@ synchronization precedes host-driven pattern uploads. compare_post_prototype.py
 compares local artifacts and writes only statistics/hashes for private review.
 Generated vendor-derived PTX/cubins and output arrays remain local.
 
+## Accumulation order and packed helper follow-up
+
+The follow-up tests reverse the order of the two FP16 matrix operations for both
+K partitions. Reversing the order eliminates differences in the weights-only
+test, but combined tensor/weight patterns still differ. This identifies an
+order-sensitive case; it does not identify a complete match for the current
+kernel's arithmetic. arithmetic-variants-summary.json retains all comparisons.
+
+New packed encode/decode routines in fp8_exact.cuh pass the same exhaustive
+scalar/packed conversion checks against CUDA, with zero mismatches. Packed-helper
+and scalar-helper post-block prototypes produce byte-identical outputs on the
+three compared patterns. This preserves the prototype's behavior, including its
+remaining differences from the deployed kernel. The packed/reversed matrix
+mapping also passes all 16,384 exactly representable matrix outputs.
+
+Disassembly of the outlined packed prototype found 684 helper calls. The new
+`--inline` generator option expands helper bodies, renames registers/labels and
+replaces parameter transfers and returns. Inlined output matches the outlined
+prototype on the same tests. The inlined block compiles with 168 registers,
+64 stack bytes, 64 spill-store bytes and 72 spill-load bytes. Its nonuniform
+small-image run passes memcheck. Removing calls did not establish a speedup:
+
+| Uniform synthetic 1440p benchmark | Default-policy median per launch |
+|---|---:|
+| Current compiled block | 5.210889 ms |
+| Inlined packed prototype, reversed interleaved order | 7.231780 ms |
+
+Each run contains rotating cache-policy trials with ten launches per measurement.
+The table uses the nine default-policy measurements after discarding the first
+three warm-up measurements overall. Runs were separate, not an in-game A/B test.
+The candidate is slower and retains output mismatches, so it remains rejected.
+
+Reproduce the packed/reversed helpers with
+`build_post_helpers.cmd -DNR_MMA_REVERSE=1 -DNR_FAST_FP8=1`, then
+`python build_post_prototype.py --inline`. Add `-DNR_MMA_CONTIGUOUS=1` to the
+helper build for the alternative partition. Omitting the flags retains the
+original scalar/default-order prototype. build_mma_mapping.cmd accepts the same
+defines. Build metadata records the generated helper hash and inline setting.
+The fused quantizer remains a separate validated building block; it has not been
+integrated into a compatible full model. The installed app and games are unchanged.
+
 Only our harness/instrumentation source, build scripts and diagnostic text are
 included in the private review. Extracted NVIDIA PTX/cubins and output textures
 remain local and are not included.

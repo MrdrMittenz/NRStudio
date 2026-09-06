@@ -70,3 +70,29 @@ __host__ __device__ inline uint32_t nr_quantize_e4m3_half2(uint32_t bits) {
     const unsigned quantized = ((normal & normalMask) | (subnormal & ~normalMask)) | sign;
     return (quantized & ~nanMask) | (0x7fff7fffu & nanMask);
 }
+
+// Packed alternatives: match the reference functions while keeping each lane
+// independent. Comparisons return masks for the two 16-bit lanes.
+__host__ __device__ inline uint16_t nr_pack_half2_e4m3(uint32_t bits) {
+    const __half2 value = nr_as_half2(bits & 0x7fff7fffu);
+    const unsigned nanMask = __hneu2_mask(value, value);
+    const __half2 bounded = __hmin2(value, __float2half2_rn(448.f));
+    const __half2 normal = __hmax2(bounded, __float2half2_rn(0.015625f));
+    const unsigned raw = nr_as_bits(normal);
+    const unsigned rounded = raw + 0x003f003fu + ((raw >> 7) & 0x00010001u) - 0x20002000u;
+    const unsigned normalBytes = (rounded >> 7) & 0x007f007fu;
+    const unsigned subBytes = nr_as_bits(__hadd2(bounded, __float2half2_rn(2.f))) & 0x007f007fu;
+    const unsigned normalMask = __hge2_mask(bounded, __float2half2_rn(0.015625f));
+    unsigned result = (normalBytes & normalMask) | (subBytes & ~normalMask) | ((bits >> 8) & 0x00800080u);
+    result = (result & ~nanMask) | (0x007f007fu & nanMask);
+    return uint16_t((result & 0xffu) | ((result >> 8) & 0xff00u));
+}
+
+__host__ __device__ inline uint32_t nr_unpack_e4m3_half2(uint16_t bits) {
+    const unsigned expanded = (bits & 0xffu) | ((unsigned(bits) & 0xff00u) << 8);
+    const unsigned magnitude = (expanded & 0x007f007fu) << 7;
+    const unsigned sign = (expanded & 0x00800080u) << 8;
+    const unsigned nanMask = __heq2_mask(nr_as_half2(magnitude), nr_as_half2(0x3f803f80u));
+    const unsigned converted = nr_as_bits(__hmul2(nr_as_half2(magnitude | sign), __float2half2_rn(256.f)));
+    return (converted & ~nanMask) | (0x7fff7fffu & nanMask);
+}

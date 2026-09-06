@@ -8,7 +8,7 @@
 static void check(cudaError_t result) {
     if (result != cudaSuccess) { fprintf(stderr, "%s\n", cudaGetErrorString(result)); exit(2); }
 }
-struct Counts { unsigned encode, decode, packEncode, packDecode, fused; };
+struct Counts { unsigned encode, decode, packEncode, packDecode, fused, fastEncode, fastDecode; };
 __global__ void verify(Counts* counts) {
     const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= 65536) return;
@@ -21,12 +21,14 @@ __global__ void verify(Counts* counts) {
     const auto decoded = __nv_cvt_fp8x2_to_halfraw2(uint16_t(i), __NV_E4M3);
     const unsigned expectedPair = unsigned(decoded.x) | (unsigned(decoded.y) << 16);
     if (nr_e4m3x2_to_half2(uint16_t(i)) != expectedPair) atomicAdd(&counts->packDecode, 1);
+    if (nr_unpack_e4m3_half2(uint16_t(i)) != expectedPair) atomicAdd(&counts->fastDecode, 1);
     // Each half pattern occurs in both lanes, with varying independent companions.
     for (unsigned pattern = 0; pattern < 4; ++pattern) {
         const uint16_t other = uint16_t(pattern == 0 ? ~i : pattern == 1 ? i * 25173 + 13849 : pattern == 2 ? i ^ 0x8000 : 0x7e00);
         const __half2_raw pair{uint16_t(i), other};
         const auto pairExpected = __nv_cvt_halfraw2_to_fp8x2(pair, __NV_SATFINITE, __NV_E4M3);
         if (nr_half2_to_e4m3x2(i | (unsigned(other) << 16)) != pairExpected) atomicAdd(&counts->packEncode, 1);
+        if (nr_pack_half2_e4m3(i | (unsigned(other) << 16)) != pairExpected) atomicAdd(&counts->fastEncode, 1);
         const auto roundtrip = __nv_cvt_fp8x2_to_halfraw2(pairExpected, __NV_E4M3);
         const unsigned expectedQuantized = unsigned(roundtrip.x) | (unsigned(roundtrip.y) << 16);
         if (nr_quantize_e4m3_half2(i | (unsigned(other) << 16)) != expectedQuantized) atomicAdd(&counts->fused, 1);
@@ -52,5 +54,6 @@ int main() {
     printf("host_encode_mismatches=%u host_decode_mismatches=%u\n", hostEncode, hostDecode);
     printf("gpu_encode_mismatches=%u gpu_decode_mismatches=%u packed_encode_mismatches=%u packed_decode_mismatches=%u\n", result.encode, result.decode, result.packEncode, result.packDecode);
     printf("fused_quantizer_mismatches=%u tested_pairs=262144\n", result.fused);
-    return hostEncode || hostDecode || result.encode || result.decode || result.packEncode || result.packDecode || result.fused ? 1 : 0;
+    printf("packed_alternative_encode_mismatches=%u packed_alternative_decode_mismatches=%u\n", result.fastEncode, result.fastDecode);
+    return hostEncode || hostDecode || result.encode || result.decode || result.packEncode || result.packDecode || result.fused || result.fastEncode || result.fastDecode ? 1 : 0;
 }

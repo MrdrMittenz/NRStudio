@@ -1,5 +1,13 @@
 #pragma once
 #include "fp8_exact.cuh"
+#ifndef NR_MMA_REVERSE
+#define NR_MMA_REVERSE 0
+#endif
+#ifdef NR_FAST_FP8
+#define NR_MMA_DECODE nr_unpack_e4m3_half2
+#else
+#define NR_MMA_DECODE nr_e4m3x2_to_half2
+#endif
 
 // E4M3 m16n8k32 row/column fragments -> two Ampere FP16 m16n8k16
 // operations. This establishes operand mapping, not cross-architecture
@@ -7,7 +15,7 @@
 // All 32 lanes must participate in every shuffle and MMA instruction.
 __device__ __forceinline__ unsigned nr_gather_half_pair(unsigned word, unsigned source, unsigned lane) {
     const unsigned packed = __shfl_sync(0xffffffffu, word, source);
-    return nr_e4m3x2_to_half2(uint16_t(packed >> ((lane & 1) * 16)));
+    return NR_MMA_DECODE(uint16_t(packed >> ((lane & 1) * 16)));
 }
 
 __device__ __forceinline__ void nr_mma_e4m3_contiguous_m16n8k32(
@@ -16,7 +24,8 @@ __device__ __forceinline__ void nr_mma_e4m3_contiguous_m16n8k32(
     const unsigned source = (lane & ~3u) | ((lane & 3u) >> 1);
     unsigned c0 = c[0], c1 = c[1];
     #pragma unroll
-    for (unsigned part = 0; part < 2; ++part) {
+    for (unsigned step = 0; step < 2; ++step) {
+        const unsigned part = step ^ NR_MMA_REVERSE;
         const unsigned a0 = nr_gather_half_pair(a[part * 2], source, lane);
         const unsigned a1 = nr_gather_half_pair(a[part * 2 + 1], source, lane);
         const unsigned a2 = nr_gather_half_pair(a[part * 2], source + 2, lane);
@@ -40,13 +49,14 @@ __device__ __forceinline__ void nr_mma_e4m3_m16n8k32(
     const unsigned (&a)[4], const unsigned (&b)[2], const unsigned (&c)[2], unsigned (&d)[2]) {
     unsigned c0 = c[0], c1 = c[1];
     #pragma unroll
-    for (unsigned part = 0; part < 2; ++part) {
-        const unsigned a0 = nr_e4m3x2_to_half2(uint16_t(a[0] >> (part * 16)));
-        const unsigned a1 = nr_e4m3x2_to_half2(uint16_t(a[1] >> (part * 16)));
-        const unsigned a2 = nr_e4m3x2_to_half2(uint16_t(a[2] >> (part * 16)));
-        const unsigned a3 = nr_e4m3x2_to_half2(uint16_t(a[3] >> (part * 16)));
-        const unsigned b0 = nr_e4m3x2_to_half2(uint16_t(b[0] >> (part * 16)));
-        const unsigned b1 = nr_e4m3x2_to_half2(uint16_t(b[1] >> (part * 16)));
+    for (unsigned step = 0; step < 2; ++step) {
+        const unsigned part = step ^ NR_MMA_REVERSE;
+        const unsigned a0 = NR_MMA_DECODE(uint16_t(a[0] >> (part * 16)));
+        const unsigned a1 = NR_MMA_DECODE(uint16_t(a[1] >> (part * 16)));
+        const unsigned a2 = NR_MMA_DECODE(uint16_t(a[2] >> (part * 16)));
+        const unsigned a3 = NR_MMA_DECODE(uint16_t(a[3] >> (part * 16)));
+        const unsigned b0 = NR_MMA_DECODE(uint16_t(b[0] >> (part * 16)));
+        const unsigned b1 = NR_MMA_DECODE(uint16_t(b[1] >> (part * 16)));
         unsigned r0, r1;
         asm volatile("mma.sync.aligned.m16n8k16.row.col.f16.f16.f16.f16 "
                      "{%0,%1}, {%2,%3,%4,%5}, {%6,%7}, {%8,%9};"

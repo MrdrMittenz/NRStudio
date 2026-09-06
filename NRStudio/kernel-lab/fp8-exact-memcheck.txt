@@ -2,4 +2,5 @@
 host_encode_mismatches=0 host_decode_mismatches=0
 gpu_encode_mismatches=0 gpu_decode_mismatches=0 packed_encode_mismatches=0 packed_decode_mismatches=0
 fused_quantizer_mismatches=0 tested_pairs=262144
+packed_alternative_encode_mismatches=0 packed_alternative_decode_mismatches=0
 ========= ERROR SUMMARY: 0 errors
