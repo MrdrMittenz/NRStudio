@@ -1,0 +1,51 @@
+[
+  {
+    "file": "module-0.fatbin",
+    "elf_exit": 0,
+    "elf": "ELF file    1: module-0.1.sm_120.cubin\n",
+    "ptx_exit": 0,
+    "ptx": "PTX file    1: module-0.1.sm_120.ptx\n"
+  },
+  {
+    "file": "module-1.fatbin",
+    "elf_exit": 0,
+    "elf": "ELF file    1: module-1.1.sm_120.cubin\n",
+    "ptx_exit": 0,
+    "ptx": "PTX file    1: module-1.1.sm_120.ptx\n"
+  },
+  {
+    "file": "module-2.fatbin",
+    "elf_exit": 0,
+    "elf": "ELF file    1: module-2.1.sm_120.cubin\n",
+    "ptx_exit": 0,
+    "ptx": "PTX file    1: module-2.1.sm_120.ptx\n"
+  },
+  {
+    "file": "module-3.fatbin",
+    "elf_exit": 0,
+    "elf": "ELF file    1: module-3.1.sm_120.cubin\n",
+    "ptx_exit": 0,
+    "ptx": "PTX file    1: module-3.1.sm_120.ptx\n"
+  },
+  {
+    "file": "module-4.fatbin",
+    "elf_exit": 0,
+    "elf": "ELF file    1: module-4.1.sm_120.cubin\n",
+    "ptx_exit": 0,
+    "ptx": "PTX file    1: module-4.1.sm_120.ptx\n"
+  },
+  {
+    "file": "module-5.fatbin",
+    "elf_exit": 0,
+    "elf": "ELF file    1: module-5.1.sm_120.cubin\n",
+    "ptx_exit": 0,
+    "ptx": "PTX file    1: module-5.1.sm_120.ptx\n"
+  },
+  {
+    "file": "module-6.fatbin",
+    "elf_exit": 0,
+    "elf": "ELF file    1: module-6.1.sm_120.cubin\n",
+    "ptx_exit": 0,
+    "ptx": "PTX file    1: module-6.1.sm_120.ptx\n"
+  }
+]

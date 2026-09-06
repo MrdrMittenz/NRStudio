@@ -1,0 +1,37 @@
+[
+  {
+    "file": "module-0.fatbin",
+    "result": 209,
+    "result_name": "CUDA_ERROR_NO_BINARY_FOR_GPU"
+  },
+  {
+    "file": "module-1.fatbin",
+    "result": 209,
+    "result_name": "CUDA_ERROR_NO_BINARY_FOR_GPU"
+  },
+  {
+    "file": "module-2.fatbin",
+    "result": 209,
+    "result_name": "CUDA_ERROR_NO_BINARY_FOR_GPU"
+  },
+  {
+    "file": "module-3.fatbin",
+    "result": 209,
+    "result_name": "CUDA_ERROR_NO_BINARY_FOR_GPU"
+  },
+  {
+    "file": "module-4.fatbin",
+    "result": 209,
+    "result_name": "CUDA_ERROR_NO_BINARY_FOR_GPU"
+  },
+  {
+    "file": "module-5.fatbin",
+    "result": 209,
+    "result_name": "CUDA_ERROR_NO_BINARY_FOR_GPU"
+  },
+  {
+    "file": "module-6.fatbin",
+    "result": 209,
+    "result_name": "CUDA_ERROR_NO_BINARY_FOR_GPU"
+  }
+]
