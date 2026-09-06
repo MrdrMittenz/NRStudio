@@ -1,0 +1,320 @@
+{
+  "name": "optimized-gameplay-01",
+  "pid": 5640,
+  "warmup_seconds": 5,
+  "requested_seconds": 30,
+  "started_utc": "2026-09-06T21:10:52Z",
+  "foreground_checks": [
+    {
+      "time": 1788729057.7058349,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729058.2060971,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729058.706571,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729059.2070436,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729059.7075367,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729060.2079651,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729060.7083766,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729061.208881,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729061.7093558,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729062.2098129,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729062.7102754,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729063.210699,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729063.7111387,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729064.2116768,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729064.712103,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729065.212534,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729065.713095,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729066.2135203,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729066.7141519,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729067.2145426,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729067.7150164,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729068.2150927,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729068.7155774,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729069.216083,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729069.7165213,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729070.2170494,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729070.717925,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729071.2184796,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729071.71897,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729072.2195237,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729072.719956,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729073.2204416,
+      "pid": 5640,
+      "last_input_tick": 12099531
+    },
+    {
+      "time": 1788729073.7209954,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729074.2215307,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729074.7219377,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729075.2223983,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729075.7228096,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729076.2230353,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729076.7234652,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729077.2239227,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729077.7243962,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729078.2245126,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729078.7250037,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729079.2255929,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729079.7261088,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729080.2264802,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729080.7269156,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729081.2274601,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729081.7279148,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729082.2280939,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729082.7285917,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729083.2290378,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729083.7296083,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729084.2299852,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729084.7304323,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729085.2309475,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729085.731706,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729086.231985,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729086.7325363,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729087.2329214,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    },
+    {
+      "time": 1788729087.7333517,
+      "pid": 5640,
+      "last_input_tick": 12129125
+    }
+  ],
+  "returncode": 0,
+  "console": "Started recording.\r\nStopped recording.\r\n",
+  "finished_utc": "2026-09-06T21:11:28Z",
+  "foreground_valid": true,
+  "input_idle": false,
+  "invalid_reason": "Input activity during capture; not a controlled stationary trial"
+}

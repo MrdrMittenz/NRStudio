@@ -36,4 +36,6 @@ Deployment is limited to the local STALKER 2 forwarder and enable marker.
 The model DLL, OptiScaler settings, installed app runtime and installer remain
 at their prior versions. deployment.json records hashes; game-backup holds the
 previous forwarder. Run rollback.ps1 with the game closed to restore it.
-Game performance validation is pending the user's loaded gameplay scene.
+Gameplay validation: see game-benchmark/REPORT.md. The optimized kernel runs
+in-game; two samples measured about 19.3 FPS. Input activity prevents a
+controlled comparison, and no game FPS speedup is claimed.

@@ -11,5 +11,6 @@
     "pid=5640 tick=11880718 post-opt launch=1200 grid=321,185,1",
     "pid=5640 tick=11904609 post-opt launch=1800 grid=321,185,1"
   ],
-  "game_stage": "Shader compilation screen; gameplay performance pending"
+  "game_stage": "Loaded gameplay; two approximately 30-second captures, candidate active, no logged evaluation failures",
+  "game_performance_report": "game-benchmark/REPORT.md"
 }

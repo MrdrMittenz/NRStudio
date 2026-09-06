@@ -1,0 +1,59 @@
+[
+  {
+    "trial": "optimized-gameplay-01",
+    "controlled": false,
+    "invalid_reason": "Input activity during capture; not a controlled stationary trial",
+    "rows": 575,
+    "swapchains": {
+      "0x4DD1D780": 575
+    },
+    "frame_intervals": 574,
+    "mean_fps": 19.33929534608988,
+    "one_percent_low_fps": 17.82065294872404,
+    "p99_frame_ms": 54.082012999999996,
+    "mean_frame_ms": 51.70819216027875,
+    "duration_seconds": 29.6805023,
+    "logged_eval_samples": 6,
+    "model_sizes": [
+      "2560x1440"
+    ],
+    "guide_sizes": [
+      "1972x1108"
+    ],
+    "native_failures": 0,
+    "gpu_total_used_mib_peak": 8836.0,
+    "input_tick_changes": 1,
+    "candidate_launch_samples": [
+      6000
+    ]
+  },
+  {
+    "trial": "optimized-gameplay-02",
+    "controlled": false,
+    "invalid_reason": "Input activity during capture; not a controlled stationary trial",
+    "rows": 575,
+    "swapchains": {
+      "0x4DD1D780": 575
+    },
+    "frame_intervals": 574,
+    "mean_fps": 19.3146685192866,
+    "one_percent_low_fps": 18.151433781754417,
+    "p99_frame_ms": 53.820139,
+    "mean_frame_ms": 51.77412177700349,
+    "duration_seconds": 29.7183459,
+    "logged_eval_samples": 6,
+    "model_sizes": [
+      "2560x1440"
+    ],
+    "guide_sizes": [
+      "1972x1108"
+    ],
+    "native_failures": 0,
+    "gpu_total_used_mib_peak": 8756.0,
+    "input_tick_changes": 2,
+    "candidate_launch_samples": [
+      6600,
+      7200
+    ]
+  }
+]
