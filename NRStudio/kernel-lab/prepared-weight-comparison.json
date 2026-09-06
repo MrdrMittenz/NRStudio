@@ -1,0 +1,171 @@
+{
+  "tests": [
+    {
+      "label": "prepared-r224-small-1",
+      "cubin": "post-prepared.cubin",
+      "mode": "small",
+      "pattern": 1,
+      "gpu_ms": [
+        0.142656,
+        0.108448,
+        0.108448,
+        0.108832,
+        0.107712
+      ],
+      "warm_median_ms": 0.108448,
+      "output_sha256": "83833bb768fc2dde0f48ecb3ba45fe17687ce6db3ec4d34e5e7c3ea2a4c9293f"
+    },
+    {
+      "label": "prepared-r224-small-2",
+      "cubin": "post-prepared.cubin",
+      "mode": "small",
+      "pattern": 2,
+      "gpu_ms": [
+        0.141312,
+        0.10832,
+        0.108992,
+        0.10992,
+        0.105856
+      ],
+      "warm_median_ms": 0.108656,
+      "output_sha256": "f22702b13f2d94aef5caa35f11d686bea308bacabdcaa1a49fbca294ba09de73"
+    },
+    {
+      "label": "prepared-r224-small-3",
+      "cubin": "post-prepared.cubin",
+      "mode": "small",
+      "pattern": 3,
+      "gpu_ms": [
+        0.14192,
+        0.10976,
+        0.10608,
+        0.107936,
+        0.107808
+      ],
+      "warm_median_ms": 0.107872,
+      "output_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad"
+    },
+    {
+      "label": "prepared-r224-small-4",
+      "cubin": "post-prepared.cubin",
+      "mode": "small",
+      "pattern": 4,
+      "gpu_ms": [
+        0.147328,
+        0.112608,
+        0.11264,
+        0.114144,
+        0.114592
+      ],
+      "warm_median_ms": 0.11339199999999999,
+      "output_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad"
+    },
+    {
+      "label": "prepared-r224-small-5",
+      "cubin": "post-prepared.cubin",
+      "mode": "small",
+      "pattern": 5,
+      "gpu_ms": [
+        0.14176,
+        0.11024,
+        0.107424,
+        0.106528,
+        0.107584
+      ],
+      "warm_median_ms": 0.107504,
+      "output_sha256": "888b47ff56a9dec7d58e40ec4f7d2bee070f1bc2fdb22b892a065e7d0a37899d"
+    },
+    {
+      "label": "prepared-compare-0",
+      "cubin": "post-word-raw.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.600224,
+        4.61184,
+        4.974912,
+        4.614432,
+        4.612384
+      ],
+      "warm_median_ms": 4.613408,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "prepared-compare-1",
+      "cubin": "post-prepared-r192.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.07984,
+        4.1768,
+        4.565536,
+        4.170816,
+        4.169312
+      ],
+      "warm_median_ms": 4.173808,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "prepared-compare-2",
+      "cubin": "post-prepared.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.090368,
+        4.189088,
+        4.188736,
+        4.554912,
+        4.1936
+      ],
+      "warm_median_ms": 4.191344,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "prepared-compare-3",
+      "cubin": "post-prepared.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.098784,
+        4.583488,
+        4.20128,
+        4.188256,
+        4.18784
+      ],
+      "warm_median_ms": 4.194768,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "prepared-compare-4",
+      "cubin": "post-prepared-r192.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.080576,
+        4.174752,
+        4.176832,
+        4.176896,
+        4.17168
+      ],
+      "warm_median_ms": 4.1757919999999995,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "prepared-compare-5",
+      "cubin": "post-word-raw.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.544768,
+        4.614784,
+        4.62208,
+        4.612224,
+        4.612128
+      ],
+      "warm_median_ms": 4.613504000000001,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    }
+  ],
+  "outputs_exact": true,
+  "scope": "Synthetic post block only. Preparation excluded; no full-model or game gain established."
+}

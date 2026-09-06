@@ -8,7 +8,7 @@
 static void check(cudaError_t result) {
     if (result != cudaSuccess) { fprintf(stderr, "%s\n", cudaGetErrorString(result)); exit(2); }
 }
-struct Counts { unsigned encode, decode, packEncode, packDecode, fused, fastEncode, fastDecode; };
+struct Counts { unsigned encode, decode, packEncode, packDecode, fused, fastEncode, fastDecode, mmaQuantized; };
 __global__ void verify(Counts* counts) {
     const unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= 65536) return;
@@ -32,6 +32,14 @@ __global__ void verify(Counts* counts) {
         const auto roundtrip = __nv_cvt_fp8x2_to_halfraw2(pairExpected, __NV_E4M3);
         const unsigned expectedQuantized = unsigned(roundtrip.x) | (unsigned(roundtrip.y) << 16);
         if (nr_quantize_e4m3_half2(i | (unsigned(other) << 16)) != expectedQuantized) atomicAdd(&counts->fused, 1);
+        unsigned expectedMma=0;
+        for(unsigned lane=0;lane<2;++lane){
+            unsigned v=(pairExpected>>(8*lane))&255;
+            __half_raw raw;raw.x=uint16_t(((v&127)<<7)|((v&128)<<8));
+            __half_raw expanded=__float2half_rn(__half2float(__half(raw))*256.0f);
+            expectedMma|=unsigned(expanded.x)<<(16*lane);
+        }
+        if(nr_quantize_e4m3_mma_half2(i | (unsigned(other)<<16))!=expectedMma)atomicAdd(&counts->mmaQuantized,1);
     }
 }
 int main() {
@@ -55,5 +63,6 @@ int main() {
     printf("gpu_encode_mismatches=%u gpu_decode_mismatches=%u packed_encode_mismatches=%u packed_decode_mismatches=%u\n", result.encode, result.decode, result.packEncode, result.packDecode);
     printf("fused_quantizer_mismatches=%u tested_pairs=262144\n", result.fused);
     printf("packed_alternative_encode_mismatches=%u packed_alternative_decode_mismatches=%u\n", result.fastEncode, result.fastDecode);
-    return hostEncode || hostDecode || result.encode || result.decode || result.packEncode || result.packDecode || result.fused || result.fastEncode || result.fastDecode ? 1 : 0;
+    printf("mma_quantizer_mismatches=%u tested_pairs=262144\n",result.mmaQuantized);
+    return hostEncode || hostDecode || result.encode || result.decode || result.packEncode || result.packDecode || result.fused || result.fastEncode || result.fastDecode || result.mmaQuantized ? 1 : 0;
 }

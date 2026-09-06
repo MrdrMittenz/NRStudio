@@ -1,11 +1,13 @@
 ﻿from pathlib import Path
-import subprocess,time,hashlib,json
+import subprocess,time,hashlib,json,sys,re
 from benchmark_switch import select
 root=Path(__file__).resolve().parent
 probe=root.parents[1]/'fp8-ampere-candidate/native-nr-3090-v1/native_probe.exe'
 runtime=Path.home()/'AppData/Local/Programs/NRStudio/runtime'
 core=r'C:\Windows\System32\DriverStore\FileRepository\nvmdi.inf_amd64_ba34f758deb2a7d2\nvngx.dll'
-case=root/'switch-validation';case.mkdir(exist_ok=True)
+case_name=sys.argv[1] if len(sys.argv)>1 else 'switch-validation'
+assert re.fullmatch(r'[a-z0-9-]+',case_name)
+case=root/case_name;case.mkdir(exist_ok=case_name=='switch-validation')
 with (case/'probe.txt').open('w') as output:
     proc=subprocess.Popen([str(probe),core,str(runtime/'nvngx_dlssnr.dll'),str(root/'nvngx.dll_dlssnr.dll'),'2560','1440','12'],cwd=case,stdout=output,stderr=subprocess.STDOUT,creationflags=0x08000000)
     try:

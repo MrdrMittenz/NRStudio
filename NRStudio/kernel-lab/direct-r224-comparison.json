@@ -1,0 +1,141 @@
+{
+  "tests": [
+    {
+      "label": "direct-r224-small-1",
+      "cubin": "post-direct.cubin",
+      "mode": "small",
+      "pattern": 1,
+      "gpu_ms": [
+        0.111488,
+        0.088832,
+        0.088384,
+        0.088192,
+        0.087584
+      ],
+      "warm_median_ms": 0.088288,
+      "output_sha256": "83833bb768fc2dde0f48ecb3ba45fe17687ce6db3ec4d34e5e7c3ea2a4c9293f"
+    },
+    {
+      "label": "direct-r224-small-2",
+      "cubin": "post-direct.cubin",
+      "mode": "small",
+      "pattern": 2,
+      "gpu_ms": [
+        0.113344,
+        0.08928,
+        0.090496,
+        0.089504,
+        0.09792
+      ],
+      "warm_median_ms": 0.09,
+      "output_sha256": "f22702b13f2d94aef5caa35f11d686bea308bacabdcaa1a49fbca294ba09de73"
+    },
+    {
+      "label": "direct-r224-small-3",
+      "cubin": "post-direct.cubin",
+      "mode": "small",
+      "pattern": 3,
+      "gpu_ms": [
+        0.115712,
+        0.089568,
+        0.09152,
+        0.08896,
+        0.088832
+      ],
+      "warm_median_ms": 0.089264,
+      "output_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad"
+    },
+    {
+      "label": "direct-r224-small-4",
+      "cubin": "post-direct.cubin",
+      "mode": "small",
+      "pattern": 4,
+      "gpu_ms": [
+        0.113952,
+        0.090656,
+        0.09312,
+        0.088704,
+        0.088384
+      ],
+      "warm_median_ms": 0.08968000000000001,
+      "output_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad"
+    },
+    {
+      "label": "direct-r224-small-5",
+      "cubin": "post-direct.cubin",
+      "mode": "small",
+      "pattern": 5,
+      "gpu_ms": [
+        0.11248,
+        0.089568,
+        0.088544,
+        0.19312,
+        0.089952
+      ],
+      "warm_median_ms": 0.08976,
+      "output_sha256": "888b47ff56a9dec7d58e40ec4f7d2bee070f1bc2fdb22b892a065e7d0a37899d"
+    },
+    {
+      "label": "direct-r224-abba-0",
+      "cubin": "post-word-raw.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.535936,
+        5.164352,
+        4.577088,
+        4.629344,
+        4.618528
+      ],
+      "warm_median_ms": 4.6239360000000005,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "direct-r224-abba-1",
+      "cubin": "post-direct.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        3.265728,
+        3.3552,
+        3.821472,
+        3.361792,
+        3.358528
+      ],
+      "warm_median_ms": 3.36016,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "direct-r224-abba-2",
+      "cubin": "post-direct.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        3.271168,
+        3.37856,
+        3.355936,
+        3.350944,
+        3.332512
+      ],
+      "warm_median_ms": 3.35344,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    },
+    {
+      "label": "direct-r224-abba-3",
+      "cubin": "post-word-raw.cubin",
+      "mode": "normal",
+      "pattern": 1,
+      "gpu_ms": [
+        4.754592,
+        4.616832,
+        4.61904,
+        4.615424,
+        4.615488
+      ],
+      "warm_median_ms": 4.61616,
+      "output_sha256": "e24b7742295b0ea0019009ebdaa51f9021b93d01e77fb07adde5f221e946545d"
+    }
+  ],
+  "outputs_exact": true,
+  "scope": "Synthetic post kernel only, not a game FPS measurement."
+}

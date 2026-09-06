@@ -56,7 +56,8 @@ __host__ __device__ inline uint32_t nr_as_bits(__half2 value) {
 
 // Keep values in binary16 while performing exactly the E4M3 encode/decode
 // quantization. Intended for a future fused arithmetic path, not FP8 storage.
-__host__ __device__ inline uint32_t nr_quantize_e4m3_half2(uint32_t bits) {
+template<unsigned NaNBits>
+__host__ __device__ inline uint32_t nr_quantize_e4m3_half2_impl(uint32_t bits) {
     const unsigned sign = bits & 0x80008000u;
     const __half2 magnitude = nr_as_half2(bits & 0x7fff7fffu);
     const unsigned nanMask = __hneu2_mask(magnitude, magnitude);
@@ -68,7 +69,16 @@ __host__ __device__ inline uint32_t nr_quantize_e4m3_half2(uint32_t bits) {
     const unsigned subnormal = nr_as_bits(__hsub2(__hadd2(clamped, two), two));
     const unsigned normalMask = __hge2_mask(clamped, __float2half2_rn(0.015625f));
     const unsigned quantized = ((normal & normalMask) | (subnormal & ~normalMask)) | sign;
-    return (quantized & ~nanMask) | (0x7fff7fffu & nanMask);
+    return (quantized & ~nanMask) | (NaNBits & nanMask);
+}
+
+__host__ __device__ inline uint32_t nr_quantize_e4m3_half2(uint32_t bits) {
+    return nr_quantize_e4m3_half2_impl<0x7fff7fffu>(bits);
+}
+// Match the inspected compatibility MMA decoder: encoding canonicalizes NaNs
+// to 0x7f, whose raw MMA expansion is +480. This is not general FP8 decoding.
+__host__ __device__ inline uint32_t nr_quantize_e4m3_mma_half2(uint32_t bits) {
+    return nr_quantize_e4m3_half2_impl<0x5f805f80u>(bits);
 }
 
 // Packed alternatives: match the reference functions while keeping each lane

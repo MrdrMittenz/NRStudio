@@ -13,7 +13,7 @@ from pathlib import Path
 root = Path(__file__).resolve().parent
 inline = '--inline' in sys.argv[1:]
 register_limit = next((int(arg.split('=', 1)[1]) for arg in sys.argv[1:] if arg.startswith('--registers=')), 168)
-if register_limit not in (128, 144, 160, 168, 192, 224):
+if register_limit not in (128, 144, 160, 168, 192, 224, 240, 255):
     raise ValueError('Unsupported experimental register limit')
 kernel = next((arg.split('=', 1)[1] for arg in sys.argv[1:] if arg.startswith('--kernel=')), 'post')
 variants = {
@@ -24,6 +24,16 @@ variants = {
 }
 name, expected_counts = variants[kernel]
 prefix = kernel + '-prototype'
+prepared = '--prepared-weights' in sys.argv[1:]
+direct = '--direct-activations' in sys.argv[1:]
+if prepared:
+    if kernel != 'post' or not inline:
+        raise ValueError('Prepared weights currently require inline post mode')
+    prefix = 'post-prepared'
+if direct:
+    if not inline:
+        raise ValueError('Direct activations require inline mode')
+    prefix = kernel + ('-prepared-direct' if prepared else '-direct')
 helper_source = (root / 'post_helpers.ptx').read_text()
 serial = 0
 
@@ -62,6 +72,15 @@ source = original.read_text()
 begin = source.index('.visible .entry ' + name + '(')
 end = source.find('.visible .entry ', begin + 1)
 body = source[begin:end if end >= 0 else None]
+prepared_mapping = {}
+activation_mapping = {}
+direct_required = set()
+if prepared:
+    import prepared_weights
+    body, prepared_mapping = prepared_weights.prepare(body)
+if direct:
+    import direct_activations, prepared_weights
+    body,activation_mapping,direct_required=direct_activations.analyze(body)
 body, limits = re.subn(r'\.maxnreg\s+168', f'.maxnreg {register_limit}', body, count=1)
 if limits != 1:
     raise ValueError('Missing register directive')
@@ -75,7 +94,10 @@ def conversion(match):
     before = f'mov.b32 v, {src};' if encode else f'cvt.u32.u16 v, {src};'
     after = f'cvt.u16.u32 {dst}, result;' if encode else f'mov.b32 {dst}, result;'
     if inline:
-        return '{\n.reg .b32 v, result;\n' + before + '\n' + inline_helper(func, ['v'], 'result', 32) + '\n' + after + '\n}'
+        text='{\n.reg .b32 v, result;\n' + before + '\n' + inline_helper(func, ['v'], 'result', 32) + '\n' + after + '\n}'
+        if encode and dst in direct_required:
+            text+='\n'+inline_helper('nrQuantize',[src],'%nrQ'+dst[1:],32)
+        return text
     return ('{\n.reg .b32 v, result;\n.param .b32 arg;\n.param .b32 retv;\n'
             f'{before}\nst.param.b32 [arg], v;\ncall.uni (retv), {func}, (arg);\n'
             f'ld.param.b32 result, [retv];\n{after}\n}}')
@@ -88,6 +110,8 @@ def mma(match):
     if list(map(len, [d, a, b, c])) != [2, 4, 2, 2]:
         raise ValueError('Unexpected MMA operands')
     args = a + b + c
+    if prepared or direct:
+        return prepared_weights.mma(d, a, b, c, prepared_mapping, activation_mapping)
     if inline:
         return '{\n.reg .b64 result;\n' + inline_helper('nrMma', args, 'result', 64) + f'\nmov.b64 {{{d[0]},{d[1]}}}, result;\n}}'
     lines = ['{', '.reg .b64 result;', '.param .b64 retv;']
@@ -116,6 +140,9 @@ result = subprocess.run(command, capture_output=True, text=True)
     input_sha256=hashlib.sha256(original.read_bytes()).hexdigest(),
     helper_sha256=hashlib.sha256((root / 'post_helpers.ptx').read_bytes()).hexdigest(),
     inline_helpers=inline,
+    prepared_weight_operands=len(prepared_mapping),
+    direct_activation_operands=len(activation_mapping),
+    direct_quantizations=len(direct_required),
     register_limit=register_limit,
     transformed=counts, exit_code=result.returncode,
     limitations='Compatibility prototype; helper expansion recorded above. Not deployed; '

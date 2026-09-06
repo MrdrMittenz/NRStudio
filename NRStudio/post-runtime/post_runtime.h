@@ -21,7 +21,7 @@ static Chain chain;
 static ChainEx chainEx;
 static decltype(&NvAPI_D3D12_CreateCuModule) createModule;
 static decltype(&NvAPI_D3D12_DestroyCuModule) destroyModule;
-struct Entry { ID3D12Device* device; NVDX_ObjectHandle module,function; };
+struct Entry { ID3D12Device* device; NVDX_ObjectHandle module,function,controlModule,controlFunction; unsigned paramBytes,blockY; const char* key; };
 static std::map<NVDX_ObjectHandle,Entry> entries;
 static std::shared_mutex mutex;
 static std::once_flag once;
@@ -30,6 +30,10 @@ static thread_local bool scope=false;
 static HMODULE self;
 static const void* blob;
 static DWORD blobSize;
+static const void* swinBlob;
+static DWORD swinBlobSize;
+static const void* previousBlob;
+static DWORD previousBlobSize;
 static LONG launches=0;
 static HANDLE originalEvent=nullptr;
 static LONG lastMode=-1;
@@ -50,15 +54,20 @@ static bool ModelMatches(const wchar_t* path) {
 }
 static NvAPI_Status __cdecl OnCreate(ID3D12Device*d,NVDX_ObjectHandle m,const char*n,NVDX_ObjectHandle*out){
  auto result=create(d,m,n,out);
- if(result!=NVAPI_OK||!scope||!out||!n||strcmp(n,"cc_tinlayout_fused_post_block_swin_1h_32_fp8"))return result;
- Entry entry{d,{},{}};
- auto status=createModule(d,blob,blobSize,&entry.module);
+ if(result!=NVAPI_OK||!scope||!out||!n)return result;
+ bool post=!strcmp(n,"cc_tinlayout_fused_post_block_swin_1h_32_fp8");
+ bool swin=!strcmp(n,"cc_tinlayout_fused_swin_8h_256_8_chained_fp8");
+ if(!post&&!swin)return result;
+ Entry entry{};entry.device=d;entry.paramBytes=post?184:88;entry.blockY=post?1:8;entry.key=post?"post":"swin8";
+ auto status=createModule(d,post?blob:swinBlob,post?blobSize:swinBlobSize,&entry.module);
  if(status==NVAPI_OK)status=create(d,entry.module,n,&entry.function);
- if(status!=NVAPI_OK){if(entry.module)destroyModule(d,entry.module);native_log("post-opt fallback: candidate creation status=%d",status);return result;}
+ if(status==NVAPI_OK&&post)status=createModule(d,previousBlob,previousBlobSize,&entry.controlModule);
+ if(status==NVAPI_OK&&post)status=create(d,entry.controlModule,n,&entry.controlFunction);
+ if(status!=NVAPI_OK){if(entry.controlFunction)destroy(d,entry.controlFunction);if(entry.controlModule)destroyModule(d,entry.controlModule);if(entry.function)destroy(d,entry.function);if(entry.module)destroyModule(d,entry.module);native_log("post-opt fallback: candidate creation status=%d",status);return result;}
  std::unique_lock<std::shared_mutex> guard(mutex);
- if(entries.count(*out)){destroy(d,entry.function);destroyModule(d,entry.module);return result;}
+ if(entries.count(*out)){if(entry.controlFunction)destroy(d,entry.controlFunction);if(entry.controlModule)destroyModule(d,entry.controlModule);destroy(d,entry.function);destroyModule(d,entry.module);return result;}
  d->AddRef();entries.emplace(*out,entry);
- native_log("post-opt ready: registers=192 original=%p candidate=%p",*out,entry.function);
+ native_log("post-opt ready: kernel=%s registers=%u original=%p candidate=%p baseline=previous-validated",entry.key,post?224:240,*out,entry.function);
  return result;
 }
 static NvAPI_Status __cdecl OnDestroy(ID3D12Device*d,NVDX_ObjectHandle f){
@@ -67,8 +76,9 @@ static NvAPI_Status __cdecl OnDestroy(ID3D12Device*d,NVDX_ObjectHandle f){
  auto it=entries.find(f);
  if(result==NVAPI_OK&&it!=entries.end()){
   auto e=it->second;entries.erase(it);
+  if(e.controlFunction)destroy(e.device,e.controlFunction);if(e.controlModule)destroyModule(e.device,e.controlModule);
   destroy(e.device,e.function);destroyModule(e.device,e.module);e.device->Release();
-  native_log("post-opt released: launches=%ld",launches);
+  native_log("post-opt released: kernel=%s launches=%ld",e.key,launches);
  }
  return result;
 }
@@ -78,18 +88,19 @@ template<class T,class F> static NvAPI_Status Launch(F original,ID3D12GraphicsCo
  if(n==1){
   auto it=entries.find(k->hFunction);if(it==entries.end())return original(c,k,n);
   T copy=*k;
-  if(copy.paramSize!=184||copy.blockDim.x!=32||copy.blockDim.y!=1||copy.blockDim.z!=1)return original(c,k,n);
+  if(!copy.pParams||copy.paramSize!=it->second.paramBytes||copy.blockDim.x!=32||copy.blockDim.y!=it->second.blockY||copy.blockDim.z!=1||copy.dynSharedMemBytes)return original(c,k,n);
   const bool useOriginal=originalEvent&&WaitForSingleObject(originalEvent,0)==WAIT_OBJECT_0;
   LONG previous=InterlockedExchange(&lastMode,useOriginal?1:0);
   if(previous!=(useOriginal?1:0))native_log("post-opt benchmark mode=%s",useOriginal?"original":"optimized");
   if(useOriginal){
    LONG count=InterlockedIncrement(&originalLaunches);
    if(count<=2||count%600==0)native_log("post-opt original launch=%ld",count);
+   if(it->second.controlFunction){copy.hFunction=it->second.controlFunction;return original(c,&copy,n);}
    return original(c,k,n);
   }
   copy.hFunction=it->second.function;
   LONG count=InterlockedIncrement(&launches);
-  if(count<=2||count%600==0)native_log("post-opt launch=%ld grid=%u,%u,%u",count,copy.gridDim.x,copy.gridDim.y,copy.gridDim.z);
+  if(count<=2||count%600==0)native_log("post-opt launch=%ld kernel=%s grid=%u,%u,%u",count,it->second.key,copy.gridDim.x,copy.gridDim.y,copy.gridDim.z);
   return original(c,&copy,n);
  }
  // The validated model uses singleton chains. Preserve unknown chain layouts.
@@ -111,6 +122,10 @@ static void Install(ID3D12Device*device,const wchar_t* model){
   if(FAILED(hr)||desc.VendorId!=0x10de||desc.DeviceId!=0x2204||!ModelMatches(model)){native_log("post-opt disabled: adapter/model mismatch");return;}
   auto resource=FindResourceW(self,MAKEINTRESOURCEW(101),RT_RCDATA);if(!resource)return;
   blobSize=SizeofResource(self,resource);blob=LockResource(LoadResource(self,resource));if(!blob||!blobSize)return;
+  resource=FindResourceW(self,MAKEINTRESOURCEW(102),RT_RCDATA);if(!resource)return;
+  swinBlobSize=SizeofResource(self,resource);swinBlob=LockResource(LoadResource(self,resource));if(!swinBlob||!swinBlobSize)return;
+  resource=FindResourceW(self,MAKEINTRESOURCEW(103),RT_RCDATA);if(!resource)return;
+  previousBlobSize=SizeofResource(self,resource);previousBlob=LockResource(LoadResource(self,resource));if(!previousBlob||!previousBlobSize)return;
   auto nv=LoadLibraryExW(L"nvapi64.dll",nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);if(!nv)return;
   auto query=reinterpret_cast<void*(__cdecl*)(unsigned)>(GetProcAddress(nv,"nvapi_QueryInterface"));if(!query)return;
   create=reinterpret_cast<Create>(query(0xe2436e22));destroy=reinterpret_cast<Destroy>(query(0xdf295ea6));
@@ -142,7 +157,7 @@ static void Install(ID3D12Device*device,const wchar_t* model){
   wchar_t eventName[96];swprintf_s(eventName,L"Local\\NRStudio.PostOriginal.%lu",GetCurrentProcessId());
   originalEvent=CreateEventW(nullptr,TRUE,FALSE,eventName);
   if(!originalEvent)native_log("post-opt benchmark control unavailable error=%lu",GetLastError());
-  enabled=true;native_log("post-opt enabled: embedded cubin bytes=%lu",blobSize);
+  enabled=true;native_log("post-opt enabled: direct-activation update post=%lu swin8=%lu previous=%lu bytes",blobSize,swinBlobSize,previousBlobSize);
  });
 }
 }

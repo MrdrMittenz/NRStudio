@@ -1,5 +1,52 @@
 ﻿# Experimental post-block runtime integration
 
+## Current direct-activation update, 2026-09-07
+
+The current forwarder embeds two replacements: post (224-register limit) and
+swin8 (240-register limit). Both retain FP8 rounding and the accepted Ampere
+FP16 matrix operation order while avoiding selected register-only pack/unpack
+round trips. Model weights, NR working resolution, evaluation frequency, and
+game settings are unchanged. Prepared-weight experiments remain isolated and
+are not embedded. The pre and swin1 candidates were slower and are excluded.
+
+Build the helpers with the accepted flags documented in ../kernel-lab, then
+run build_post_prototype.py --inline --registers=224 --direct-activations for
+post, and --kernel=swin8 --inline --registers=240 --direct-activations for swin8.
+Copy post-direct.cubin as post.cubin, swin8-direct.cubin as swin8.cubin, and
+retain the previously validated post-word-raw.cubin as previous-post.cubin.
+candidate.rc embeds those three local artifacts. Run build.cmd.
+These generated proprietary-derived artifacts remain outside source control.
+
+The same model hash, RTX 3090 PCI ID, enable marker and hook lifecycle checks
+apply. Only singleton launches with validated parameter sizes, block shapes
+and zero dynamic shared memory are replaced. The extra target uses 88 parameter
+bytes and a 32x8x1 block; post uses 184 bytes and 32x1x1.
+
+The existing PostOriginal event now selects the **previous validated runtime**:
+the old optimized post plus the model's original swin8. The historical event
+name and original/optimized log labels are retained for benchmark tooling.
+Removing the enable marker and restarting selects the unmodified model kernels.
+
+Validation: direct-validation/result.json compares every output frame against
+the previous runtime: 60 frames at 2560x1440, 12 at 1920x1080, and 12 at
+3072x1728. All SHA-256 values match, GPU fences complete, finite readbacks pass,
+both candidate functions are released, and the 25 exported names/ordinals
+match. The disabled-marker case and live benchmark switch also pass.
+Inputs are synthetic; this does not establish equivalence in every game scene.
+
+Sustained isolated model tests measured approximately 4-5% lower summed GPU
+kernel time for the selected pair. This is not an in-game FPS measurement.
+See ../kernel-lab/direct-activation-results.json. Gameplay validation of this
+update is pending. The local STALKER forwarder and its installation journal
+were updated; the installed app's runtime and distributable installer have
+not yet been updated.
+
+rollback_direct.ps1 restores the previous validated runtime and its managed
+installation hash. rollback.ps1 restores the original pre-experiment forwarder.
+Both require the game to be closed and verify the deployed file before writing.
+
+## Previous build history
+
 This opt-in forwarder embeds the locally built post-block cubin validated in
 ../kernel-lab. It replaces only the inspected singleton 184-byte, 32-thread
 post-block launch. All original model functions still exist. Unknown launch

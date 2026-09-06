@@ -9,3 +9,8 @@ __pycache__/
 *.pdb
 *.lib
 *.exp
+*.ptx
+*.cubin
+*.sass
+*.f32
+*.rgba16f

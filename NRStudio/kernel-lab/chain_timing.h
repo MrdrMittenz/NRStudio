@@ -5,7 +5,7 @@
 #include <cstdint>
 
 namespace ChainTiming {
-static constexpr unsigned capacity = 8192;
+static constexpr unsigned capacity = 32768;
 static ID3D12QueryHeap* heap = nullptr;
 static ID3D12Resource* readback = nullptr;
 static UINT64 frequency = 0;

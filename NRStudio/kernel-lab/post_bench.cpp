@@ -1,4 +1,5 @@
 #include <cuda.h>
+#include <cuda_fp16.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstdint>
@@ -27,7 +28,8 @@ int main(int argc, char** argv) {
     check(cuModuleLoad(&module, argv[1]));
     check(cuModuleGetFunction(&kernel, module, "cc_tinlayout_fused_post_block_swin_1h_32_fp8"));
     size_t offset, size; check(cuFuncGetParamInfo(kernel, 0, &offset, &size));
-    if (offset || size != 184) return 3;
+    if (offset || (size != 184 && size != 192)) return 3;
+    const bool prepared = size == 192;
     for (auto attribute : {CU_FUNC_ATTRIBUTE_NUM_REGS, CU_FUNC_ATTRIBUTE_LOCAL_SIZE_BYTES, CU_FUNC_ATTRIBUTE_SHARED_SIZE_BYTES}) {
         int value; check(cuFuncGetAttribute(&value, attribute, kernel)); printf("attribute=%d value=%d\n", attribute, value);
     }
@@ -60,6 +62,25 @@ int main(int argc, char** argv) {
         }
     }
     printf("pattern=%d\n", pattern);
+    CUdeviceptr preparedWeights = 0;
+    if (prepared) {
+        check(cuStreamSynchronize(stream));
+        std::vector<unsigned char> packed(sizes[2]);
+        check(cuMemcpyDtoH(packed.data(), buffers[2], packed.size()));
+        std::vector<unsigned short> expanded(packed.size());
+        for (size_t i = 0; i < packed.size(); i += 4) {
+            const int order[] = {0,2,1,3};
+            for (int j = 0; j < 4; ++j) {
+                unsigned v = packed[i + order[j]];
+                __half_raw raw; raw.x = static_cast<unsigned short>(((v & 0x7f) << 7) | ((v & 0x80) << 8));
+                __half result = __float2half_rn(__half2float(__half(raw)) * 256.0f);
+                expanded[i+j] = static_cast<__half_raw>(result).x;
+            }
+        }
+        check(cuMemAlloc(&preparedWeights, expanded.size() * sizeof(unsigned short)));
+        check(cuMemcpyHtoD(preparedWeights, expanded.data(), expanded.size() * sizeof(unsigned short)));
+        printf("prepared_weight_bytes=%zu preparation=once_before_timing\n", expanded.size()*sizeof(unsigned short));
+    }
     CUDA_ARRAY3D_DESCRIPTOR desc{}; desc.Width = width; desc.Height = height;
     desc.Format = CU_AD_FORMAT_FLOAT; desc.NumChannels = 4; desc.Flags = CUDA_ARRAY3D_SURFACE_LDST;
     CUarray inputArray, outputArray;
@@ -78,13 +99,14 @@ int main(int argc, char** argv) {
     texture.filterMode = CU_TR_FILTER_MODE_LINEAR; texture.flags = CU_TRSF_NORMALIZED_COORDINATES;
     CUtexObject tex; check(cuTexObjectCreate(&tex, &resource, &texture, nullptr));
     resource.res.array.hArray = outputArray; CUsurfObject surface; check(cuSurfObjectCreate(&surface, &resource));
-    alignas(8) unsigned char params[184]{};
+    alignas(8) unsigned char params[192]{};
     put(params, 0, buffers[0] + halos[0]); put(params, 8, buffers[1] + halos[1]); put(params, 16, surface); put(params, 24, buffers[2]);
     put(params, 32, int(tensorHeight)); put(params, 36, int(width)); put(params, 40, -4); put(params, 44, -4);
     put(params, 48, 0.03125f); put(params, 52, 1); put(params, 56, tex);
     put(params, 72, float(width)); put(params, 76, float(height)); put(params, 80, 1.0f / width); put(params, 84, 1.0f / height);
     put(params, 104, buffers[3]); put(params, 112, uint64_t(1));
     put(params, 164, 1.0f / width); put(params, 168, 1.0f / height); put(params, 172, int(width)); put(params, 176, int(height));
+    if (prepared) put(params, 184, preparedWeights);
     void* args[] = {params}; CUevent start, end; check(cuEventCreate(&start, 0)); check(cuEventCreate(&end, 0));
     for (int run = 0; run < (tune ? 30 : 5); ++run) {
         const int mode = tune ? (run % 3 + run / 3) % 3 : 0;
@@ -122,5 +144,6 @@ int main(int argc, char** argv) {
     check(cuEventDestroy(start)); check(cuEventDestroy(end)); check(cuTexObjectDestroy(tex)); check(cuSurfObjectDestroy(surface));
     check(cuArrayDestroy(inputArray)); check(cuArrayDestroy(outputArray));
     for (auto p : allocations) check(cuMemFree(p));
+    if (preparedWeights) check(cuMemFree(preparedWeights));
     check(cuStreamDestroy(stream)); check(cuModuleUnload(module)); check(cuDevicePrimaryCtxRelease(device)); return 0;
 }

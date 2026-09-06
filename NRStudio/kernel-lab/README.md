@@ -527,3 +527,70 @@ signatures; prepare_launch_batch.py prepares the experimental probe and build
 script. NRSTUDIO_BATCH=1 enabled grouping, and NRSTUDIO_BATCH_LIMIT=4 selected the
 failed variant. These names document the failed experiment, not a recommendation
 to run it. summarize_launch_batch.py includes both completed and failed results.
+
+## Prepared weights and direct activations, 2026-09-07
+
+The prepared-weight experiment expands selected packed weight operands into
+half2 pairs in a separate buffer. Standalone preparation is excluded from kernel
+timing. The full-model prototype refreshes 20,704 source bytes on the GPU before
+every evaluation and includes that pass and its UAV barriers in the measured
+post span. It does not assume weights remain immutable between evaluations.
+The expanded buffer is 41,408 bytes. This is a workload reuse experiment, not
+evidence that 24 GB VRAM is necessary for this particular optimization.
+
+prepare_weights.cu, prepared_weights.py, prepared_launch.h and their build/probe
+generators implement the isolated experiment. All saved final outputs matched
+the baseline. The small standalone memory checker passed. A 30-frame run first
+hit the old timestamp capacity after 26 frames; it was not a device hang. The
+query capacity was increased to 32,768 and completed runs followed. Interleaved
+model timings were promising but clock-sensitive. This prototype is not deployed.
+
+Direct activation conversion removes another round trip: selected encoded and
+packed activation registers are represented as rounded FP16 pairs for their MMA
+consumers. FP8 storage and all other uses remain intact. The helper preserves
+the inspected decoder's +480 expansion of the canonical encoded NaN, rather
+than silently switching to general-purpose FP8 NaN semantics. Exhaustive checks
+cover 262,144 half2 pairs, every half bit pattern in both lanes, and edge cases;
+direct-quantizer-check.txt reports zero mismatches. The small standalone post
+memory checker also reports zero errors, and five varied post inputs match.
+
+The first swin1 transformation was rejected for output mismatch. Four packed
+registers also receive vector loads on another branch. direct_activations.py now
+excludes these aliases; the corrected small and 1440p model outputs match.
+Do not use swin1-direct-rejected-alias.cubin. The corrected swin1 and pre
+candidates remain slower than their original kernels and are excluded.
+
+Selected runtime: post at 224 registers and swin8 at 240 registers. The prepared
+weight buffer is excluded: its incremental benefit would require additional
+runtime resource/synchronization management. The selected pair keeps existing
+launch parameters, input/output buffers, resolution and evaluation cadence.
+
+Sustained 100-frame interleaved timing, first eight frames excluded:
+
+| Span | Previous validated runtime | Selected candidate |
+| --- | ---: | ---: |
+| Post | 4.4165 ms | 3.2225 ms |
+| Swin8, all calls/frame | 4.2486 ms | 3.8938 ms |
+| Sum of model kernel spans | 36.8819 ms | 35.0627 ms |
+
+This is approximately 4.93% less summed kernel time in the recorded run. A
+224-register swin8 variant also reduced total time (36.6103 to 35.1968 ms),
+but its target kernel was slower than the 240-register candidate. These are
+isolated GPU measurements, not game FPS or an official Blackwell comparison.
+
+Correctness and performance use separate modes. The regular direct probe checks
+finite output and SHA-256 of every frame. All 60 hashes of the selected
+interleaved sequence matched a separate previous-runtime control. Timing-only
+mode retains GPU fence/error checks but scans/hashes only the final frame; this
+avoids long CPU image scans that allow GPU clocks to drop between evaluations.
+Every intermediate frame is therefore not independently checked in timing-only
+runs. direct-activation-results.json retains timing samples and their scope.
+
+prepare_direct_probe.py/build_direct_probe.cmd build the interleaved probe.
+run_direct_case.py selects post/swin1/pre/swin8 and control/candidate/alternate
+modes; use --timing-only only after separate correctness validation. All GPU
+launches remain in original order; the rejected launch-grouping code is unused.
+The embedded runtime validation and STALKER deployment are in ../post-runtime.
+Every compared frame matched at 1080p, 1440p and 3072x1728; exports, disabled
+marker, function cleanup and live previous/candidate switch passed. The update
+awaits a same-scene game FPS comparison before installer rollout.

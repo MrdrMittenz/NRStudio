@@ -8,6 +8,7 @@ extern "C" __device__ unsigned nrEncode(unsigned value) {
 #endif
 }
 extern "C" __device__ unsigned nrDecode(unsigned value) { return NR_MMA_DECODE(uint16_t(value)); }
+extern "C" __device__ unsigned nrQuantize(unsigned value) { return nr_quantize_e4m3_mma_half2(value); }
 extern "C" __device__ unsigned long long nrMma(unsigned a0, unsigned a1, unsigned a2, unsigned a3,
                                               unsigned b0, unsigned b1, unsigned c0, unsigned c1) {
     unsigned a[4]{a0,a1,a2,a3}, b[2]{b0,b1}, c[2]{c0,c1}, d[2];
