@@ -1,0 +1,10 @@
+﻿========= COMPUTE-SANITIZER
+attribute=4 value=168
+attribute=3 value=96
+attribute=1 value=0
+run=0 gpu_ms=28.274015 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=1 gpu_ms=28.792671 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=2 gpu_ms=31.359137 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=3 gpu_ms=26.899649 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=4 gpu_ms=27.199871 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+========= ERROR SUMMARY: 0 errors

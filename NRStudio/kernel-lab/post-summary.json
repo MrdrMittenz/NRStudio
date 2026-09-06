@@ -1,0 +1,53 @@
+{
+  "experiments": {
+    "post-cache-results.txt": {
+      "policies": {
+        "-1": {
+          "samples": 9,
+          "median_ms": 5.17802,
+          "min_ms": 5.143021,
+          "max_ms": 5.257885
+        },
+        "0": {
+          "samples": 9,
+          "median_ms": 5.181296,
+          "min_ms": 5.152269,
+          "max_ms": 5.250109
+        },
+        "100": {
+          "samples": 9,
+          "median_ms": 5.117625,
+          "min_ms": 5.077245,
+          "max_ms": 5.210563
+        }
+      },
+      "median_saved_ms": 0.060394999999999754,
+      "percent_saved": 1.1663724744207198
+    },
+    "post-cache-repeat.txt": {
+      "policies": {
+        "-1": {
+          "samples": 9,
+          "median_ms": 5.177482,
+          "min_ms": 5.148858,
+          "max_ms": 5.248998
+        },
+        "0": {
+          "samples": 9,
+          "median_ms": 5.1516,
+          "min_ms": 5.147251,
+          "max_ms": 5.342749
+        },
+        "100": {
+          "samples": 9,
+          "median_ms": 5.111897,
+          "min_ms": 5.073901,
+          "max_ms": 5.210304
+        }
+      },
+      "median_saved_ms": 0.06558500000000045,
+      "percent_saved": 1.2667354517118639
+    }
+  },
+  "limitations": "Synthetic, overprovisioned tensors and float32 CUDA textures; not a full-model replay. Carveout is a driver preference. Ten launches per timing sample include submission gaps. No game FPS gain established and no runtime changes deployed."
+}

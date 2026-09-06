@@ -162,6 +162,58 @@ block uses a 184-byte struct and grid 321,185,1 with one warp per block; recover
 its texture/surface and tensor arguments is still needed for standalone testing.
 No measured code optimization has been deployed from this lab.
 
+## Post-block harness and cache experiment
+
+post_bench.cpp runs the original compiled SM86 post block with a 184-byte
+parameter structure, linear tensor buffers, a normalized CUDA texture object,
+and a CUDA surface object. The 1440p case uses the recorded 2560x1472 tensor
+dimensions, (-4,-4) offsets, and grid 321,185,1 / block 32,1,1. The source and
+destination CUDA arrays are float32 RGBA; the game uses D3D12 resources and its
+exact texture descriptors have not been reproduced. Weights and tensors are
+synthetic. This is not a capture/replay of actual model intermediates.
+
+An initial tensor allocation assumption was too small. Compute Sanitizer caught
+23,345 errors despite finite, repeatable-looking output; those timings were
+rejected. Extra edge padding alone was insufficient. The final harness uses
+overprovisioned storage (16 bytes per tensor pixel for the first buffer, 32 for
+the second, plus surrounding padding), and the exercised 1440p launch passes
+memcheck with zero errors. The exact native tensor extents/layout are still not
+established; allocating sufficient synthetic storage is not a proof of them.
+The installed runtime was not modified by these failures or tests.
+
+All output values are written and finite, repeated output is bit-identical, and
+allocation guards pass. Nsight Compute full application replay on the validated
+harness reports 168 registers/thread, 96 local bytes/thread, no static shared
+memory, 25% theoretical occupancy, 24.95% achieved occupancy, and register
+spilling. Reported duration is 6.09 ms, DRAM throughput 10.85% of peak, and
+approximately 839 million executed warp instructions. These measurements suggest
+instruction/dependency costs deserve investigation; they do not prove which
+source-level operation dominates or what speedup a rewrite could achieve.
+
+The cache experiment compares the default, minimum, and maximum preferred shared
+memory carveouts through cuFuncSetAttribute. These values are driver preferences,
+not guaranteed physical allocations. Two separate runs each use 30 rotating-order
+measurements, ten launches per measurement, with identical-output and guard
+checks. The first three measurements are excluded from the timing summary.
+
+| Run | Default median | Maximum carveout median | Difference |
+|---|---:|---:|---:|
+| First | 5.178020 ms | 5.117625 ms | 0.060395 ms (1.17%) |
+| Repeat | 5.177482 ms | 5.111897 ms | 0.065585 ms (1.27%) |
+
+Individual samples overlap. This small standalone improvement is not an in-game
+FPS result and has not been integrated into the D3D12 runtime. It is not evidence
+of a substantial performance unlock. Further work should investigate the compiled
+kernel's instruction/conversion paths with a stronger reference-output comparison
+before attempting an arithmetic rewrite.
+
+Build with build_post.cmd. Run `post_bench.exe path\\to\\module-0.2.sm_86.cubin`
+for 1440p, append `small` for the synthetic 256x256 case, or `cache` for the
+rotating cache experiment. summarize_post.py validates and summarizes both saved
+cache runs. ncu-post-1440.txt contains the validated harness profile; instrumentation
+inflates the separate harness timings printed during profiling. No NVIDIA binary,
+game file, installer or image-quality setting was changed.
+
 Only our harness/instrumentation source, build scripts and diagnostic text are
 included in the private review. Extracted NVIDIA PTX/cubins and output textures
 remain local and are not included.
