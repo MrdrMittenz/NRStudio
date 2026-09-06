@@ -5,18 +5,52 @@
 #include <mutex>
 #include <fstream>
 #include <iomanip>
+#include <vector>
+#include <iterator>
 #include "chain_timing.h"
 namespace NRTrace {
 using Create=decltype(&NvAPI_D3D12_CreateCuFunction);
 using Chain=decltype(&NvAPI_D3D12_LaunchCuKernelChain);
 using ChainEx=decltype(&NvAPI_D3D12_LaunchCuKernelChainEx);
-static Create create=nullptr;static Chain chain=nullptr;static ChainEx chainEx=nullptr;
+static decltype(&NvAPI_D3D12_CreateCuModule) createModule=nullptr;
+static decltype(&NvAPI_D3D12_DestroyCuModule) destroyModule=nullptr;
+static decltype(&NvAPI_D3D12_DestroyCuFunction) destroyFunction=nullptr;
+static ID3D12Device* testDevice=nullptr;
+static NVDX_ObjectHandle testModule{},testFunction{},originalFunction{};
+static unsigned substitutions=0;
+static bool attempted=false;
+static bool requested=false;
+static decltype(&NvAPI_D3D12_CreateCuFunction) create=nullptr;
+static void PrepareCandidate(ID3D12Device*d,const char*n,NVDX_ObjectHandle original){
+ if(strcmp(n,"cc_tinlayout_fused_post_block_swin_1h_32_fp8")!=0)return;
+ wchar_t path[32768];DWORD len=GetEnvironmentVariableW(L"NRSTUDIO_TEST_CUBIN",path,32768);
+ if(!len)return;
+ if(len>=32768||attempted){puts("candidate: invalid path or duplicate target");exit(40);}
+ attempted=true;
+ std::ifstream file(path,std::ios::binary);
+ std::vector<char> blob((std::istreambuf_iterator<char>(file)),{});
+ if(blob.empty()||blob.size()>0xffffffffu)exit(41);
+ auto status=createModule(d,blob.data(),static_cast<NvU32>(blob.size()),&testModule);
+ printf("candidate: CreateCuModule=%d bytes=%zu\n",status,blob.size());
+ if(status!=NVAPI_OK)exit(42);
+ status=create(d,testModule,n,&testFunction);
+ printf("candidate: CreateCuFunction=%d\n",status);
+ if(status!=NVAPI_OK)exit(43);
+ originalFunction=original;testDevice=d;d->AddRef();
+}
+template<class T> static const T* Substitute(const T*k,NvU32 n,std::vector<T>& copy){
+ if(!testFunction)return k;
+ copy.assign(k,k+n);
+ for(auto& item:copy)if(item.hFunction==originalFunction){item.hFunction=testFunction;++substitutions;}
+ return copy.data();
+}
+static Chain chain=nullptr;static ChainEx chainEx=nullptr;
 static std::map<NVDX_ObjectHandle,std::string> names;
 static std::map<std::string,unsigned> counts;
 static std::mutex lock;
 static std::ofstream trace;
 static NvAPI_Status __cdecl OnCreate(ID3D12Device*d,NVDX_ObjectHandle m,const char*n,NVDX_ObjectHandle*out){
- auto r=create(d,m,n,out);if(r==NVAPI_OK&&out&&n){std::lock_guard<std::mutex>guard(lock);names[*out]=n;}return r;
+ auto r=create(d,m,n,out);if(r==NVAPI_OK&&out&&n){std::lock_guard<std::mutex>guard(lock);names[*out]=n;PrepareCandidate(d,n,*out);}return r;
 }
 template<class T> static void Record(const T* kernels,NvU32 count){
  if(!kernels||count>100000)return;
@@ -34,13 +68,24 @@ template<class T> static unsigned StartTiming(ID3D12GraphicsCommandList*c,const 
  std::lock_guard<std::mutex>guard(lock);
  return ChainTiming::Begin(c,n,n?names[k[0].hFunction]:"empty",n?names[k[n-1].hFunction]:"empty");
 }
-static NvAPI_Status __cdecl OnChain(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS*k,NvU32 n){if(!c||!k||!n)return chain(c,k,n);Record(k,n);unsigned index=StartTiming(c,k,n);auto r=chain(c,k,n);ChainTiming::End(c,index);return r;}
-static NvAPI_Status __cdecl OnChainEx(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS_EX*k,NvU32 n){if(!c||!k||!n)return chainEx(c,k,n);Record(k,n);unsigned index=StartTiming(c,k,n);auto r=chainEx(c,k,n);ChainTiming::End(c,index);return r;}
-static void Finish(){std::ofstream out("kernel-counts.tsv");for(auto& x:counts)out<<x.first<<"\t"<<x.second<<"\n";trace.flush();ChainTiming::Finish();}
+static NvAPI_Status __cdecl OnChain(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS*k,NvU32 n){if(!c||!k||!n)return chain(c,k,n);Record(k,n);unsigned index=StartTiming(c,k,n);std::vector<NVAPI_CU_KERNEL_LAUNCH_PARAMS> copy;auto r=chain(c,Substitute(k,n,copy),n);ChainTiming::End(c,index);return r;}
+static NvAPI_Status __cdecl OnChainEx(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS_EX*k,NvU32 n){if(!c||!k||!n)return chainEx(c,k,n);Record(k,n);unsigned index=StartTiming(c,k,n);std::vector<NVAPI_CU_KERNEL_LAUNCH_PARAMS_EX> copy;auto r=chainEx(c,Substitute(k,n,copy),n);ChainTiming::End(c,index);return r;}
+static void Finish(){std::ofstream out("kernel-counts.tsv");for(auto& x:counts)out<<x.first<<"\t"<<x.second<<"\n";trace.flush();ChainTiming::Finish();
+ if(requested&&!attempted){puts("candidate: requested target was never created");exit(46);}
+ if(attempted){printf("candidate: substitutions=%u completed=%d\n",substitutions,ChainTiming::completed);
+ std::ofstream report("candidate-status.txt");report<<"substitutions="<<substitutions<<" completed="<<ChainTiming::completed<<"\n";
+ if(ChainTiming::completed&&testDevice){destroyFunction(testDevice,testFunction);destroyModule(testDevice,testModule);testDevice->Release();}
+ if(!substitutions||!ChainTiming::completed)exit(44);
+ }}
 static void Install(){
+ requested=GetEnvironmentVariableW(L"NRSTUDIO_TEST_CUBIN",nullptr,0)>0;
  HMODULE nv=LoadLibraryExW(L"nvapi64.dll",nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);if(!nv){puts("trace: cannot load system NVAPI");exit(20);}
  auto query=reinterpret_cast<void*(__cdecl*)(unsigned)>(GetProcAddress(nv,"nvapi_QueryInterface"));if(!query)exit(21);
  create=reinterpret_cast<Create>(query(0xe2436e22));chain=reinterpret_cast<Chain>(query(0x24973538));chainEx=reinterpret_cast<ChainEx>(query(0x846a9bf0));if(!create||!chain||!chainEx)exit(22);
+ createModule=reinterpret_cast<decltype(createModule)>(query(0xad1a677d));
+ destroyModule=reinterpret_cast<decltype(destroyModule)>(query(0x41c65285));
+ destroyFunction=reinterpret_cast<decltype(destroyFunction)>(query(0xdf295ea6));
+ if(!createModule||!destroyModule||!destroyFunction)exit(45);
  trace.open("kernel-launches.tsv");if(!trace)exit(23);
  if(DetourTransactionBegin()!=NO_ERROR)exit(24);
  DetourUpdateThread(GetCurrentThread());

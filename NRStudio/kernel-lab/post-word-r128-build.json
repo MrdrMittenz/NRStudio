@@ -1,0 +1,13 @@
+{
+  "input_sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+  "helper_sha256": "01904553b2160a0e8d64610aa614e4cf2bf0e490e721263182b88605ed728c7e",
+  "inline_helpers": true,
+  "register_limit": 128,
+  "transformed": {
+    "encode": 388,
+    "decode": 40,
+    "mma": 256
+  },
+  "exit_code": 0,
+  "limitations": "Compatibility prototype; helper expansion recorded above. Not deployed; numerical and performance acceptance remain required."
+}

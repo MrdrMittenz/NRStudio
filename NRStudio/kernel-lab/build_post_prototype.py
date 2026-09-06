@@ -12,6 +12,9 @@ from pathlib import Path
 
 root = Path(__file__).resolve().parent
 inline = '--inline' in sys.argv[1:]
+register_limit = next((int(arg.split('=', 1)[1]) for arg in sys.argv[1:] if arg.startswith('--registers=')), 168)
+if register_limit not in (128, 144, 160, 168, 192, 224):
+    raise ValueError('Unsupported experimental register limit')
 helper_source = (root / 'post_helpers.ptx').read_text()
 serial = 0
 
@@ -51,6 +54,9 @@ name = 'cc_tinlayout_fused_post_block_swin_1h_32_fp8'
 begin = source.index('.visible .entry ' + name + '(')
 end = source.find('.visible .entry ', begin + 1)
 body = source[begin:end if end >= 0 else None]
+body, limits = re.subn(r'\.maxnreg\s+168', f'.maxnreg {register_limit}', body, count=1)
+if limits != 1:
+    raise ValueError('Missing register directive')
 counts = {'encode': 0, 'decode': 0, 'mma': 0}
 
 def conversion(match):
@@ -101,6 +107,7 @@ result = subprocess.run(command, capture_output=True, text=True)
     input_sha256=hashlib.sha256(original.read_bytes()).hexdigest(),
     helper_sha256=hashlib.sha256((root / 'post_helpers.ptx').read_bytes()).hexdigest(),
     inline_helpers=inline,
+    register_limit=register_limit,
     transformed=counts, exit_code=result.returncode,
     limitations='Compatibility prototype; helper expansion recorded above. Not deployed; '
     'numerical and performance acceptance remain required.'), indent=2))

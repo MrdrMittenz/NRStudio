@@ -380,3 +380,57 @@ the unprofiled harness separately for the complete correctness checks.
 kernel_metadata.py queries interfaces without launching kernels. summarize.py
 records static instruction families and median timing results. Scripts that
 refer to the recovery workspace require adjusting that path on another machine.
+
+## Post-block candidate: full-model validation, 2026-09-06
+
+A new isolated candidate matches the original post-block's observed FP16 MMA
+word grouping and uses direct mask/shift/half2 expansion for its MMA operands.
+At a 192-register limit, two standalone 1440p runs measured about 4.03 and
+4.04 ms, versus 5.21 and 5.15 ms for the original: about 22% less time for this
+one block. Small varied-input checks and a varied 1440p check were bit-exact.
+Compute Sanitizer reported zero errors at both resolutions.
+
+The optional trace-probe replacement loads a separate candidate module and
+substitutes only this function in copied launch descriptors. The original
+model, its other kernels, the installed app and game files are unchanged.
+The probe retained the original function handle for model-owned cleanup and
+released its candidate after completed GPU work. A requested candidate that
+fails to load or is never used fails explicitly.
+
+The full model with its actual weights completed baseline/candidate runs at
+256x256 (4 evaluations) and 2560x1440 (10 evaluations, repeated pair). Saved
+final RGBA16F outputs were byte-identical. Each 1440p comparison covered
+14,745,600 half values. This checks the saved final frame; intermediate frames
+were checked for finite output, not saved for byte comparisons.
+
+1440p warm medians (first frame excluded; all other samples retained):
+
+| Run | Original block | Candidate block | Original chain total | Candidate chain total |
+| --- | ---: | ---: | ---: | ---: |
+| First pair | 5.254 ms | 4.584 ms | 39.998 ms | 40.234 ms |
+| Repeat pair | 6.018 ms | 4.598 ms | 40.899 ms | 39.504 ms |
+
+The per-block gain survives full-model integration. Whole-model timings have
+large outliers and do not yet establish a reliable overall gain or game FPS.
+Inputs are synthetic D3D12 textures, not a captured game sequence. The raw MMA
+expansion intentionally matches this inspected binary (including +/-480 for
+FP8 NaN byte encodings); it is not a general-purpose FP8 decoder. The ordinary
+FP8 helper retains its separate canonical-NaN behavior.
+
+Rebuild the candidate with locally available, inspected vendor PTX:
+
+```
+build_post_helpers.cmd -DNR_MMA_WORD_PARTITION=1 -DNR_MMA_STRIDED=1 -DNR_FAST_FP8=1 -DNR_MMA_RAW_DECODE=1
+python build_post_prototype.py --inline --registers=192
+python prepare_trace.py
+build_trace.cmd
+```
+
+Run trace_probe.exe with core/model/forwarder paths, width, height and frame
+count, in a fresh output directory. Set process environment variable
+NRSTUDIO_TEST_CUBIN to the absolute candidate cubin path only for candidate
+runs; clear it for baseline runs. candidate-status.txt must show the expected
+substitution count and completed=1. compare_full_post.py compares the named
+full-post-*-1440 directories and preserves all timing samples in JSON.
+Vendor PTX, cubins and output textures remain local and are not redistributed.
+Game integration and an actual game benchmark remain pending.

@@ -1,0 +1,34 @@
+﻿attribute=4 value=128
+attribute=3 value=384
+attribute=1 value=0
+pattern=0
+run=0 carveout=-1 gpu_ms=7.494064 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=1 carveout=0 gpu_ms=7.609424 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=2 carveout=100 gpu_ms=7.194253 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=3 carveout=0 gpu_ms=7.102544 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=4 carveout=100 gpu_ms=7.292291 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=5 carveout=-1 gpu_ms=7.167939 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=6 carveout=100 gpu_ms=7.255866 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=7 carveout=-1 gpu_ms=7.213549 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=8 carveout=0 gpu_ms=7.135805 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=9 carveout=-1 gpu_ms=7.133091 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=10 carveout=0 gpu_ms=7.174973 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=11 carveout=100 gpu_ms=7.217354 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=12 carveout=0 gpu_ms=7.096026 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=13 carveout=100 gpu_ms=7.300761 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=14 carveout=-1 gpu_ms=7.134752 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=15 carveout=100 gpu_ms=7.220038 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=16 carveout=-1 gpu_ms=7.199757 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=17 carveout=0 gpu_ms=7.141801 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=18 carveout=-1 gpu_ms=7.100202 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=19 carveout=0 gpu_ms=7.177930 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=20 carveout=100 gpu_ms=7.216518 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=21 carveout=0 gpu_ms=7.144064 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=22 carveout=100 gpu_ms=7.269600 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=23 carveout=-1 gpu_ms=7.150013 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=24 carveout=100 gpu_ms=7.221693 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=25 carveout=-1 gpu_ms=7.272659 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=26 carveout=0 gpu_ms=7.108233 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=27 carveout=-1 gpu_ms=7.072103 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=28 carveout=0 gpu_ms=7.167665 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
+run=29 carveout=100 gpu_ms=7.244092 launches=10 unwritten=0 invalid=0 sum=7003488.04 repeat=pass guards=pass
