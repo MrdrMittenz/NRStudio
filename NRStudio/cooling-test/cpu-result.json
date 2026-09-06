@@ -1,0 +1,17 @@
+{
+  "cpu_evaluate_ms": [
+    0.7002,
+    0.3009,
+    0.2894,
+    0.2865,
+    0.2859,
+    0.2819,
+    0.2841,
+    0.2801,
+    0.2851,
+    0.279
+  ],
+  "median_warm_cpu_ms": 0.2851,
+  "final_output_sha256": "7cf910242b8f05c7e3271a777f7345c30fc946c10eb7c8da764391954b021dd9",
+  "limitations": "Synthetic model command-recording CPU duration, not GPU execution duration or game FPS; excludes forwarder parameter setup and logging."
+}

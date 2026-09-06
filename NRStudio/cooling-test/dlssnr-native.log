@@ -1,0 +1,15 @@
+pid=8428 tick=13977468 create init=00000001 result=00000001 size=2560x1440 float_slot=6 feature=0000000057405020
+pid=8428 tick=13977515 cpu-evaluate-ms=0.700200
+pid=8428 tick=13977515 evaluate frame=1 result=00000001 size=2560x1440 guides=2560x1440 reset=1
+pid=8428 tick=13977734 cpu-evaluate-ms=0.300900
+pid=8428 tick=13977734 evaluate frame=2 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=8428 tick=13977953 cpu-evaluate-ms=0.289400
+pid=8428 tick=13977953 evaluate frame=3 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=8428 tick=13978171 cpu-evaluate-ms=0.286500
+pid=8428 tick=13978171 evaluate frame=4 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=8428 tick=13978390 cpu-evaluate-ms=0.285900
+pid=8428 tick=13978625 cpu-evaluate-ms=0.281900
+pid=8428 tick=13978828 cpu-evaluate-ms=0.284100
+pid=8428 tick=13979062 cpu-evaluate-ms=0.280100
+pid=8428 tick=13979281 cpu-evaluate-ms=0.285100
+pid=8428 tick=13979500 cpu-evaluate-ms=0.279000
