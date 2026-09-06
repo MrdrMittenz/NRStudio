@@ -1,0 +1,98 @@
+[
+  {
+    "elements": 1,
+    "median_us": {
+      "original": 4.677488,
+      "vector": 4.679168,
+      "cuda_memset": 4.434512
+    }
+  },
+  {
+    "elements": 3,
+    "median_us": {
+      "original": 4.601856,
+      "vector": 4.753920000000001,
+      "cuda_memset": 4.471296000000001
+    }
+  },
+  {
+    "elements": 4,
+    "median_us": {
+      "original": 4.790272,
+      "vector": 4.960768,
+      "cuda_memset": 4.460656
+    }
+  },
+  {
+    "elements": 31,
+    "median_us": {
+      "original": 4.64376,
+      "vector": 4.808144,
+      "cuda_memset": 3.9594240000000003
+    }
+  },
+  {
+    "elements": 32,
+    "median_us": {
+      "original": 4.591584,
+      "vector": 4.495872,
+      "cuda_memset": 4.3432960000000005
+    }
+  },
+  {
+    "elements": 33,
+    "median_us": {
+      "original": 4.592192000000001,
+      "vector": 4.9853439999999996,
+      "cuda_memset": 4.363264
+    }
+  },
+  {
+    "elements": 255,
+    "median_us": {
+      "original": 4.521984,
+      "vector": 4.822016,
+      "cuda_memset": 4.33624
+    }
+  },
+  {
+    "elements": 256,
+    "median_us": {
+      "original": 4.520448,
+      "vector": 4.631024,
+      "cuda_memset": 3.430208
+    }
+  },
+  {
+    "elements": 257,
+    "median_us": {
+      "original": 4.483072,
+      "vector": 4.553216,
+      "cuda_memset": 4.389376
+    }
+  },
+  {
+    "elements": 4096,
+    "median_us": {
+      "original": 4.548608,
+      "vector": 4.5731839999999995,
+      "cuda_memset": 4.4672
+    }
+  },
+  {
+    "elements": 57600,
+    "median_us": {
+      "original": 4.485632,
+      "vector": 4.450816,
+      "cuda_memset": 4.545024
+    }
+  },
+  {
+    "elements": 3686400,
+    "median_us": {
+      "original": 20.464641,
+      "vector": 20.725759500000002,
+      "cuda_memset": 20.73088
+    }
+  }
+]

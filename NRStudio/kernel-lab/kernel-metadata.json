@@ -1,0 +1,50 @@
+[
+  {
+    "kernel": "cc_cb_clear",
+    "parameters": [
+      {
+        "index": 0,
+        "offset": 0,
+        "bytes": 16
+      }
+    ],
+    "attributes": {
+      "max_threads": 1024,
+      "static_shared_bytes": 0,
+      "local_bytes": 0,
+      "registers_per_thread": 8
+    }
+  },
+  {
+    "kernel": "cc_dec_input_upsample_1024_512",
+    "parameters": [
+      {
+        "index": 0,
+        "offset": 0,
+        "bytes": 80
+      }
+    ],
+    "attributes": {
+      "max_threads": 384,
+      "static_shared_bytes": 2064,
+      "local_bytes": 40,
+      "registers_per_thread": 168
+    }
+  },
+  {
+    "kernel": "cc_dec_input_upsample_1024_512_fp8",
+    "parameters": [
+      {
+        "index": 0,
+        "offset": 0,
+        "bytes": 80
+      }
+    ],
+    "attributes": {
+      "max_threads": 384,
+      "static_shared_bytes": 2064,
+      "local_bytes": 168,
+      "registers_per_thread": 168
+    }
+  }
+]
