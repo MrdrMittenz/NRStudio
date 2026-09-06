@@ -1,0 +1,152 @@
+{
+  "trials": [
+    {
+      "trial": "abba01-1-original",
+      "controlled": false,
+      "invalid_reason": "Input activity during capture",
+      "rows": 562,
+      "swapchains": {
+        "0x4DE2B640": 562
+      },
+      "frame_intervals": 561,
+      "mean_fps": 18.888313590287076,
+      "one_percent_low_fps": 17.83528931960452,
+      "p99_frame_ms": 55.0043,
+      "mean_frame_ms": 52.9427889483066,
+      "duration_seconds": 29.700904599999998,
+      "logged_eval_samples": 6,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "native_failures": 0,
+      "gpu_total_used_mib_peak": 8229.0,
+      "input_change_seconds": [
+        29.03
+      ],
+      "kernel_mode": "original",
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "gpu_temperature_range_c": [
+        84.0,
+        85.0
+      ],
+      "mean_gpu_clock_mhz": 1755.483870967742
+    },
+    {
+      "trial": "abba01-2-optimized",
+      "controlled": false,
+      "invalid_reason": "Input activity during capture",
+      "rows": 565,
+      "swapchains": {
+        "0x4DE2B640": 565
+      },
+      "frame_intervals": 564,
+      "mean_fps": 18.992883302643385,
+      "one_percent_low_fps": 17.831001335542,
+      "p99_frame_ms": 54.601317,
+      "mean_frame_ms": 52.65130017730496,
+      "duration_seconds": 29.695333299999998,
+      "logged_eval_samples": 6,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "native_failures": 0,
+      "gpu_total_used_mib_peak": 8148.0,
+      "input_change_seconds": [
+        10.01
+      ],
+      "kernel_mode": "optimized",
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "gpu_temperature_range_c": [
+        84.0,
+        86.0
+      ],
+      "mean_gpu_clock_mhz": 1756.9354838709678
+    },
+    {
+      "trial": "abba01-3-optimized",
+      "controlled": false,
+      "invalid_reason": "Input activity during capture",
+      "rows": 566,
+      "swapchains": {
+        "0x4DE2B640": 566
+      },
+      "frame_intervals": 565,
+      "mean_fps": 19.009452041240174,
+      "one_percent_low_fps": 17.738521772113803,
+      "p99_frame_ms": 55.17578800000001,
+      "mean_frame_ms": 52.60540902654868,
+      "duration_seconds": 29.722056100000003,
+      "logged_eval_samples": 6,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "native_failures": 0,
+      "gpu_total_used_mib_peak": 8148.0,
+      "input_change_seconds": [
+        6.5
+      ],
+      "kernel_mode": "optimized",
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "gpu_temperature_range_c": [
+        84.0,
+        86.0
+      ],
+      "mean_gpu_clock_mhz": 1738.5483870967741
+    },
+    {
+      "trial": "abba01-4-original",
+      "controlled": false,
+      "invalid_reason": "Input activity during capture",
+      "rows": 563,
+      "swapchains": {
+        "0x4DE2B640": 563
+      },
+      "frame_intervals": 562,
+      "mean_fps": 18.893267043067386,
+      "one_percent_low_fps": 17.91254914382493,
+      "p99_frame_ms": 54.554074,
+      "mean_frame_ms": 52.928908362989326,
+      "duration_seconds": 29.746046500000002,
+      "logged_eval_samples": 5,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "native_failures": 0,
+      "gpu_total_used_mib_peak": 8148.0,
+      "input_change_seconds": [
+        20.02
+      ],
+      "kernel_mode": "original",
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "gpu_temperature_range_c": [
+        84.0,
+        86.0
+      ],
+      "mean_gpu_clock_mhz": 1747.741935483871
+    }
+  ],
+  "summary": {
+    "original": 18.890790316677233,
+    "optimized": 19.00116767194178,
+    "observed_difference_fps": 0.1103773552645464,
+    "observed_difference_percent": 0.5842918872859482,
+    "reliable_speedup_established": false,
+    "limitations": "Input activity in all four captures; presentation intervals not independently classified for frame generation; two samples per mode."
+  }
+}

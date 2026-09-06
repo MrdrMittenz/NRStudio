@@ -1,0 +1,323 @@
+{
+  "name": "abba01-2-optimized",
+  "pid": 17996,
+  "warmup_seconds": 5,
+  "requested_seconds": 30,
+  "started_utc": "2026-09-06T21:26:00Z",
+  "foreground_checks": [
+    {
+      "time": 1788729966.1293101,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729966.6294687,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729967.1299667,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729967.6300986,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729968.1302588,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729968.6307094,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729969.1312351,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729969.6317003,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729970.1322627,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729970.632773,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729971.1332495,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729971.633771,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729972.134329,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729972.6348755,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729973.1353185,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729973.6358268,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729974.1363778,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729974.6368687,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729975.1374624,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729975.6379764,
+      "pid": 17996,
+      "last_input_tick": 13014359
+    },
+    {
+      "time": 1788729976.138505,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729976.6390305,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729977.1390965,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729977.639596,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729978.1401088,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729978.6406105,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729979.1410856,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729979.641613,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729980.1421645,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729980.6427374,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729981.142911,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729981.643382,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729982.1438603,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729982.644353,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729983.144484,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729983.6450076,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729984.14555,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729984.6456187,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729985.146146,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729985.6466842,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729986.1472065,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729986.647759,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729987.1482396,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729987.6487458,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729988.1493104,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729988.649841,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729989.1499012,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729989.6503963,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729990.150487,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729990.6509767,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729991.1510715,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729991.651526,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729992.1516464,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729992.6521525,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729993.1523247,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729993.6528351,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729994.1533644,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729994.6539466,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729995.1544309,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729995.6549706,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    },
+    {
+      "time": 1788729996.1555264,
+      "pid": 17996,
+      "last_input_tick": 13031546
+    }
+  ],
+  "returncode": 0,
+  "console": "Started recording.\r\nStopped recording.\r\n",
+  "finished_utc": "2026-09-06T21:26:36Z",
+  "foreground_valid": true,
+  "input_idle": false,
+  "kernel_mode": "optimized",
+  "mode_acknowledged_before": true,
+  "mode_acknowledged_after": true,
+  "invalid_reason": "Input activity during capture"
+}

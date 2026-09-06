@@ -1,0 +1,30 @@
+[
+  {
+    "trial": "abba01-1-original",
+    "kernel_mode": "original",
+    "returncode": 1,
+    "input_idle": false,
+    "foreground_valid": true
+  },
+  {
+    "trial": "abba01-2-optimized",
+    "kernel_mode": "optimized",
+    "returncode": 1,
+    "input_idle": false,
+    "foreground_valid": true
+  },
+  {
+    "trial": "abba01-3-optimized",
+    "kernel_mode": "optimized",
+    "returncode": 1,
+    "input_idle": false,
+    "foreground_valid": true
+  },
+  {
+    "trial": "abba01-4-original",
+    "kernel_mode": "original",
+    "returncode": 1,
+    "input_idle": false,
+    "foreground_valid": true
+  }
+]

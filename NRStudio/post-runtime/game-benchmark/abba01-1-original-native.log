@@ -1,0 +1,7 @@
+pid=17996 tick=12980187 evaluate frame=5640 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=17996 tick=12986515 evaluate frame=5760 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=17996 tick=12992843 evaluate frame=5880 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=17996 tick=12999203 evaluate frame=6000 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=17996 tick=13005578 evaluate frame=6120 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=17996 tick=13011593 post-opt original launch=600
+pid=17996 tick=13011906 evaluate frame=6240 result=00000001 size=2560x1440 guides=1972x1108 reset=0
