@@ -1,0 +1,11 @@
+﻿========= COMPUTE-SANITIZER
+attribute=4 value=160
+attribute=3 value=0
+attribute=1 value=0
+pattern=1
+run=0 carveout=-1 gpu_ms=1.576800 launches=1 unwritten=0 invalid=0 sum=132369.738 repeat=pass guards=pass
+run=1 carveout=-1 gpu_ms=1.555296 launches=1 unwritten=0 invalid=0 sum=132369.738 repeat=pass guards=pass
+run=2 carveout=-1 gpu_ms=1.543200 launches=1 unwritten=0 invalid=0 sum=132369.738 repeat=pass guards=pass
+run=3 carveout=-1 gpu_ms=1.546240 launches=1 unwritten=0 invalid=0 sum=132369.738 repeat=pass guards=pass
+run=4 carveout=-1 gpu_ms=1.533024 launches=1 unwritten=0 invalid=0 sum=132369.738 repeat=pass guards=pass
+========= ERROR SUMMARY: 0 errors

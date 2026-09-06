@@ -1,0 +1,10 @@
+{
+  "input_sha256": "1957476a7c5b3e934c198ceff7f5a81f87e8786f3fee921f0e714ab9bb79b71a",
+  "transformed": {
+    "encode": 388,
+    "decode": 40,
+    "mma": 256
+  },
+  "exit_code": 0,
+  "limitations": "Compatibility prototype with helper calls; not deployed or optimized."
+}

@@ -1,0 +1,3 @@
+﻿========= COMPUTE-SANITIZER
+matrices=128 compared_values=16384 mismatches=0
+========= ERROR SUMMARY: 0 errors

@@ -1,0 +1,52 @@
+{
+  "status": "rejected_for_deployment",
+  "variant": "pair-interleaved K partition",
+  "tests": [
+    {
+      "pattern": 1,
+      "values": 262144,
+      "bit_mismatches": 75939,
+      "max_abs": 0.00177001953125,
+      "rms": 0.00011653171991796994,
+      "baseline_sha256": "83833bb768fc2dde0f48ecb3ba45fe17687ce6db3ec4d34e5e7c3ea2a4c9293f",
+      "candidate_sha256": "620e4f71b29e4cdeaf07f582782c84585108afedabd216f1f44279c1ec0ddb95"
+    },
+    {
+      "pattern": 2,
+      "values": 262144,
+      "bit_mismatches": 119421,
+      "max_abs": 0.001434326171875,
+      "rms": 8.782501315887444e-05,
+      "baseline_sha256": "f22702b13f2d94aef5caa35f11d686bea308bacabdcaa1a49fbca294ba09de73",
+      "candidate_sha256": "a2077a83ae8cbf725c3c08e2862ebc105b1a23a35ffb1a970cec647aafc910a2"
+    },
+    {
+      "pattern": 3,
+      "values": 262144,
+      "bit_mismatches": 0,
+      "max_abs": 0.0,
+      "rms": 0.0,
+      "baseline_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad",
+      "candidate_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad"
+    },
+    {
+      "pattern": 4,
+      "values": 262144,
+      "bit_mismatches": 0,
+      "max_abs": 0.0,
+      "rms": 0.0,
+      "baseline_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad",
+      "candidate_sha256": "7cec707194423120797d272161567aaef6dc72fbf3a2829f41d00a38b5e7f9ad"
+    },
+    {
+      "pattern": 5,
+      "values": 262144,
+      "bit_mismatches": 61504,
+      "max_abs": 3.814697265625e-06,
+      "rms": 1.8477439880371094e-06,
+      "baseline_sha256": "888b47ff56a9dec7d58e40ec4f7d2bee070f1bc2fdb22b892a065e7d0a37899d",
+      "candidate_sha256": "8eb292aa49911db31141df720d8c38450a61f25819c68e7ddcc998718ae04ee1"
+    }
+  ],
+  "limitations": "Synthetic 256x256 test. Patterns 1/2 vary tensors and weights; 3 varies tensor 0 only, 4 tensor 1 only, 5 weights only. Not a full-model/game quality assessment; fused quantizer not integrated."
+}

@@ -43,6 +43,23 @@ int main(int argc, char** argv) {
         check(cuMemsetD8Async(buffers[i], 0x08, sizes[i], stream));
     }
     check(cuMemsetD16Async(buffers[3], 0x3c00, sizes[3] / 2, stream));
+    const int pattern = argc > 4 ? atoi(argv[4]) : 0;
+    if (pattern < 0 || pattern > 5) return 9;
+    if (pattern) {
+        check(cuStreamSynchronize(stream));
+        std::vector<unsigned short> host(sizes[0] / 2);
+        const unsigned short values[] = {0xb400, 0xb000, 0x3000, 0x3400};
+        for (size_t i = 0; i < host.size(); ++i) host[i] = values[(i * 13 + i / 31 + pattern) % 4];
+        if (pattern <= 3) check(cuMemcpyHtoD(buffers[0], host.data(), sizes[0]));
+        const unsigned char values8[] = {0x00,0x08,0x10,0x20,0x28,0x30,0x80,0x88,0x90,0xa0};
+        for (int index : {1, 2}) {
+            if (pattern == 3 || (pattern == 4 && index != 1) || (pattern == 5 && index != 2)) continue;
+            std::vector<unsigned char> packed(sizes[index]);
+            for (size_t i = 0; i < packed.size(); ++i) packed[i] = values8[(i * 7 + i / 19 + pattern * 3) % 10];
+            check(cuMemcpyHtoD(buffers[index], packed.data(), sizes[index]));
+        }
+    }
+    printf("pattern=%d\n", pattern);
     CUDA_ARRAY3D_DESCRIPTOR desc{}; desc.Width = width; desc.Height = height;
     desc.Format = CU_AD_FORMAT_FLOAT; desc.NumChannels = 4; desc.Flags = CUDA_ARRAY3D_SURFACE_LDST;
     CUarray inputArray, outputArray;
@@ -93,6 +110,13 @@ int main(int argc, char** argv) {
         }
         printf("run=%d carveout=%d gpu_ms=%.6f launches=%d unwritten=%zu invalid=%zu sum=%.9g repeat=%s guards=pass\n", run, carveouts[mode], ms, launches, unwritten, invalid, sum, exact ? "pass" : "FAIL"); fflush(stdout);
         if (unwritten || invalid || !exact || sum == 0) return 6;
+        if (argc > 3 && run == (tune ? 29 : 4)) {
+            FILE* file = nullptr;
+            if (fopen_s(&file, argv[3], "wb") || !file) return 7;
+            const size_t written = fwrite(output.data(), sizeof(float), output.size(), file);
+            fclose(file);
+            if (written != output.size()) return 8;
+        }
         prior.swap(output);
     }
     check(cuEventDestroy(start)); check(cuEventDestroy(end)); check(cuTexObjectDestroy(tex)); check(cuSurfObjectDestroy(surface));

@@ -260,6 +260,65 @@ Run build_fp8_exact.cmd followed by fp8_exact_test.exe. CUDA 13.3 and MSVC 14.38
 paths in the build script may need adjustment. No NVIDIA PTX, cubin, game DLL or
 installer is altered by these tests.
 
+## Full post-block compatibility prototype
+
+fp8_mma.cuh implements two ways to map E4M3 m16n8k32 operands onto two SM86 FP16
+m16n8k16 operations. One uses contiguous K halves and lane shuffles; the other
+uses corresponding pair-interleaved permutations of A and B to avoid those
+shuffles. The mapping follows NVIDIA's [PTX fragment documentation](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-16832)
+and its [FP16 fragment documentation](https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#warp-level-matrix-fragment-mma-16816-float).
+Different partitions can change FP16 accumulation results despite computing the
+same real-valued dot product.
+
+mma_mapping_test.cu uses 128 matrices with signed, dense, sparse-routing and
+nonzero accumulator cases. All 16,384 output values match independent CPU matrix
+products exactly for both mappings. Values were chosen so sums/products are
+exactly representable: this checks operand placement, not arbitrary floating-point
+accumulation equivalence. The current interleaved mapping also passes memcheck.
+
+build_post_helpers.cmd generates PTX from our conversion/MMA helpers.
+build_post_prototype.py extracts only the local clean NVIDIA post-block entry and
+replaces 388 FP8 encodes, 40 decodes and 256 FP8 MMA operations with helper calls.
+It emits a separate local SM86 cubin. The final interleaved prototype compiles with
+160 registers/thread and zero reported stack/spill bytes. PTX helper calls may be
+inlined by ptxas. No NVIDIA model DLL is patched, and this compatibility baseline
+does not yet use the fused quantizer from the preceding experiment.
+
+The initial contiguous prototype matched all 262,144 output values on the uniform
+256x256 synthetic case and passed memcheck, but was substantially slower (roughly
+0.89 ms versus the original's roughly 0.12 ms in this small harness). Varying the
+tensors and weights revealed mismatches. Switching to the interleaved partition
+did not resolve them. The final prototype is **rejected for deployment**.
+
+| Interleaved prototype test | Bit mismatches / 262,144 values | Maximum absolute difference |
+|---|---:|---:|
+| Varied tensors/weights, pattern 1 | 75,939 | 0.0017700195 |
+| Varied tensors/weights, pattern 2 | 119,421 | 0.0014343262 |
+| Vary first tensor only | 0 | 0 |
+| Vary second tensor only | 0 | 0 |
+| Vary weights only | 61,504 | 0.0000038147 |
+
+These differential tests point toward an arithmetic compatibility issue but do
+not prove its cause, nor do they establish the exact native tensor layout.
+The nonuniform prototype run still has finite, repeatable output and passes
+Compute Sanitizer memcheck. Memory safety and isolated conversion correctness
+therefore do not establish whole-block output equivalence.
+
+The next requirement is resolving compatibility with the current compiled block's
+arithmetic before fusing or tuning the replacement. The signed clean PTX is not
+assumed identical to the modified SM86 implementation merely because names and
+parameter sizes match. No full-model or game FPS improvement is claimed.
+
+Reproduce with build_mma_mapping.cmd and mma_mapping_test.exe, then
+build_post_helpers.cmd and `python build_post_prototype.py`. The latter requires
+the local extracted vendor PTX and checks expected transformation counts.
+post_bench.exe now accepts an optional output filename (third argument after the
+executable) and pattern number (fourth); `small` selects 256x256. Patterns 1/2
+vary all tensors/weights and 3/4/5 vary individual inputs. Explicit stream
+synchronization precedes host-driven pattern uploads. compare_post_prototype.py
+compares local artifacts and writes only statistics/hashes for private review.
+Generated vendor-derived PTX/cubins and output arrays remain local.
+
 Only our harness/instrumentation source, build scripts and diagnostic text are
 included in the private review. Extracted NVIDIA PTX/cubins and output textures
 remain local and are not included.

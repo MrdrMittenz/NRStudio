@@ -1,0 +1,8 @@
+﻿attribute=4 value=168
+attribute=3 value=96
+attribute=1 value=0
+run=0 carveout=-1 gpu_ms=0.158976 launches=1 unwritten=0 invalid=0 sum=124428.801 repeat=pass guards=pass
+run=1 carveout=-1 gpu_ms=0.146016 launches=1 unwritten=0 invalid=0 sum=124428.801 repeat=pass guards=pass
+run=2 carveout=-1 gpu_ms=0.144512 launches=1 unwritten=0 invalid=0 sum=124428.801 repeat=pass guards=pass
+run=3 carveout=-1 gpu_ms=0.143968 launches=1 unwritten=0 invalid=0 sum=124428.801 repeat=pass guards=pass
+run=4 carveout=-1 gpu_ms=0.144864 launches=1 unwritten=0 invalid=0 sum=124428.801 repeat=pass guards=pass

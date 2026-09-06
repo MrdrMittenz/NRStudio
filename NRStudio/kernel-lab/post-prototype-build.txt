@@ -1,0 +1,12 @@
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'cc_tinlayout_fused_post_block_swin_1h_32_fp8' for 'sm_86'
+ptxas info    : Function properties for cc_tinlayout_fused_post_block_swin_1h_32_fp8
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 160 registers, used 0 barriers, 536 bytes cmem[0]
+ptxas info    : Compile time = 0.000 ms
+ptxas info    : Function properties for nrDecode
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Function properties for nrEncode
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Function properties for nrMma
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
