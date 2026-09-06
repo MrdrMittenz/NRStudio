@@ -5,6 +5,7 @@
 #include <mutex>
 #include <fstream>
 #include <iomanip>
+#include "chain_timing.h"
 namespace NRTrace {
 using Create=decltype(&NvAPI_D3D12_CreateCuFunction);
 using Chain=decltype(&NvAPI_D3D12_LaunchCuKernelChain);
@@ -29,9 +30,13 @@ template<class T> static void Record(const T* kernels,NvU32 count){
  }
  trace.flush();
 }
-static NvAPI_Status __cdecl OnChain(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS*k,NvU32 n){Record(k,n);return chain(c,k,n);}
-static NvAPI_Status __cdecl OnChainEx(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS_EX*k,NvU32 n){Record(k,n);return chainEx(c,k,n);}
-static void Finish(){std::ofstream out("kernel-counts.tsv");for(auto& x:counts)out<<x.first<<"\t"<<x.second<<"\n";trace.flush();}
+template<class T> static unsigned StartTiming(ID3D12GraphicsCommandList*c,const T*k,NvU32 n){
+ std::lock_guard<std::mutex>guard(lock);
+ return ChainTiming::Begin(c,n,n?names[k[0].hFunction]:"empty",n?names[k[n-1].hFunction]:"empty");
+}
+static NvAPI_Status __cdecl OnChain(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS*k,NvU32 n){if(!c||!k||!n)return chain(c,k,n);Record(k,n);unsigned index=StartTiming(c,k,n);auto r=chain(c,k,n);ChainTiming::End(c,index);return r;}
+static NvAPI_Status __cdecl OnChainEx(ID3D12GraphicsCommandList*c,const NVAPI_CU_KERNEL_LAUNCH_PARAMS_EX*k,NvU32 n){if(!c||!k||!n)return chainEx(c,k,n);Record(k,n);unsigned index=StartTiming(c,k,n);auto r=chainEx(c,k,n);ChainTiming::End(c,index);return r;}
+static void Finish(){std::ofstream out("kernel-counts.tsv");for(auto& x:counts)out<<x.first<<"\t"<<x.second<<"\n";trace.flush();ChainTiming::Finish();}
 static void Install(){
  HMODULE nv=LoadLibraryExW(L"nvapi64.dll",nullptr,LOAD_LIBRARY_SEARCH_SYSTEM32);if(!nv){puts("trace: cannot load system NVAPI");exit(20);}
  auto query=reinterpret_cast<void*(__cdecl*)(unsigned)>(GetProcAddress(nv,"nvapi_QueryInterface"));if(!query)exit(21);

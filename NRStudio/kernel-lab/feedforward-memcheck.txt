@@ -1,0 +1,46 @@
+﻿========= COMPUTE-SANITIZER
+kernel=cc_split_swin_16h_ffwd_512_fp8 registers=164 local_bytes=0 shared_bytes=8208
+seed=0 run=0 gpu_us=1147.904 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=1 gpu_us=1123.328 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=2 gpu_us=1161.216 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=3 gpu_us=1130.496 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=4 gpu_us=1131.520 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=0 gpu_us=1121.280 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=1 gpu_us=1128.448 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=2 gpu_us=1094.656 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=3 gpu_us=1105.920 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=4 gpu_us=1121.280 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+kernel=cc_split_swin_16h_ffwd_512_chained_fp8 registers=168 local_bytes=0 shared_bytes=8208
+seed=0 run=0 gpu_us=1121.280 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=1 gpu_us=1165.312 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=2 gpu_us=1131.520 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=3 gpu_us=1155.072 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=4 gpu_us=1129.472 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=0 gpu_us=1120.256 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=1 gpu_us=1573.888 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=2 gpu_us=1138.688 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=3 gpu_us=1141.760 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=4 gpu_us=1131.520 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+kernel=cc_split_swin_16h_ffwd_proj_512_fp8 registers=128 local_bytes=232 shared_bytes=12312
+seed=0 run=0 gpu_us=625.664 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=1 gpu_us=612.352 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=2 gpu_us=642.048 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=3 gpu_us=633.856 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=0 run=4 gpu_us=638.976 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=0 gpu_us=635.904 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=1 gpu_us=658.432 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=2 gpu_us=654.336 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=3 gpu_us=660.480 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+seed=1 run=4 gpu_us=632.832 changed_bytes=1966080 published_flags=0 repeat=pass guards=pass comparison=not_compared
+kernel=cc_split_swin_16h_ffwd_proj_512_chained_fp8 registers=160 local_bytes=216 shared_bytes=12312
+seed=0 run=0 gpu_us=647.168 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=1 gpu_us=650.240 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=2 gpu_us=652.288 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=3 gpu_us=635.904 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=0 run=4 gpu_us=701.440 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=0 gpu_us=658.432 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=1 gpu_us=668.672 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=2 gpu_us=883.712 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=3 gpu_us=688.128 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+seed=1 run=4 gpu_us=648.192 changed_bytes=1966080 published_flags=120 repeat=pass guards=pass comparison=bit_exact_plain
+========= ERROR SUMMARY: 0 errors

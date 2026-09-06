@@ -1,0 +1,355 @@
+{
+  "frame_chain_totals_us": {
+    "0": 37824.29199999999,
+    "1": 38948.866,
+    "2": 39052.263999999996
+  },
+  "warm_frames": 2,
+  "ranking": [
+    {
+      "first": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+      "last": "cc_tinlayout_fused_post_block_swin_1h_32_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 5108.225,
+      "total_us_per_frame": 5108.225
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_8h_256_8_chained_fp8",
+      "last": "cc_tinlayout_fused_swin_8h_256_8_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 12.0,
+      "mean_us": 397.8226666666667,
+      "total_us_per_frame": 4773.872
+    },
+    {
+      "first": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+      "last": "cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 3193.3450000000003,
+      "total_us_per_frame": 3193.3450000000003
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_1h_32_1_chained_fp8",
+      "last": "cc_tinlayout_fused_swin_1h_32_1_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 4.0,
+      "mean_us": 765.056,
+      "total_us_per_frame": 3060.224
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_4h_128_4_chained_fp8",
+      "last": "cc_tinlayout_fused_swin_4h_128_4_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 8.0,
+      "mean_us": 322.432,
+      "total_us_per_frame": 2579.456
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_2h_64_2_chained_fp8",
+      "last": "cc_tinlayout_fused_swin_2h_64_2_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 4.0,
+      "mean_us": 505.856,
+      "total_us_per_frame": 2023.424
+    },
+    {
+      "first": "cc_split_swin_16h_qkv_512_chained_fp8",
+      "last": "cc_split_swin_16h_qkv_512_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 16.0,
+      "mean_us": 102.848,
+      "total_us_per_frame": 1645.568
+    },
+    {
+      "first": "cc_split_swin_16h_ffwd_512_chained_fp8",
+      "last": "cc_split_swin_16h_ffwd_512_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 15.0,
+      "mean_us": 91.71626666666666,
+      "total_us_per_frame": 1375.744
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_1h_32_1_upsample_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_1h_32_1_upsample_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 1348.6100000000001,
+      "total_us_per_frame": 1348.6100000000001
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_1h_32_1_ds_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_1h_32_1_ds_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 1106.433,
+      "total_us_per_frame": 1106.433
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_1h_32_1_outview_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_1h_32_1_outview_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 1070.08,
+      "total_us_per_frame": 1070.08
+    },
+    {
+      "first": "cc_vit_1d_ffn_expand_chained_fp8",
+      "last": "cc_vit_1d_ffn_expand_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 7.0,
+      "mean_us": 150.38171428571428,
+      "total_us_per_frame": 1052.672
+    },
+    {
+      "first": "cc_vit_1d_ffn_contract_chained_fp8",
+      "last": "cc_vit_1d_ffn_contract_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 8.0,
+      "mean_us": 117.31200000000001,
+      "total_us_per_frame": 938.4960000000001
+    },
+    {
+      "first": "cc_vit_1d_qkv_chained_fp8",
+      "last": "cc_vit_1d_qkv_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 8.0,
+      "mean_us": 99.648,
+      "total_us_per_frame": 797.184
+    },
+    {
+      "first": "cc_vit_1d_attention_chained_fp8",
+      "last": "cc_vit_1d_attention_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 8.0,
+      "mean_us": 98.304,
+      "total_us_per_frame": 786.432
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_1h_32_1_inpview_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_1h_32_1_inpview_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 742.4,
+      "total_us_per_frame": 742.4
+    },
+    {
+      "first": "cc_split_swin_16h_ffwd_proj_512_chained_fp8",
+      "last": "cc_split_swin_16h_ffwd_proj_512_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 15.0,
+      "mean_us": 48.2304,
+      "total_us_per_frame": 723.456
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_2h_64_2_upsample_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_2h_64_2_upsample_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 692.224,
+      "total_us_per_frame": 692.224
+    },
+    {
+      "first": "cc_split_swin_16h_proj_512_chained_fp8",
+      "last": "cc_split_swin_16h_proj_512_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 14.0,
+      "mean_us": 48.34742857142857,
+      "total_us_per_frame": 676.864
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_2h_64_2_ds_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_2h_64_2_ds_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 520.192,
+      "total_us_per_frame": 520.192
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_2h_64_2_inpview_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_2h_64_2_inpview_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 503.808,
+      "total_us_per_frame": 503.808
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_2h_64_2_outview_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_2h_64_2_outview_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 491.008,
+      "total_us_per_frame": 491.008
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_4h_128_4_upsample_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_4h_128_4_upsample_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 435.2,
+      "total_us_per_frame": 435.2
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_8h_256_8_upsample_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_8h_256_8_upsample_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 371.712,
+      "total_us_per_frame": 371.712
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_4h_128_4_ds_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_4h_128_4_ds_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 354.816,
+      "total_us_per_frame": 354.816
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_8h_256_8_ds_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_8h_256_8_ds_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 347.136,
+      "total_us_per_frame": 347.136
+    },
+    {
+      "first": "cc_vit_1d_projection_chained_fp8",
+      "last": "cc_vit_1d_projection_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 7.0,
+      "mean_us": 47.39657142857143,
+      "total_us_per_frame": 331.776
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_4h_128_4_outview_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_4h_128_4_outview_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 329.728,
+      "total_us_per_frame": 329.728
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_8h_256_8_inpview_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_8h_256_8_inpview_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 326.656,
+      "total_us_per_frame": 326.656
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_4h_128_4_inpview_tilesync_fp8",
+      "last": "cc_tinlayout_fused_swin_4h_128_4_inpview_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 324.096,
+      "total_us_per_frame": 324.096
+    },
+    {
+      "first": "cc_tinlayout_fused_swin_8h_256_8_outview_wait_fp8",
+      "last": "cc_tinlayout_fused_swin_8h_256_8_outview_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 300.032,
+      "total_us_per_frame": 300.032
+    },
+    {
+      "first": "cc_vit_1d_ffn_expand_publish_fp8",
+      "last": "cc_vit_1d_ffn_expand_publish_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 163.84,
+      "total_us_per_frame": 163.84
+    },
+    {
+      "first": "cc_split_swin_16h_proj_512_outview_wait_fp8",
+      "last": "cc_split_swin_16h_proj_512_outview_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 104.44800000000001,
+      "total_us_per_frame": 104.44800000000001
+    },
+    {
+      "first": "cc_split_swin_16h_ffwd_inpview_512_tilesync_fp8",
+      "last": "cc_split_swin_16h_ffwd_inpview_512_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 94.208,
+      "total_us_per_frame": 94.208
+    },
+    {
+      "first": "cc_split_swin_16h_ffwd_proj_inpview_512_chained_fp8",
+      "last": "cc_split_swin_16h_ffwd_proj_inpview_512_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 89.088,
+      "total_us_per_frame": 89.088
+    },
+    {
+      "first": "cc_vit_1d_projection_wait_fp8",
+      "last": "cc_vit_1d_projection_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 48.128,
+      "total_us_per_frame": 48.128
+    },
+    {
+      "first": "cg2r_copy_kernel",
+      "last": "cg2r_copy_kernel",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 41.983999999999995,
+      "total_us_per_frame": 41.983999999999995
+    },
+    {
+      "first": "cc_split_swin_16h_proj_pool_512_chained_fp8",
+      "last": "cc_split_swin_16h_proj_pool_512_chained_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 41.472,
+      "total_us_per_frame": 41.472
+    },
+    {
+      "first": "cc_dec_input_upsample_1024_512_tilesync_fp8",
+      "last": "cc_dec_input_upsample_1024_512_tilesync_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 37.376,
+      "total_us_per_frame": 37.376
+    },
+    {
+      "first": "cc_split_swin_16h_final_head_512_wait_fp8",
+      "last": "cc_split_swin_16h_final_head_512_wait_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 29.696,
+      "total_us_per_frame": 29.696
+    },
+    {
+      "first": "cc_vit_1d_repack_2d_to_1d_fp8",
+      "last": "cc_vit_1d_repack_2d_to_1d_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 7.68,
+      "total_us_per_frame": 7.68
+    },
+    {
+      "first": "cc_vit_1d_repack_1d_to_2d_fp8",
+      "last": "cc_vit_1d_repack_1d_to_2d_fp8",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 7.168,
+      "total_us_per_frame": 7.168
+    },
+    {
+      "first": "cc_cb_clear",
+      "last": "cc_cb_clear",
+      "kernels_per_chain": 1,
+      "calls_per_frame": 1.0,
+      "mean_us": 4.6080000000000005,
+      "total_us_per_frame": 4.6080000000000005
+    }
+  ],
+  "limitations": "Synthetic full-model inputs. Timestamp spans include chain scheduling and instrumentation effects. No in-game FPS measurement."
+}

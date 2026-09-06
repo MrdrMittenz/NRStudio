@@ -105,6 +105,63 @@ the harness command. build_trace.cmd compiles trace_probe.cpp; prepare_trace.py
 regenerates it from the local recovery probe. Build scripts currently require
 adjusting local SDK/recovery paths on another machine.
 
+## Feed-forward validation and full-model GPU timing
+
+feedforward_bench.cpp now exercises the original SM86 plain and chained FP8
+feed-forward and projection functions from module 4. The structs are 56 and 72
+bytes. Launches use captured 1440p shapes: grid 10,6,2 / block 32,8,1 and grid
+20,6,1 / block 32,4,1, with height 48 and width 80. Synthetic input buffers are
+populated before marking input flags ready (zero); output flags start at -1.
+
+Both synthetic seeds pass five repeats for all four variants. Chained output
+matches plain output byte-for-byte across the full 16 MiB output allocation;
+1,966,080 bytes change from the sentinel and each chained kernel publishes 120
+completion flags. Allocation guards pass and Compute Sanitizer memcheck reports
+zero errors. This is a narrow equivalence check on synthetic packed inputs, not
+a proof for all activations, offsets, weights or concurrent graph scheduling.
+It does not justify replacing a chained kernel with a plain one in the model.
+
+Build with build_feedforward.cmd, then run feedforward_bench.exe with the path to
+module-4.2.sm_86.cubin. An optional exact kernel name selects one function for
+profiling. The unprofiled stages take roughly 0.09 and 0.05 ms per call in this
+harness. They are called 15 times each per model evaluation at the traced shape.
+
+chain_timing.h adds D3D12 GPU timestamps around each original NVAPI kernel-chain
+submission in the isolated full-model probe. The chains are not split or their
+kernel arguments changed. The driver also makes null/empty initialization calls;
+these are forwarded without instrumentation. An initial instrumented probe
+crashed before this guard was added; the guarded version passed all subsequent
+captures. Results are exported only after successful completion of the probe.
+
+The observed graph submits 156 single-kernel chains per evaluation. A three-frame
+capture and a separate ten-frame capture completed with successful evaluation and
+finite, nonzero outputs. The first three frame output statistics also match the
+earlier probe without GPU timestamps. The ten-frame capture's median warm-frame
+sum of chain spans is 39.632 ms; one 65.860 ms outlier remains in the report.
+summarize_chains.py retains all frames, excludes initialization frame 0 from
+ranking, and reports both means and medians of each stage's per-frame total.
+
+| Stage | Calls/frame | Median total GPU span/frame |
+|---|---:|---:|
+| fused post block, swin 1h/32, FP8 | 1 | 5.083 ms |
+| fused swin 8h/256/8 chained FP8 | 12 | 4.351 ms |
+| fused swin 1h/32/1 chained FP8 | 4 | 3.784 ms |
+| fused pre block, swin 1h/32/1 downsample FP8 | 1 | 2.983 ms |
+| fused swin 4h/128/4 chained FP8 | 8 | 2.566 ms |
+| feed-forward 512 chained FP8 | 15 | 1.375 ms |
+
+These are measurements of the full modified model on synthetic textures, with
+real model weights and its original dispatch. Timestamp insertion/resolution can
+affect scheduling, and the spans include chain execution effects. They are not
+isolated Nsight instruction counters or an in-game FPS benchmark. Medians of
+individual stage totals need not sum to the median full-frame total.
+
+The results move the next optimization target to the post block and fused
+attention kernels, rather than the isolated decoder or buffer clear. The post
+block uses a 184-byte struct and grid 321,185,1 with one warp per block; recovering
+its texture/surface and tensor arguments is still needed for standalone testing.
+No measured code optimization has been deployed from this lab.
+
 Only our harness/instrumentation source, build scripts and diagnostic text are
 included in the private review. Extracted NVIDIA PTX/cubins and output textures
 remain local and are not included.

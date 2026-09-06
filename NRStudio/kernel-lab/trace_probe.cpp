@@ -36,6 +36,7 @@ int wmain(int argc,wchar_t**argv) {
     hr(D3D12CreateDevice(nullptr,D3D_FEATURE_LEVEL_12_0,IID_PPV_ARGS(&dev)),"device");
     ID3D12CommandQueue* queue=nullptr; D3D12_COMMAND_QUEUE_DESC qd={};
     hr(dev->CreateCommandQueue(&qd,IID_PPV_ARGS(&queue)),"queue");
+    ChainTiming::Initialize(queue);
     ID3D12CommandAllocator* alloc=nullptr;
     hr(dev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,IID_PPV_ARGS(&alloc)),"allocator");
     ID3D12GraphicsCommandList* cmd=nullptr;
@@ -114,5 +115,6 @@ int wmain(int argc,wchar_t**argv) {
         if(invalid||delta==0||sum==0)return 11;
     }
     symbol<void(*)(void*)>(fwd,"dlssnr_call_release")(feature);
+    ChainTiming::completed = true;
     return 0;
 }
