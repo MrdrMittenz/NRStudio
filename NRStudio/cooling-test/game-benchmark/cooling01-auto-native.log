@@ -1,0 +1,8 @@
+pid=19932 tick=14279750 post-opt launch=3600 grid=321,185,1
+pid=19932 tick=14279750 evaluate frame=3600 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14286031 evaluate frame=3720 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14292312 evaluate frame=3840 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14298562 evaluate frame=3960 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14304859 evaluate frame=4080 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14311125 post-opt launch=4200 grid=321,185,1
+pid=19932 tick=14311125 evaluate frame=4200 result=00000001 size=2560x1440 guides=1972x1108 reset=0

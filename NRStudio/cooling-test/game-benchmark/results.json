@@ -1,0 +1,50 @@
+[
+  {
+    "trial": "cooling01-auto",
+    "controlled": false,
+    "invalid_reason": "Input activity during capture",
+    "rows": 569,
+    "swapchains": {
+      "0x4C7980E0": 569
+    },
+    "frame_intervals": 568,
+    "mean_fps": 19.11794178715974,
+    "one_percent_low_fps": 17.94207401404565,
+    "p99_frame_ms": 54.628917,
+    "mean_frame_ms": 52.306885915492956,
+    "duration_seconds": 29.7103112,
+    "logged_eval_samples": 6,
+    "model_sizes": [
+      "2560x1440"
+    ],
+    "guide_sizes": [
+      "1972x1108"
+    ],
+    "native_failures": 0,
+    "gpu_total_used_mib_peak": 8361.0
+  },
+  {
+    "trial": "cooling01-fan80",
+    "controlled": true,
+    "invalid_reason": null,
+    "rows": 570,
+    "swapchains": {
+      "0x4C7980E0": 570
+    },
+    "frame_intervals": 569,
+    "mean_fps": 19.147270422839533,
+    "one_percent_low_fps": 18.08178754140729,
+    "p99_frame_ms": 54.155644,
+    "mean_frame_ms": 52.2267653778559,
+    "duration_seconds": 29.7170295,
+    "logged_eval_samples": 5,
+    "model_sizes": [
+      "2560x1440"
+    ],
+    "guide_sizes": [
+      "1972x1108"
+    ],
+    "native_failures": 0,
+    "gpu_total_used_mib_peak": 8363.0
+  }
+]

@@ -52,3 +52,11 @@ The loaded gameplay comparison is pending the user's ready signal.
 The earlier statement that write commands were untested describes the state
 before this smoke test; the commands have now completed with acknowledged
 manual and restored automatic mode.
+
+## Loaded-game comparison completed
+
+See game-benchmark/REPORT.md. Automatic fans already requested 83-86%, so
+manual 80% was less cooling, not more. Mean temperature rose from 82.20 to
+84.19 C; FPS was effectively unchanged (19.118 versus 19.147). Neither interval
+recorded thermal slowdown. Automatic fan control was restored and verified.
+No fan, quality or runtime change is recommended from this experiment.

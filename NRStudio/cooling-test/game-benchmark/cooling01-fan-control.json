@@ -1,0 +1,43 @@
+[
+  {
+    "time": 1788731220.9311612,
+    "args": [
+      "inspect"
+    ],
+    "returncode": 0,
+    "output": "signature=4d41434d version=00020003 header=36 entries=1 entry_bytes=3760 command=00000000\nfan_percent=80 fan_flags=1 min=30 max=100 supported=1\n"
+  },
+  {
+    "time": 1788731258.1013474,
+    "args": [
+      "set",
+      "80"
+    ],
+    "returncode": 0,
+    "output": "signature=4d41434d version=00020003 header=36 entries=1 entry_bytes=3760 command=00000000\nfan_percent=80 fan_flags=1 min=30 max=100 supported=1\nFan command acknowledged; verify fan telemetry\n"
+  },
+  {
+    "time": 1788731318.1105106,
+    "args": [
+      "inspect"
+    ],
+    "returncode": 0,
+    "output": "signature=4d41434d version=00020003 header=36 entries=1 entry_bytes=3760 command=00000000\nfan_percent=80 fan_flags=0 min=30 max=100 supported=1\n"
+  },
+  {
+    "time": 1788731355.2519228,
+    "args": [
+      "auto"
+    ],
+    "returncode": 0,
+    "output": "signature=4d41434d version=00020003 header=36 entries=1 entry_bytes=3760 command=00000000\nfan_percent=80 fan_flags=0 min=30 max=100 supported=1\nFan command acknowledged; verify fan telemetry\n"
+  },
+  {
+    "time": 1788731355.2550943,
+    "args": [
+      "inspect"
+    ],
+    "returncode": 0,
+    "output": "signature=4d41434d version=00020003 header=36 entries=1 entry_bytes=3760 command=00000000\nfan_percent=80 fan_flags=1 min=30 max=100 supported=1\n"
+  }
+]

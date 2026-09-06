@@ -1,0 +1,24 @@
+{
+  "auto": {
+    "temperature_c_min": 82.0,
+    "temperature_c_max": 83.0,
+    "mean_temperature_c": 82.2,
+    "fan_percent_min": 83.0,
+    "fan_percent_max": 86.0,
+    "mean_clock_mhz": 1769.5,
+    "thermal_active_samples": 0,
+    "thermal_counter_delta_us": 0.0,
+    "sample_count": 30
+  },
+  "fan80": {
+    "temperature_c_min": 84.0,
+    "temperature_c_max": 85.0,
+    "mean_temperature_c": 84.19354838709677,
+    "fan_percent_min": 80.0,
+    "fan_percent_max": 80.0,
+    "mean_clock_mhz": 1767.0967741935483,
+    "thermal_active_samples": 0,
+    "thermal_counter_delta_us": 0.0,
+    "sample_count": 31
+  }
+}

@@ -1,0 +1,6 @@
+pid=19932 tick=14380140 evaluate frame=5520 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14386390 evaluate frame=5640 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14392656 evaluate frame=5760 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14398937 evaluate frame=5880 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=19932 tick=14405203 post-opt launch=6000 grid=321,185,1
+pid=19932 tick=14405203 evaluate frame=6000 result=00000001 size=2560x1440 guides=1972x1108 reset=0
