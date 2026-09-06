@@ -1,0 +1,39 @@
+trace: NVAPI launch recording enabled in isolated probe
+core init=00000001
+capabilities=00000001 params=000000004E16E7F0
+float slot6 rc=00000001 value=0.3125
+candidate: CreateCuModule=0 bytes=253096
+candidate: CreateCuFunction=0
+native init=00000001 create=00000001 feature=0000000061421720
+native feature initialization submitted and completed
+frame 0 evaluate=00000001
+evaluation and readback completed in 52.021 ms at 2560x1440
+frame 0 invalid=0 range=[0.113037,1] sum=7508936.21 mean_abs_change=0.00109296834
+frame 1 evaluate=00000001
+evaluation and readback completed in 43.944 ms at 2560x1440
+frame 1 invalid=0 range=[0.108704,1] sum=7506184.37 mean_abs_change=0.00128916926
+frame 2 evaluate=00000001
+evaluation and readback completed in 42.926 ms at 2560x1440
+frame 2 invalid=0 range=[0.109741,1] sum=7506598.54 mean_abs_change=0.00132269218
+frame 3 evaluate=00000001
+evaluation and readback completed in 43.329 ms at 2560x1440
+frame 3 invalid=0 range=[0.109497,1] sum=7507284.49 mean_abs_change=0.00128126093
+frame 4 evaluate=00000001
+evaluation and readback completed in 43.512 ms at 2560x1440
+frame 4 invalid=0 range=[0.110413,1] sum=7507097.38 mean_abs_change=0.00126977017
+frame 5 evaluate=00000001
+evaluation and readback completed in 43.818 ms at 2560x1440
+frame 5 invalid=0 range=[0.110413,1] sum=7507812.29 mean_abs_change=0.00129214264
+frame 6 evaluate=00000001
+evaluation and readback completed in 43.111 ms at 2560x1440
+frame 6 invalid=0 range=[0.110168,1] sum=7507476.35 mean_abs_change=0.00129249839
+frame 7 evaluate=00000001
+evaluation and readback completed in 43.155 ms at 2560x1440
+frame 7 invalid=0 range=[0.111206,1] sum=7508495.88 mean_abs_change=0.00128397462
+frame 8 evaluate=00000001
+evaluation and readback completed in 42.891 ms at 2560x1440
+frame 8 invalid=0 range=[0.108398,1] sum=7506491.79 mean_abs_change=0.00133844806
+frame 9 evaluate=00000001
+evaluation and readback completed in 69.553 ms at 2560x1440
+frame 9 invalid=0 range=[0.109741,1] sum=7507966.79 mean_abs_change=0.00132419767
+candidate: substitutions=40 completed=1

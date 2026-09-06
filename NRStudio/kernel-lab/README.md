@@ -434,3 +434,50 @@ substitution count and completed=1. compare_full_post.py compares the named
 full-post-*-1440 directories and preserves all timing samples in JSON.
 Vendor PTX, cubins and output textures remain local and are not redistributed.
 Game integration and an actual game benchmark remain pending.
+
+## Broader kernel candidates and thermal check, 2026-09-06
+
+The post-block arithmetic mapping was extended in the isolated generator to
+three additional bottlenecks. The game was closed before GPU tests. The installed
+app and game DLLs were not changed by this work. The generator now accepts
+--kernel=post|swin1|pre|swin8, retaining post as its default and checking exact
+transformation counts for every entry. swin8 requires locally extracted
+module-3.1.sm_120.ptx; the other entries use module-0.1.sm_120.ptx.
+Both proprietary sources remain local. The validated helper flags are unchanged.
+
+The trace harness accepts NRSTUDIO_TEST_KERNEL only from the same four-entry
+allowlist. run_model_case.py creates a fresh case directory, selects a candidate
+only inside the probe environment, and rejects running tests alongside STALKER.
+It always uses the unchanged installed forwarder, avoiding double substitution
+with the game's optimized forwarder.
+
+All saved final outputs in the 1440p comparisons match the original byte for
+byte (14,745,600 half values per output). Each case evaluates ten frames with
+finite readbacks. Small-resolution checks also passed for each new entry.
+This tests synthetic full-model inputs and real model weights, not all possible
+game sequences. Intermediate outputs were checked for finiteness, not saved
+for exact comparison. No new memory-safety claim is made from these tests.
+
+Warm medians in milliseconds per frame (all samples after frame zero retained):
+
+| Block | Original | Candidate variants | Decision |
+| --- | ---: | ---: | --- |
+| swin1, four calls | 3.329 | 4.453 at 192 regs; 4.432 at 224 | Reject: slower |
+| pre, one call | 2.953 | 4.949 at 192 regs; 4.515 at 224 | Reject: slower |
+| swin8, twelve calls | 4.403 / 4.408 repeat | 4.594 / 4.582 at 192; 4.925 at 168 | Reject: no repeatable block gain |
+
+The 224-register variants eliminate spill traffic in swin1/pre, but remain
+slower. The 168-register swin8 variant adds 104 bytes of stack/spill traffic.
+The 192-register swin8 candidate uses 189 registers without spills. Its whole
+model chain total sometimes falls slightly despite a slower measured target;
+that is not sufficient evidence of an optimization. All timing samples and
+candidate cubin hashes are preserved in broad-kernel-comparison.json; regenerate
+with summarize_broad.py while local output textures remain available.
+No candidate from this broader experiment was deployed.
+
+While the game was still running, nvidia-smi reported SW Thermal Slowdown Active
+at 85 C (target temperature 83 C). After game exit and cooling to 50 C it reported
+Not Active. This confirms thermal limiting at the sampled gameplay moment, not
+its magnitude or whether it was active throughout earlier benchmarks. No fan,
+power, voltage, clock, graphics-quality or driver settings were changed.
+The game was left closed as requested for isolated testing.

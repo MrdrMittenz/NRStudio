@@ -1,0 +1,39 @@
+trace: NVAPI launch recording enabled in isolated probe
+core init=00000001
+capabilities=00000001 params=000000004D92C060
+float slot6 rc=00000001 value=0.3125
+candidate: CreateCuModule=0 bytes=275360
+candidate: CreateCuFunction=0
+native init=00000001 create=00000001 feature=00000000591304C0
+native feature initialization submitted and completed
+frame 0 evaluate=00000001
+evaluation and readback completed in 15.682 ms at 256x256
+frame 0 invalid=0 range=[0.10907,1] sum=133553.875 mean_abs_change=0.00352386315
+frame 1 evaluate=00000001
+evaluation and readback completed in 9.024 ms at 256x256
+frame 1 invalid=0 range=[0.10614,1] sum=133620.222 mean_abs_change=0.00399478269
+frame 2 evaluate=00000001
+evaluation and readback completed in 9.692 ms at 256x256
+frame 2 invalid=0 range=[0.106628,1] sum=133530.858 mean_abs_change=0.00380334887
+frame 3 evaluate=00000001
+evaluation and readback completed in 8.938 ms at 256x256
+frame 3 invalid=0 range=[0.105957,1] sum=133496.06 mean_abs_change=0.00387665164
+frame 4 evaluate=00000001
+evaluation and readback completed in 8.844 ms at 256x256
+frame 4 invalid=0 range=[0.106567,1] sum=133458.418 mean_abs_change=0.00369026675
+frame 5 evaluate=00000001
+evaluation and readback completed in 8.933 ms at 256x256
+frame 5 invalid=0 range=[0.104553,1] sum=133517.389 mean_abs_change=0.00406042789
+frame 6 evaluate=00000001
+evaluation and readback completed in 10.362 ms at 256x256
+frame 6 invalid=0 range=[0.107239,1] sum=133495.436 mean_abs_change=0.00366717135
+frame 7 evaluate=00000001
+evaluation and readback completed in 8.958 ms at 256x256
+frame 7 invalid=0 range=[0.107483,1] sum=133503.837 mean_abs_change=0.00357251824
+frame 8 evaluate=00000001
+evaluation and readback completed in 8.900 ms at 256x256
+frame 8 invalid=0 range=[0.104858,1] sum=133548.326 mean_abs_change=0.00418947707
+frame 9 evaluate=00000001
+evaluation and readback completed in 9.692 ms at 256x256
+frame 9 invalid=0 range=[0.106689,1] sum=133582.891 mean_abs_change=0.00396708352
+candidate: substitutions=10 completed=1

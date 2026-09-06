@@ -1,0 +1,6 @@
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8' for 'sm_86'
+ptxas info    : Function properties for cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8
+    0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 224 registers, used 1 barriers, 2048 bytes smem, 616 bytes cmem[0]
+ptxas info    : Compile time = 0.000 ms

@@ -15,6 +15,15 @@ inline = '--inline' in sys.argv[1:]
 register_limit = next((int(arg.split('=', 1)[1]) for arg in sys.argv[1:] if arg.startswith('--registers=')), 168)
 if register_limit not in (128, 144, 160, 168, 192, 224):
     raise ValueError('Unsupported experimental register limit')
+kernel = next((arg.split('=', 1)[1] for arg in sys.argv[1:] if arg.startswith('--kernel=')), 'post')
+variants = {
+    'post': ('cc_tinlayout_fused_post_block_swin_1h_32_fp8', {'encode': 388, 'decode': 40, 'mma': 256}),
+    'swin1': ('cc_tinlayout_fused_swin_1h_32_1_chained_fp8', {'encode': 388, 'decode': 32, 'mma': 256}),
+    'swin8': ('cc_tinlayout_fused_swin_8h_256_8_chained_fp8', {'encode': 324, 'decode': 64, 'mma': 288}),
+    'pre': ('cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8', {'encode': 424, 'decode': 0, 'mma': 256}),
+}
+name, expected_counts = variants[kernel]
+prefix = kernel + '-prototype'
 helper_source = (root / 'post_helpers.ptx').read_text()
 serial = 0
 
@@ -48,9 +57,8 @@ def inline_helper(name, arguments, output, bits):
     label = prefix + 'end'
     text = re.sub(r'\bret;', 'bra ' + label + ';', text)
     return '{\n' + text + '\n' + label + ':\n}'
-original = root / 'module-0.1.sm_120.ptx'
+original = root / ('module-3.1.sm_120.ptx' if kernel == 'swin8' else 'module-0.1.sm_120.ptx')
 source = original.read_text()
-name = 'cc_tinlayout_fused_post_block_swin_1h_32_fp8'
 begin = source.index('.visible .entry ' + name + '(')
 end = source.find('.visible .entry ', begin + 1)
 body = source[begin:end if end >= 0 else None]
@@ -91,19 +99,20 @@ def mma(match):
 
 body = re.sub(r'mma\.sync\.aligned\.m16n8k32\.row\.col\.f16\.e4m3\.e4m3\.f16\s*'
               r'\{([^}]+)\},\s*\{([^}]+)\},\s*\{([^}]+)\},\s*\{([^}]+)\};', mma, body)
-if counts != {'encode': 388, 'decode': 40, 'mma': 256}:
+if counts != expected_counts:
     raise ValueError(f'Unexpected transformation counts: {counts}')
 if re.search(r'(?m)^\s*(?:cvt|mma)\.[^\n]*e4m3', body):
     raise ValueError('Untranslated FP8 arithmetic')
 helpers = helper_source
 helpers = helpers[helpers.index('.visible .func'):]
-output = root / 'post-prototype.ptx'
+output = root / (prefix + '.ptx')
 output.write_text('.version 9.3\n.target sm_86\n.address_size 64\n' + helpers + '\n' + body)
 command = [r'C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v13.3\bin\ptxas.exe',
-           '-arch=sm_86', '-O3', '-v', str(output), '-o', str(root / 'post-prototype.cubin')]
+           '-arch=sm_86', '-O3', '-v', str(output), '-o', str(root / (prefix + '.cubin'))]
 result = subprocess.run(command, capture_output=True, text=True)
-(root / 'post-prototype-build.txt').write_text(result.stdout + result.stderr)
-(root / 'post-prototype-build.json').write_text(json.dumps(dict(
+(root / (prefix + '-build.txt')).write_text(result.stdout + result.stderr)
+(root / (prefix + '-build.json')).write_text(json.dumps(dict(
+    kernel=name,
     input_sha256=hashlib.sha256(original.read_bytes()).hexdigest(),
     helper_sha256=hashlib.sha256((root / 'post_helpers.ptx').read_bytes()).hexdigest(),
     inline_helpers=inline,

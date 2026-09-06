@@ -1,0 +1,14 @@
+{
+  "kernel": "cc_tinlayout_fused_swin_8h_256_8_chained_fp8",
+  "input_sha256": "afca21c868f1c8df337de6f3ef9ac18c0b80a01bb0fbd2a5a5c05bfb5ff84b3d",
+  "helper_sha256": "a4757f3eb81bc1e6f5b76704714e6f4b686d0c08e3304cbd8a5d282297bbbca5",
+  "inline_helpers": true,
+  "register_limit": 168,
+  "transformed": {
+    "encode": 324,
+    "decode": 64,
+    "mma": 288
+  },
+  "exit_code": 0,
+  "limitations": "Compatibility prototype; helper expansion recorded above. Not deployed; numerical and performance acceptance remain required."
+}

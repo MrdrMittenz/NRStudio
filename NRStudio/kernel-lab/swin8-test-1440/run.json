@@ -1,0 +1,6 @@
+{
+  "case": "swin8-test-1440",
+  "frames": 10,
+  "sha256": "7cf910242b8f05c7e3271a777f7345c30fc946c10eb7c8da764391954b021dd9",
+  "candidate": "swin8-r192.cubin"
+}

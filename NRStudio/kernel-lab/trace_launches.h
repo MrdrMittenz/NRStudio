@@ -22,7 +22,14 @@ static bool attempted=false;
 static bool requested=false;
 static decltype(&NvAPI_D3D12_CreateCuFunction) create=nullptr;
 static void PrepareCandidate(ID3D12Device*d,const char*n,NVDX_ObjectHandle original){
- if(strcmp(n,"cc_tinlayout_fused_post_block_swin_1h_32_fp8")!=0)return;
+ char target[256]="cc_tinlayout_fused_post_block_swin_1h_32_fp8";
+ char configured[256];DWORD length=GetEnvironmentVariableA("NRSTUDIO_TEST_KERNEL",configured,256);
+ if(length>=256)exit(47);
+ if(length){
+  if(strcmp(configured,"cc_tinlayout_fused_post_block_swin_1h_32_fp8")&&strcmp(configured,"cc_tinlayout_fused_swin_1h_32_1_chained_fp8")&&strcmp(configured,"cc_tinlayout_fused_swin_8h_256_8_chained_fp8")&&strcmp(configured,"cc_tinlayout_fused_pre_block_swin_1h_32_1_ds_fp8"))exit(48);
+  strcpy_s(target,configured);
+ }
+ if(strcmp(n,target)!=0)return;
  wchar_t path[32768];DWORD len=GetEnvironmentVariableW(L"NRSTUDIO_TEST_CUBIN",path,32768);
  if(!len)return;
  if(len>=32768||attempted){puts("candidate: invalid path or duplicate target");exit(40);}
