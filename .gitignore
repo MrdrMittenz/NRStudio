@@ -1,0 +1,11 @@
+build/
+optiscaler-nr-reference/
+__pycache__/
+*.exe
+*.dll
+*.zip
+*.rar
+*.obj
+*.pdb
+*.lib
+*.exp

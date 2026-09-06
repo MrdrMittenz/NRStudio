@@ -1,0 +1,196 @@
+diff --git a/OptiScaler/dlssnr/DlssNr_Capture.h b/OptiScaler/dlssnr/DlssNr_Capture.h
+index 196a724..18c337a 100644
+--- a/OptiScaler/dlssnr/DlssNr_Capture.h
++++ b/OptiScaler/dlssnr/DlssNr_Capture.h
+@@ -318,6 +318,7 @@ class FrameCapture
+ 
+         if (std::FILE* f = _wfopen(path.wstring().c_str(), L"wt"))
+         {
++            std::fprintf(f, "capture_version 2\nbefore_source hdrCopy\nafter_source resolved_output\ncolour_space game_output\n");
+             std::fprintf(f, "frames %u\n", captured_);
+             std::fprintf(f, "before width %llu height %u format %d rowPitch %u\n",
+                          (unsigned long long) beforeDesc_.Width, beforeDesc_.Height,
+@@ -326,7 +327,7 @@ class FrameCapture
+             std::fprintf(f, "after width %llu height %u format %d rowPitch %u\n",
+                          (unsigned long long) afterDesc_.Width, afterDesc_.Height, (int) afterDesc_.Format,
+                          afterShots_.empty() ? 0 : afterShots_[0].layout.Footprint.RowPitch);
+-            std::fprintf(f, "\nbefore_NN.raw is the frame as the upscaler produced it.\n");
++            std::fprintf(f, "\nbefore_NN.raw is the retained upscaler frame (negative RGB clamped to zero).\n");
+             std::fprintf(f, "after_NN.raw is the same frame once the model's edit was applied.\n");
+             std::fprintf(f, "Consecutive frames, same run, so the pair is a control.\n");
+             std::fclose(f);
+diff --git a/OptiScaler/dlssnr/DlssNr_Menu.cpp b/OptiScaler/dlssnr/DlssNr_Menu.cpp
+index b212414..c7b1920 100644
+--- a/OptiScaler/dlssnr/DlssNr_Menu.cpp
++++ b/OptiScaler/dlssnr/DlssNr_Menu.cpp
+@@ -65,6 +65,95 @@ static bool DeferredSlider(const char* label, CustomOptional<float>* opt, float
+     return false;
+ }
+ 
++// Dedicated NR Studio front panel. It edits the same options consumed by the
++// native pass; no polling of a desktop process or second injection layer is needed.
++bool RenderStudioMenu(Config* config, float scale)
++{
++    const auto display = ImGui::GetIO().DisplaySize;
++    ImGui::SetNextWindowSize(ImVec2(std::min(620.0f * scale, display.x * 0.92f),
++                                  std::min(690.0f * scale, display.y * 0.90f)), ImGuiCond_FirstUseEver);
++    ImGui::SetNextWindowPos(ImVec2(display.x * 0.04f, display.y * 0.05f), ImGuiCond_FirstUseEver);
++    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.055f, 0.080f, 0.115f, 0.97f));
++    ImGui::PushStyleColor(ImGuiCol_CheckMark, ImVec4(0.42f, 0.87f, 0.74f, 1.0f));
++    ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.42f, 0.87f, 0.74f, 1.0f));
++    bool advanced = false;
++    if (ImGui::Begin("NR STUDIO | Live neural rendering", nullptr,
++                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings))
++    {
++        ImGui::TextColored(ImVec4(0.42f, 0.87f, 0.74f, 1.0f), "NR STUDIO");
++        ImGui::SameLine();
++        ImGui::TextDisabled("Insert to return to your game");
++        bool enabled = config->DlssNrEnabled.value_or_default();
++        if (ImGui::Checkbox("Neural rendering enabled", &enabled)) config->DlssNrEnabled = enabled;
++        if (DlssNr::IsRunning() && enabled)
++        {
++            auto ms = DlssNr::LastGpuTime();
++            if (ms.has_value()) ImGui::Text("Native NR running | GPU pass: %.2f ms", ms.value());
++            else ImGui::TextUnformatted("Native NR running | GPU timing pending");
++        }
++        else if (!enabled) ImGui::TextUnformatted("NR disabled | Original upscaler output");
++        else if (DlssNr::FailureReason()[0])
++        {
++            ImGui::TextWrapped("NR unavailable: %s", DlssNr::FailureReason());
++            if (ImGui::Button("Retry NR")) DlssNr::RetryAfterFailure();
++        }
++        else ImGui::TextUnformatted("Waiting for native DLSS frames. Select DLSS in the game.");
++
++        static int saveResult = 0;
++        if (ImGui::Button("Save profile")) saveResult = config->SaveIni() ? 1 : -1;
++        ImGui::SameLine();
++        if (ImGui::Button("Advanced OptiScaler")) advanced = true;
++        if (saveResult == 1) ImGui::TextDisabled("Profile saved for future launches.");
++        if (saveResult == -1) ImGui::TextUnformatted("Could not save. Check write access to the game folder.");
++        ImGui::TextDisabled("Powered by OptiScaler and the native NR model");
++        ImGui::Separator();
++        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x * 0.53f);
++
++        auto live = [](const char* label, CustomOptional<float>* opt, float lo, float hi) {
++            float value = opt->value_or_default();
++            if (ImGui::SliderFloat(label, &value, lo, hi, "%.2f", ImGuiSliderFlags_AlwaysClamp))
++                *opt = value;
++        };
++        ImGui::SeparatorText("Live appearance");
++        live("Detail strength", &config->DlssNrTransferStrength, 0.0f, 2.0f);
++        live("Colour strength", &config->DlssNrColourStrength, 0.0f, 1.0f);
++        live("Paper white", &config->DlssNrWhitePointScale, 0.25f, 4.0f);
++        live("Highlight guard", &config->DlssNrMaxRatio, 1.0f, 8.0f);
++
++        ImGui::SeparatorText("Compare with original");
++        const char* modes[] = { "Off", "Side by side", "Wipe" };
++        int mode = static_cast<int>(config->DlssNrCompare.value_or_default());
++        if (ImGui::Combo("Comparison", &mode, modes, 3)) config->DlssNrCompare = static_cast<uint32_t>(mode);
++        if (mode == 2) live("Wipe position", &config->DlssNrCompareSplit, 0.0f, 1.0f);
++        if (mode != 0)
++        {
++            bool tags = config->DlssNrCompareTags.value_or_default();
++            if (ImGui::Checkbox("Label original and NR", &tags)) config->DlssNrCompareTags = tags;
++        }
++
++        ImGui::SeparatorText("Model quality and cost");
++        ImGui::TextWrapped("These changes rebuild the model. Sliders apply when released to avoid rebuilding on every drag step.");
++        DeferredSlider("Resolution scale (1 = 100%)", &config->DlssNrWorkingScale, 0.25f, 1.0f);
++        const char* styles[] = { "Standard", "Natural", "Cinematic" };
++        int style = std::min(2, static_cast<int>(config->DlssNrStyle.value_or_default()));
++        if (ImGui::Combo("Style", &style, styles, 3)) config->DlssNrStyle = static_cast<uint32_t>(style);
++        const char* presets[] = { "Default", "Preset 1", "Preset 2", "Preset 3" };
++        int preset = std::min(3, static_cast<int>(config->DlssNrPreset.value_or_default()));
++        if (ImGui::Combo("Model preset", &preset, presets, 4)) config->DlssNrPreset = static_cast<uint32_t>(preset);
++        DeferredSlider("Intensity", &config->DlssNrIntensity, 0.0f, 2.0f);
++        DeferredSlider("Local structure", &config->DlssNrLocalStructure, 0.0f, 2.0f);
++        DeferredSlider("Local tone", &config->DlssNrLocalTone, 0.0f, 2.0f);
++        DeferredSlider("Skin structure", &config->DlssNrSkinStructure, -1.0f, 2.0f);
++        bool mask = config->DlssNrAutoMask.value_or_default();
++        if (ImGui::Checkbox("Automatic skin mask", &mask)) config->DlssNrAutoMask = mask;
++        ImGui::TextDisabled("Style names are community labels for undocumented model profiles.");
++        ImGui::PopItemWidth();
++    }
++    ImGui::End();
++    ImGui::PopStyleColor(3);
++    return advanced;
++}
++
+ void RenderMenu(Config* config, float menuResScale)
+ {
+ 
+diff --git a/OptiScaler/menu/menu_common.cpp b/OptiScaler/menu/menu_common.cpp
+index fb01aa4..1bdcbf0 100644
+--- a/OptiScaler/menu/menu_common.cpp
++++ b/OptiScaler/menu/menu_common.cpp
+@@ -51,6 +51,8 @@ static bool _hdrTonemapApplied = false;
+ static ImVec4 SdrColors[ImGuiCol_COUNT];
+ 
+ static bool inputMenu = false;
++static bool nrStudioAdvanced = false;
++namespace DlssNr { bool RenderStudioMenu(Config* config, float scale); }
+ static bool inputFG = false;
+ static bool inputFps = false;
+ static bool inputFpsCycle = false;
+@@ -1336,6 +1338,7 @@ void MenuCommon::HandleMenuShortcuts(RenderMenuContext& ctx)
+         {
+             inputMenu = false;
+             _isVisible = !_isVisible;
++            if (_isVisible) nrStudioAdvanced = false;
+ 
+             LOG_DEBUG("Menu key pressed, {0}", _isVisible ? "opening ImGui" : "closing ImGui");
+ 
+@@ -1543,7 +1546,7 @@ void MenuCommon::RenderSplashWindow(RenderMenuContext& ctx)
+                 else
+                     ImGui::SetWindowFontScale(splashScale);
+ 
+-                ImGui::Text("OptiScaler - %s for menu",
++                ImGui::Text("NR Studio - %s for live NR controls",
+                             Keybind::KeyNameFromVirtualKeyCode(config->ShortcutKey.value_or_default()).c_str());
+                 ImGui::TextColored(toneMapColor(ImVec4(1.0f, 1.0f, 1.0f, 0.7f)), splashMessage.c_str());
+ 
+@@ -7511,6 +7514,15 @@ void MenuCommon::RenderMainMenuWindow(RenderMenuContext& ctx)
+     if (!_isVisible)
+         return;
+ 
++    if (!nrStudioAdvanced)
++    {
++        if (config->UseHQFont.value_or_default())
++            ImGui::PushFontSize(std::round(menuResScale * fontSize));
++        nrStudioAdvanced = DlssNr::RenderStudioMenu(config, menuResScale);
++        if (config->UseHQFont.value_or_default()) ImGui::PopFontSize();
++        return;
++    }
++
+     // Check for GPU support once and reuse the result in all menu sections.
+     // DXVK might call Vulkan device creation, which would destroy our objects.
+     State::Instance().vulkanSkipHooks = true;
+@@ -7574,6 +7586,7 @@ void MenuCommon::RenderMainMenuWindow(RenderMenuContext& ctx)
+ 
+     if (ImGui::Begin(windowTitle.c_str(), NULL, flags))
+     {
++        if (ImGui::Button("Back to NR Studio")) nrStudioAdvanced = false;
+         // Header/status messages shown above the two-column settings table.
+         RenderMainMenuHeaderMessages(ctx);
+ 
+diff --git a/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp b/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp
+index 00c7f28..dddef0b 100644
+--- a/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp
++++ b/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp
+@@ -1357,13 +1357,13 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+         Barrier(cmdList, g_nr.output, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+                 D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+ 
+-        // On-demand capture works in this path too: the staging copy still holds the frame as the
+-        // upscaler produced it, and the edited frame is the output itself. The write happens a few
++        // hdrCopy retains the upscaler's colour encoding; colorCopy is the compressed model input
++        // and cannot be compared directly with the resolved output. The write happens a few
+         // frames later, once the GPU is certainly past these copies -- this path has no fence of its
+         // own.
+         if (g_capture.isActive())
+         {
+-            g_capture.record(cmdList, device, g_nr.colorCopy,
++            g_capture.record(cmdList, device, g_nr.hdrCopy,
+                              D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, target,
+                              D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+ 
