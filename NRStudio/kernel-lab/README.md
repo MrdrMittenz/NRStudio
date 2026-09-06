@@ -481,3 +481,49 @@ Not Active. This confirms thermal limiting at the sampled gameplay moment, not
 its magnitude or whether it was active throughout earlier benchmarks. No fan,
 power, voltage, clock, graphics-quality or driver settings were changed.
 The game was left closed as requested for isolated testing.
+
+## Launch scheduling experiment, 2026-09-06 — rejected
+
+The isolated command audit observed 156 kernel launches and 18 model-issued UAV
+barriers per evaluation. A new prototype preserved those barriers and flushed
+pending kernels before all intercepted base ID3D12GraphicsCommandList commands.
+It rejects model queries for uninstrumented extended command-list interfaces and
+aliased command vtable entries. It is a single-threaded isolated-probe experiment,
+not a game-safe hook. The NVIDIA driver/model's full scheduling and parameter
+lifetime requirements remain undocumented here; visible D3D barriers alone do
+not establish that arbitrary regrouping is safe.
+
+The default grouped experiment reduced 156 API calls to 17 groups per frame.
+The three-frame small-resolution pair and four ten-frame 1440p runs completed.
+Saved final outputs matched byte for byte; intermediate readbacks were checked
+for finite values only. Whole-model GPU timestamp medians (first frame excluded):
+
+| Run order | Mode | Warm median GPU ms |
+| --- | --- | ---: |
+| 1 | Original | 44.771 |
+| 2 | Grouped | 48.122 |
+| 3 | Grouped repeat | 54.403 |
+| 4 | Original repeat | 48.907 |
+
+The grouped candidate is slower in these noisy instrumented runs. This whole-
+model timing span includes gaps between launches and differs from earlier sums
+of per-chain spans, so their absolute values are not directly comparable.
+
+A subsequent variant limiting groups to four kernels returned success from the
+CPU evaluation call but failed the GPU device check on frame zero with HRESULT
+887a0006 (device hung). It produced no accepted output. The original-path control
+run immediately afterward completed all ten frames with matching final output;
+nvidia-smi also responded afterward. The cause of the grouped-path GPU failure
+has not been isolated. This is NOT an accepted optimization or a safety pass.
+No further grouped GPU launches were attempted after the failure.
+
+Both scheduling variants are rejected for deployment. The game was closed before
+these tests; its runtime/model files and fan settings are unchanged. No FPS gain
+is claimed. Source and diagnostic text are retained for internal review only.
+
+prepare_launch_audit.py builds the launch/barrier audit from the saved native
+probe. generate_launch_boundaries.py creates wrappers from installed Windows SDK
+signatures; prepare_launch_batch.py prepares the experimental probe and build
+script. NRSTUDIO_BATCH=1 enabled grouping, and NRSTUDIO_BATCH_LIMIT=4 selected the
+failed variant. These names document the failed experiment, not a recommendation
+to run it. summarize_launch_batch.py includes both completed and failed results.
