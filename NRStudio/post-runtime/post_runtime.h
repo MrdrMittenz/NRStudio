@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <dxgi1_4.h>
 #include <nvapi.h>
 #include <detours.h>
@@ -31,6 +31,9 @@ static HMODULE self;
 static const void* blob;
 static DWORD blobSize;
 static LONG launches=0;
+static HANDLE originalEvent=nullptr;
+static LONG lastMode=-1;
+static LONG originalLaunches=0;
 struct Scope { bool old; Scope():old(scope){scope=enabled;} ~Scope(){scope=old;} };
 static bool ModelMatches(const wchar_t* path) {
  HANDLE file=CreateFileW(path,GENERIC_READ,FILE_SHARE_READ,nullptr,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nullptr);
@@ -76,6 +79,14 @@ template<class T,class F> static NvAPI_Status Launch(F original,ID3D12GraphicsCo
   auto it=entries.find(k->hFunction);if(it==entries.end())return original(c,k,n);
   T copy=*k;
   if(copy.paramSize!=184||copy.blockDim.x!=32||copy.blockDim.y!=1||copy.blockDim.z!=1)return original(c,k,n);
+  const bool useOriginal=originalEvent&&WaitForSingleObject(originalEvent,0)==WAIT_OBJECT_0;
+  LONG previous=InterlockedExchange(&lastMode,useOriginal?1:0);
+  if(previous!=(useOriginal?1:0))native_log("post-opt benchmark mode=%s",useOriginal?"original":"optimized");
+  if(useOriginal){
+   LONG count=InterlockedIncrement(&originalLaunches);
+   if(count<=2||count%600==0)native_log("post-opt original launch=%ld",count);
+   return original(c,k,n);
+  }
   copy.hFunction=it->second.function;
   LONG count=InterlockedIncrement(&launches);
   if(count<=2||count%600==0)native_log("post-opt launch=%ld grid=%u,%u,%u",count,copy.gridDim.x,copy.gridDim.y,copy.gridDim.z);
@@ -128,6 +139,9 @@ static void Install(ID3D12Device*device,const wchar_t* model){
   status=DetourTransactionCommit();for(auto thread:threads)CloseHandle(thread);if(status!=NO_ERROR){native_log("post-opt hook commit failed=%ld",status);return;}
   // Hooks must not point into an unloaded forwarder. Keep its code for process lifetime.
   GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_PIN,reinterpret_cast<LPCWSTR>(&Install),&self);
+  wchar_t eventName[96];swprintf_s(eventName,L"Local\\NRStudio.PostOriginal.%lu",GetCurrentProcessId());
+  originalEvent=CreateEventW(nullptr,TRUE,FALSE,eventName);
+  if(!originalEvent)native_log("post-opt benchmark control unavailable error=%lu",GetLastError());
   enabled=true;native_log("post-opt enabled: embedded cubin bytes=%lu",blobSize);
  });
 }

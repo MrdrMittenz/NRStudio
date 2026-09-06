@@ -1,0 +1,14 @@
+pid=7536 tick=12677718 post-opt enabled: embedded cubin bytes=266408
+pid=7536 tick=12678062 post-opt ready: registers=192 original=000000004D2FAB30 candidate=000000004D2FABE0
+pid=7536 tick=12678062 create init=00000001 result=00000001 size=2560x1440 float_slot=6 feature=0000000057613100
+pid=7536 tick=12678093 post-opt benchmark mode=original
+pid=7536 tick=12678093 post-opt original launch=1
+pid=7536 tick=12678093 evaluate frame=1 result=00000001 size=2560x1440 guides=2560x1440 reset=1
+pid=7536 tick=12678328 post-opt original launch=2
+pid=7536 tick=12678328 evaluate frame=2 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=7536 tick=12678546 evaluate frame=3 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=7536 tick=12678828 post-opt benchmark mode=optimized
+pid=7536 tick=12678828 post-opt launch=1 grid=321,185,1
+pid=7536 tick=12678828 evaluate frame=4 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=7536 tick=12679046 post-opt launch=2 grid=321,185,1
+pid=7536 tick=12680953 post-opt released: launches=9

@@ -39,3 +39,24 @@ previous forwarder. Run rollback.ps1 with the game closed to restore it.
 Gameplay validation: see game-benchmark/REPORT.md. The optimized kernel runs
 in-game; two samples measured about 19.3 FPS. Input activity prevents a
 controlled comparison, and no game FPS speedup is claimed.
+
+## Live benchmark switch
+
+The updated forwarder creates a manual-reset, process-specific Windows event:
+Local\NRStudio.PostOriginal.<PID>. Setting it selects the original post kernel;
+resetting it selects the optimized kernel. NR remains fully enabled. The switch
+is checked only for the matched post-block launch and does not touch other
+kernels, graphics settings, game input, or model weights. The default is optimized.
+The small event handle lives with the pinned forwarder until process exit.
+
+Use `python benchmark_switch.py PID original` or `optimized`; runtime logs must
+acknowledge the selected mode. `python test_switch.py` validated both modes
+inside one 12-frame 1440p model run with byte-identical final output relative to
+the original reference. The locally embedded cubin is unchanged.
+
+From game-benchmark, `python run_comparison.py PID --prefix UNIQUE` runs four
+30-second captures in original/optimized/optimized/original order, with five
+seconds settling per trial. It checks mode acknowledgements, records focus and
+input activity, preserves invalid samples, and restores optimized mode in a
+finally block. The user must first load gameplay and keep the game in focus.
+This switch provides measurement capability; it is not an additional speedup.
