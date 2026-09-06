@@ -1,0 +1,27 @@
+pid=3184 tick=11721859 post-opt disabled: no enable marker
+pid=3184 tick=11722218 create init=00000001 result=00000001 size=2560x1440 float_slot=6 feature=0000000057F034B0
+pid=3184 tick=11722265 evaluate frame=1 result=00000001 size=2560x1440 guides=2560x1440 reset=1
+pid=3184 tick=11722500 evaluate frame=2 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=3184 tick=11722718 evaluate frame=3 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=3184 tick=11722937 evaluate frame=4 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=14160 tick=11726500 post-opt enabled: embedded cubin bytes=266408
+pid=14160 tick=11726906 post-opt ready: registers=192 original=000000004D993360 candidate=000000004D992650
+pid=14160 tick=11726906 create init=00000001 result=00000001 size=2560x1440 float_slot=6 feature=0000000058998B30
+pid=14160 tick=11726968 post-opt launch=1 grid=321,185,1
+pid=14160 tick=11726968 evaluate frame=1 result=00000001 size=2560x1440 guides=2560x1440 reset=1
+pid=14160 tick=11727203 post-opt launch=2 grid=321,185,1
+pid=14160 tick=11727203 evaluate frame=2 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=14160 tick=11727421 evaluate frame=3 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=14160 tick=11727640 evaluate frame=4 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=14160 tick=11729906 post-opt released: launches=12
+pid=6256 tick=11766578 post-opt enabled: embedded cubin bytes=266408
+pid=6256 tick=11766968 post-opt ready: registers=192 original=000000004B193CE0 candidate=000000004B192C60
+pid=6256 tick=11766968 create init=00000001 result=00000001 size=2560x1440 float_slot=6 feature=0000000057740AB0
+pid=6256 tick=11767015 post-opt launch=1 grid=321,185,1
+pid=6256 tick=11767015 evaluate frame=1 result=00000001 size=2560x1440 guides=2560x1440 reset=1
+pid=6256 tick=11767250 post-opt launch=2 grid=321,185,1
+pid=6256 tick=11767250 evaluate frame=2 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=6256 tick=11767484 evaluate frame=3 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=6256 tick=11767703 evaluate frame=4 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=6256 tick=11797093 evaluate frame=120 result=00000001 size=2560x1440 guides=2560x1440 reset=0
+pid=6256 tick=11797375 post-opt released: launches=120

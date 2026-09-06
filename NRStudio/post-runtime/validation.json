@@ -1,0 +1,15 @@
+{
+  "exports_match": 25,
+  "sustained_frames": 120,
+  "initial_enabled_disabled_final_output_matches": true,
+  "sha256": "3410983803237729139b2a44e8799e3e0c7423be8d4c025960b7f6463d6d8e97",
+  "game_pid": 5640,
+  "game_candidate_launch_samples": [
+    "pid=5640 tick=11830781 post-opt launch=1 grid=321,185,1",
+    "pid=5640 tick=11830796 post-opt launch=2 grid=321,185,1",
+    "pid=5640 tick=11856093 post-opt launch=600 grid=321,185,1",
+    "pid=5640 tick=11880718 post-opt launch=1200 grid=321,185,1",
+    "pid=5640 tick=11904609 post-opt launch=1800 grid=321,185,1"
+  ],
+  "game_stage": "Shader compilation screen; gameplay performance pending"
+}

@@ -1,0 +1,27 @@
+pid=5640 tick=11830359 post-opt enabled: embedded cubin bytes=266408
+pid=5640 tick=11830734 post-opt ready: registers=192 original=0000000214510A30 candidate=000000021450F2D0
+pid=5640 tick=11830734 create init=00000001 result=00000001 size=2560x1440 float_slot=6 feature=00000001A5DEA160
+pid=5640 tick=11830781 post-opt launch=1 grid=321,185,1
+pid=5640 tick=11830781 evaluate frame=1 result=00000001 size=2560x1440 guides=1972x1108 reset=1
+pid=5640 tick=11830796 post-opt launch=2 grid=321,185,1
+pid=5640 tick=11830796 evaluate frame=2 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11830828 evaluate frame=3 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11830875 evaluate frame=4 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11835312 evaluate frame=120 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11840937 evaluate frame=240 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11846062 evaluate frame=360 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11851015 evaluate frame=480 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11856093 post-opt launch=600 grid=321,185,1
+pid=5640 tick=11856093 evaluate frame=600 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11861000 evaluate frame=720 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11865921 evaluate frame=840 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11870812 evaluate frame=960 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11875843 evaluate frame=1080 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11880718 post-opt launch=1200 grid=321,185,1
+pid=5640 tick=11880718 evaluate frame=1200 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11885609 evaluate frame=1320 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11890484 evaluate frame=1440 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11895187 evaluate frame=1560 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11899890 evaluate frame=1680 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=5640 tick=11904609 post-opt launch=1800 grid=321,185,1
+pid=5640 tick=11904609 evaluate frame=1800 result=00000001 size=2560x1440 guides=1972x1108 reset=0
