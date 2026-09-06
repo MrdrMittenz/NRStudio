@@ -1,0 +1,13 @@
+comparison max_abs=0.0078125 max_scaled_error=0.000973709834 rms=6.06100397e-05 invalid=0 alpha_mismatch=0 elements=117964800
+timing run=0 variant=baseline gpu_ms=0.139868160
+timing run=0 variant=candidate gpu_ms=0.147527680
+timing run=1 variant=candidate gpu_ms=0.142284800
+timing run=1 variant=baseline gpu_ms=0.138813440
+timing run=2 variant=baseline gpu_ms=0.147988480
+timing run=2 variant=candidate gpu_ms=0.143400960
+timing run=3 variant=candidate gpu_ms=0.138414080
+timing run=3 variant=baseline gpu_ms=0.147445760
+timing run=4 variant=baseline gpu_ms=0.143042560
+timing run=4 variant=candidate gpu_ms=0.142489600
+timing run=5 variant=candidate gpu_ms=0.157184000
+timing run=5 variant=baseline gpu_ms=0.142725120

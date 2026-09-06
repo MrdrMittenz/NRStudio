@@ -1,0 +1,22 @@
+{
+  "shader-results.txt": {
+    "baseline": {
+      "mean_ms": 0.2847010133333333,
+      "median_ms": 0.28484096000000003
+    },
+    "candidate": {
+      "mean_ms": 0.2827127466666667,
+      "median_ms": 0.28313088
+    }
+  },
+  "shader-results-half.txt": {
+    "baseline": {
+      "mean_ms": 0.14331392,
+      "median_ms": 0.14288384
+    },
+    "candidate": {
+      "mean_ms": 0.14521685333333334,
+      "median_ms": 0.14294528
+    }
+  }
+}
