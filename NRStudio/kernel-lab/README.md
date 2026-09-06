@@ -214,6 +214,52 @@ cache runs. ncu-post-1440.txt contains the validated harness profile; instrument
 inflates the separate harness timings printed during profiling. No NVIDIA binary,
 game file, installer or image-quality setting was changed.
 
+## Exact FP8 conversion building blocks
+
+Inspection of the deployed post-block SASS found 14,504 static instructions,
+including extensive packed-half arithmetic and integer manipulation. It already
+uses half2 multiply-by-256 decoding and packed rounding logic. Replacing a slow
+generic CUDA-header fallback is therefore not an established optimization for
+this binary. analyze_post_instructions.py records counts without publishing the
+proprietary disassembly. Counts alone do not identify dynamic bottlenecks.
+
+fp8_exact.cuh supplies our source implementations of E4M3 finite-saturating,
+nearest-even conversion between binary16 and FP8, including packed pairs. It
+also supplies nr_quantize_e4m3_half2: a fused operation that keeps the result in
+binary16 while reproducing an FP8 encode/decode round trip. Normal values round
+away seven fraction bits; subnormal values round at the FP8 subnormal spacing.
+Signed zeros, finite saturation, and canonical NaNs are preserved according to
+the tested CUDA reference behavior.
+
+The potential use is avoiding intermediate packing/unpacking where an FP16
+arithmetic path immediately consumes quantized values. It is NOT a replacement
+for FP8 tensor storage, and it cannot be substituted for arbitrary FP8 MMA
+instructions without recovering their fragment layout and accumulation behavior.
+Holding expanded values in registers could also increase register pressure.
+
+fp8_exact_test.cu compares against the CUDA 13.3 FP8 header implementation, both
+on the host and on the RTX 3090 compiled for SM86:
+
+- All 65,536 binary16 encodings pass the scalar encoder comparison.
+- All 256 FP8 encodings pass the scalar decoder comparison.
+- All 65,536 packed FP8 pairs pass the packed decoder comparison.
+- 262,144 packed binary16 pairs pass encoder and fused-quantizer comparisons.
+  The four pairing patterns cover every binary16 value in each lane, with
+  complements, a permutation, sign changes and NaN companions. This is not all
+  2^32 possible packed binary16 pairs.
+- GPU Compute Sanitizer memcheck reports zero errors for the final tests.
+
+There are zero bit mismatches in these tests, including nonfinite inputs. This
+does not prove equivalence to every existing modified-kernel instruction path
+or to Blackwell hardware behavior. No complete post-block candidate has been
+rebuilt or benchmarked with this fused routine, and no speedup is claimed.
+The next integration work must preserve packed layouts, validate MMA operand
+mapping/accumulation, compare full-block outputs, and check resource usage.
+
+Run build_fp8_exact.cmd followed by fp8_exact_test.exe. CUDA 13.3 and MSVC 14.38
+paths in the build script may need adjustment. No NVIDIA PTX, cubin, game DLL or
+installer is altered by these tests.
+
 Only our harness/instrumentation source, build scripts and diagnostic text are
 included in the private review. Extracted NVIDIA PTX/cubins and output textures
 remain local and are not included.
