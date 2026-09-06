@@ -1,0 +1,3 @@
+﻿run=0 gpu_us=50.175999 written_half_values=983040 invalid=0 changed_vs_previous=0 sum=3722406.61 guards=pass
+run=1 gpu_us=48.128002 written_half_values=983040 invalid=0 changed_vs_previous=0 sum=3722406.61 guards=pass
+run=2 gpu_us=50.175999 written_half_values=983040 invalid=0 changed_vs_previous=0 sum=3722406.61 guards=pass

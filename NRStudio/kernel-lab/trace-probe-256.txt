@@ -1,0 +1,15 @@
+﻿trace: NVAPI launch recording enabled in isolated probe
+core init=00000001
+capabilities=00000001 params=000000004BEEFB60
+float slot6 rc=00000001 value=0.3125
+native init=00000001 create=00000001 feature=00000000578DF360
+native feature initialization submitted and completed
+frame 0 evaluate=00000001
+evaluation and readback completed in 15.885 ms at 256x256
+frame 0 invalid=0 range=[0.10907,1] sum=133553.875 mean_abs_change=0.00352386315
+frame 1 evaluate=00000001
+evaluation and readback completed in 9.595 ms at 256x256
+frame 1 invalid=0 range=[0.10614,1] sum=133620.222 mean_abs_change=0.00399478269
+frame 2 evaluate=00000001
+evaluation and readback completed in 9.555 ms at 256x256
+frame 2 invalid=0 range=[0.106628,1] sum=133530.858 mean_abs_change=0.00380334887

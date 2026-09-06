@@ -1,0 +1,395 @@
+==PROF== Connected to process 14888 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 1
+==PROF== Disconnected from process 14888
+==PROF== Connected to process 5204 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 2
+==PROF== Disconnected from process 5204
+==PROF== Connected to process 5324 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 3
+==PROF== Disconnected from process 5324
+==PROF== Connected to process 3604 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 4
+==PROF== Disconnected from process 3604
+==PROF== Connected to process 1952 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 5
+==PROF== Disconnected from process 1952
+==PROF== Connected to process 7812 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 6
+==PROF== Disconnected from process 7812
+==PROF== Connected to process 13332 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 7
+==PROF== Disconnected from process 13332
+==PROF== Connected to process 15500 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 8
+==PROF== Disconnected from process 15500
+==PROF== Connected to process 2380 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 9
+==PROF== Disconnected from process 2380
+==PROF== Connected to process 15968 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 10
+==PROF== Disconnected from process 15968
+==PROF== Connected to process 10852 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 11
+==PROF== Disconnected from process 10852
+==PROF== Connected to process 10028 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 12
+==PROF== Disconnected from process 10028
+==PROF== Connected to process 9336 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 13
+==PROF== Disconnected from process 9336
+==PROF== Connected to process 1684 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 14
+==PROF== Disconnected from process 1684
+==PROF== Connected to process 10848 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 15
+==PROF== Disconnected from process 10848
+==PROF== Connected to process 8556 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 16
+==PROF== Disconnected from process 8556
+==PROF== Connected to process 5944 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 17
+==PROF== Disconnected from process 5944
+==PROF== Connected to process 16340 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 18
+==PROF== Disconnected from process 16340
+==PROF== Connected to process 15492 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 19
+==PROF== Disconnected from process 15492
+==PROF== Connected to process 12212 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 20
+==PROF== Disconnected from process 12212
+==PROF== Connected to process 12696 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 21
+==PROF== Disconnected from process 12696
+==PROF== Connected to process 12188 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 22
+==PROF== Disconnected from process 12188
+==PROF== Connected to process 8904 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 23
+==PROF== Disconnected from process 8904
+==PROF== Connected to process 13460 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 24
+==PROF== Disconnected from process 13460
+==PROF== Connected to process 14124 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 25
+==PROF== Disconnected from process 14124
+==PROF== Connected to process 13364 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 26
+==PROF== Disconnected from process 13364
+==PROF== Connected to process 8712 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 27
+==PROF== Disconnected from process 8712
+==PROF== Connected to process 16308 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 28
+==PROF== Disconnected from process 16308
+==PROF== Connected to process 13448 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 29
+==PROF== Disconnected from process 13448
+==PROF== Connected to process 3916 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 30
+==PROF== Disconnected from process 3916
+==PROF== Connected to process 10380 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 31
+==PROF== Disconnected from process 10380
+==PROF== Connected to process 16140 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 32
+==PROF== Disconnected from process 16140
+==PROF== Connected to process 16596 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 33
+==PROF== Disconnected from process 16596
+==PROF== Connected to process 15792 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 34
+==PROF== Disconnected from process 15792
+==PROF== Connected to process 12404 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 35
+==PROF== Disconnected from process 12404
+==PROF== Connected to process 2436 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 36
+==PROF== Disconnected from process 2436
+==PROF== Connected to process 16564 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 37
+==PROF== Disconnected from process 16564
+==PROF== Connected to process 12136 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 38
+==PROF== Disconnected from process 12136
+==PROF== Connected to process 15724 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 39
+==PROF== Disconnected from process 15724
+==PROF== Connected to process 15936 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 40
+==PROF== Disconnected from process 15936
+==PROF== Connected to process 7804 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 41
+==PROF== Disconnected from process 7804
+==PROF== Connected to process 5640 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 42
+==PROF== Disconnected from process 5640
+==PROF== Connected to process 2164 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 43
+==PROF== Disconnected from process 2164
+==PROF== Connected to process 16888 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 44
+==PROF== Disconnected from process 16888
+==PROF== Connected to process 5852 (C:\Users\ReviOSGaming\AI-Work\NRStudio\kernel-lab\decoder_bench.exe)
+==PROF== Profiling "cc_dec_input_upsample_1024_512_fp8": Application replay pass 45
+==PROF== Disconnected from process 5852
+==PROF== Creating report from application replay data: 0%.................100%
+[14888] decoder_bench.exe@127.0.0.1
+  cc_dec_input_upsample_1024_512_fp8 (4, 2, 4)x(32, 2, 1), Context 1, Stream 13, Device 0, CC 8.6
+    Section: GPU Speed Of Light Throughput
+    ----------------------- ----------- ------------
+    Metric Name             Metric Unit Metric Value
+    ----------------------- ----------- ------------
+    DRAM Frequency                  Ghz         9.48
+    SM Frequency                    Ghz         1.72
+    Elapsed Cycles                cycle       66,353
+    Memory Throughput                 %         4.22
+    DRAM Throughput                   %         2.86
+    Duration                         us        38.50
+    L1/TEX Cache Throughput           %         7.90
+    L2 Cache Throughput               %         4.22
+    SM Active Cycles              cycle    11,487.07
+    Compute (SM) Throughput           %         1.49
+    ----------------------- ----------- ------------
+
+    OPT   This kernel grid is too small to fill the available resources on this device, resulting in only 0.07 full     
+          waves across all SMs. Look at Launch Statistics for more details.                                             
+
+    Section: GPU Speed Of Light Roofline Chart (Overview)
+    INF   The ratio of peak float (FP32) to double (FP64) performance on this device is 64:1. The workload achieved 0%  
+          of this device's FP32 peak performance and 0% of its FP64 peak performance. See the Profiling Guide           
+          (https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#roofline) for more details on roofline      
+          analysis.                                                                                                     
+
+    Section: PM Sampling
+    ------------------------- ----------- ------------
+    Metric Name               Metric Unit Metric Value
+    ------------------------- ----------- ------------
+    Maximum Buffer Size             Mbyte        16.52
+    Maximum Sampling Interval          us            1
+    # Pass Groups                                    3
+    ------------------------- ----------- ------------
+
+    Section: Compute Workload Analysis
+    -------------------- ----------- ------------
+    Metric Name          Metric Unit Metric Value
+    -------------------- ----------- ------------
+    Executed Ipc Active   inst/cycle         0.33
+    Executed Ipc Elapsed  inst/cycle         0.06
+    Issue Slots Busy               %         1.49
+    Issued Ipc Active     inst/cycle         0.34
+    SM Busy                        %         1.49
+    -------------------- ----------- ------------
+
+    OPT   Est. Local Speedup: 98.58%                                                                                    
+          All compute pipelines are under-utilized. Either this workload is very small or it doesn't issue enough warps 
+          per scheduler. Check the Launch Statistics and Scheduler Statistics sections for further details.             
+
+    Section: Memory Workload Analysis
+    --------------------------------------- ----------- ------------
+    Metric Name                             Metric Unit Metric Value
+    --------------------------------------- ----------- ------------
+    Local Memory Spilling Requests                             1,344
+    Local Memory Spilling Request Overhead            %          100
+    L2 Sector Promotion Misses                        %            0
+    Shared Memory Spilling Requests                                0
+    Shared Memory Spilling Request Overhead           %            0
+    Memory Throughput                           Gbyte/s        26.01
+    Mem Busy                                          %         4.22
+    Max Bandwidth                                     %         3.53
+    L1/TEX Hit Rate                                   %         2.80
+    L2 Persisting Size                            Mbyte         1.18
+    L2 Compression Success Rate                       %            0
+    L2 Compression Ratio                                           0
+    L2 Compression Input Sectors                 sector            0
+    L2 Hit Rate                                       %        80.65
+    Mem Pipes Busy                                    %         0.67
+    --------------------------------------- ----------- ------------
+
+    Section: Memory Workload Analysis Tables
+    OPT   Est. Speedup: 23.79%                                                                                          
+          This workload accesses local memory                                                                           
+          (https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#device-memory-accesses), accounting for     
+          5.34% of all sectors requested in L1TEX. Local memory refers to a memory space that is private to each        
+          thread. Although it is logically distinct, local memory resides in global memory. This can lead to higher     
+          memory latency compared to the usage of registers or shared memory, a decrease in available bandwidth to      
+          global memory, and an increase in executed instructions.                                                      
+          All of the local memory accesses are due to register spilling                                                 
+          (https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#variable-memory-space-specifiers). 0.00%    
+          of all local loads and 100.00% of all local stores spill into the L2 cache, accounting for 2.12% of all       
+          sectors requested in L2.                                                                                      
+          One common reason for the use of local memory is arrays being too large to fit into registers or not being    
+          indexed using compile time constants (see the "Local Memory" section of the CUDA Programming Guide            
+          (https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#device-memory-accesses). For more advice    
+          on how to reduce the usage of local memory refer to the documentation                                         
+          (https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#metrics-hw-memory).                         
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 0.02494%                                                                                        
+          The memory access pattern for global loads from L2 might not be optimal. On average, only 31.8 of the 32      
+          bytes transmitted per sector are utilized by each thread. This applies to the 99.8% of sectors missed in      
+          L1TEX. This could possibly be caused by a stride between threads. Check the Source Counters section for       
+          uncoalesced global loads.                                                                                     
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 0.02693%                                                                                        
+          The memory access pattern for global stores to L2 might not be optimal. On average, only 31.8 of the 32 bytes 
+          transmitted per sector are utilized by each thread. This applies to the 100.0% of sectors missed in L1TEX.    
+          This could possibly be caused by a stride between threads. Check the Source Counters section for uncoalesced  
+          global stores.                                                                                                
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 4.085%                                                                                          
+          The memory access pattern for local loads from L2 might not be optimal. On average, only 1.0 of the 32 bytes  
+          transmitted per sector are utilized by each thread. This applies to the 0.0% of sectors missed in L1TEX.      
+          This could possibly be caused by a stride between threads. Check the Source Counters section for uncoalesced  
+          local loads.                                                                                                  
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 4.085%                                                                                          
+          The memory access pattern for local stores to L2 might not be optimal. On average, only 1.0 of the 32 bytes   
+          transmitted per sector are utilized by each thread. This applies to the 100.0% of sectors missed in L1TEX.    
+          This could possibly be caused by a stride between threads. Check the Source Counters section for uncoalesced  
+          local stores.                                                                                                 
+
+    Section: Scheduler Statistics
+    ---------------------------- ----------- ------------
+    Metric Name                  Metric Unit Metric Value
+    ---------------------------- ----------- ------------
+    One or More Eligible                   %        16.74
+    Issued Warp Per Scheduler                        0.17
+    No Eligible                            %        83.26
+    Active Warps Per Scheduler          warp         0.99
+    Eligible Warps Per Scheduler        warp         0.17
+    ---------------------------- ----------- ------------
+
+    OPT   Est. Local Speedup: 83.26%                                                                                    
+          Every scheduler is capable of issuing one instruction per cycle, but for this workload each scheduler only    
+          issues an instruction every 6.0 cycles. This might leave hardware resources underutilized and may lead to     
+          less optimal performance. Out of the maximum of 12 warps per scheduler, this workload allocates an average    
+          of 0.99 active warps per scheduler, which already limits the scheduler to less than a warp per instruction.   
+
+    Section: Warp State Statistics
+    ---------------------------------------- ----------- ------------
+    Metric Name                              Metric Unit Metric Value
+    ---------------------------------------- ----------- ------------
+    Warp Cycles Per Issued Instruction             cycle         5.94
+    Warp Cycles Per Executed Instruction           cycle         6.10
+    Avg. Active Threads Per Warp                                31.83
+    Avg. Not Predicated Off Threads Per Warp                    31.47
+    ---------------------------------------- ----------- ------------
+
+    Section: Instruction Statistics
+    ---------------------------------------- ----------- ------------
+    Metric Name                              Metric Unit Metric Value
+    ---------------------------------------- ----------- ------------
+    Local Memory Spilling Requests                 Kbyte         1.34
+    Shared Memory Spilling Requests                 byte            0
+    Avg. Executed Instructions Per Scheduler        inst       945.16
+    Executed Instructions                           inst      310,013
+    Avg. Issued Instructions Per Scheduler          inst       970.58
+    Issued Instructions                             inst      318,349
+    ---------------------------------------- ----------- ------------
+
+    Section: Launch Statistics
+    -------------------------------- --------------- ---------------
+    Metric Name                          Metric Unit    Metric Value
+    -------------------------------- --------------- ---------------
+    Block Size                                                    64
+    Function Cache Configuration                     CachePreferNone
+    Grid Size                                                     32
+    Registers Per Thread             register/thread             168
+    Shared Memory Configuration Size           Kbyte           32.77
+    Driver Shared Memory Per Block       Kbyte/block            1.02
+    Dynamic Shared Memory Per Block       byte/block               0
+    Static Shared Memory Per Block       Kbyte/block            2.06
+    # SMs                                         SM              82
+    Stack Size                                                 1,024
+    Threads                                   thread           2,048
+    # TPCs                                                        41
+    Enabled TPC IDs                                              all
+    Uses Green Context                                             0
+    Waves Per SM                                                0.07
+    -------------------------------- --------------- ---------------
+
+    OPT   Est. Speedup: 60.98%                                                                                          
+          The grid for this launch is configured to execute only 32 blocks, which is less than the 82 multiprocessors   
+          used. This can underutilize some multiprocessors. If you do not intend to execute this kernel concurrently    
+          with other workloads, consider reducing the block size to have at least one block per multiprocessor or       
+          increase the size of the grid to fully utilize the available hardware resources. See the Hardware Model       
+          (https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html#metrics-hw-model) description for more      
+          details on launch configurations.                                                                             
+
+    Section: Occupancy
+    ------------------------------- ----------- ------------
+    Metric Name                     Metric Unit Metric Value
+    ------------------------------- ----------- ------------
+    Block Limit SM                        block           16
+    Block Limit Registers                 block            6
+    Block Limit Shared Mem                block           10
+    Block Limit Warps                     block           24
+    Theoretical Active Warps per SM        warp           12
+    Theoretical Occupancy                     %           25
+    Achieved Occupancy                        %         4.25
+    Achieved Active Warps Per SM           warp         2.04
+    ------------------------------- ----------- ------------
+
+    OPT   Est. Speedup: 82.99%                                                                                          
+          The difference between calculated theoretical (25.0%) and measured achieved occupancy (4.3%) can be the       
+          result of warp scheduling overheads or workload imbalances during the kernel execution. Load imbalances can   
+          occur between warps within a block as well as across blocks of the same kernel. See the CUDA Best Practices   
+          Guide (https://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#occupancy) for more details on     
+          optimizing occupancy.                                                                                         
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 75%                                                                                             
+          The 3.00 theoretical warps per scheduler this kernel can issue according to its occupancy are below the       
+          hardware maximum of 12. This kernel's theoretical occupancy (25.0%) is limited by the number of required      
+          registers.                                                                                                    
+
+    Section: GPU and Memory Workload Distribution
+    -------------------------- ----------- ------------
+    Metric Name                Metric Unit Metric Value
+    -------------------------- ----------- ------------
+    Average DRAM Active Cycles       cycle    10,430.67
+    Total DRAM Elapsed Cycles        cycle    4,380,672
+    Average L1 Active Cycles         cycle    11,487.07
+    Total L1 Elapsed Cycles          cycle    5,336,480
+    Average L2 Active Cycles         cycle    10,610.08
+    Total L2 Elapsed Cycles          cycle    3,002,976
+    Average SM Active Cycles         cycle    11,487.07
+    Total SM Elapsed Cycles          cycle    5,336,480
+    Average SMSP Active Cycles       cycle     5,797.73
+    Total SMSP Elapsed Cycles        cycle   21,345,920
+    -------------------------- ----------- ------------
+
+    OPT   Est. Speedup: 14.39%                                                                                          
+          One or more SMs have a much lower number of active cycles than the average number of active cycles. Maximum   
+          instance value is 81.51% above the average, while the minimum instance value is 100.00% below the average.    
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 8.092%                                                                                          
+          One or more SMSPs have a much lower number of active cycles than the average number of active cycles. Maximum 
+          instance value is 90.83% above the average, while the minimum instance value is 100.00% below the average.    
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 14.39%                                                                                          
+          One or more L1 Slices have a much lower number of active cycles than the average number of active cycles.     
+          Maximum instance value is 81.51% above the average, while the minimum instance value is 100.00% below the     
+          average.                                                                                                      
+    ----- --------------------------------------------------------------------------------------------------------------
+    OPT   Est. Speedup: 6.921%                                                                                          
+          One or more L2 Slices have a much higher number of active cycles than the average number of active cycles.    
+          Maximum instance value is 40.81% above the average, while the minimum instance value is 14.65% below the      
+          average.                                                                                                      
+
+    Section: Source Counters
+    ------------------------- ----------- ------------
+    Metric Name               Metric Unit Metric Value
+    ------------------------- ----------- ------------
+    Branch Instructions Ratio           %         0.03
+    Branch Instructions              inst        9,937
+    Branch Efficiency                   %        99.25
+    Avg. Divergent Branches      branches         0.07
+    ------------------------- ----------- ------------
+
+    OPT   Est. Speedup: 2.179%                                                                                          
+          This workload has uncoalesced global accesses resulting in a total of 12288 excessive sectors (13% of the     
+          total 95653 sectors). Check the L2 Theoretical Sectors Global Excessive table for the primary source          
+          locations. The CUDA Programming Guide                                                                         
+          (https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#device-memory-accesses) has additional      
+          information on reducing uncoalesced device memory accesses.                                                   
+

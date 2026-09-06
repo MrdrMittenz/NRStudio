@@ -1,0 +1,5 @@
+﻿========= COMPUTE-SANITIZER
+run=0 gpu_us=832.512024 written_half_values=36864 invalid=0 changed_vs_previous=0 sum=120436.594 guards=pass
+run=1 gpu_us=941.056030 written_half_values=36864 invalid=0 changed_vs_previous=0 sum=120436.594 guards=pass
+run=2 gpu_us=564.223999 written_half_values=36864 invalid=0 changed_vs_previous=0 sum=120436.594 guards=pass
+========= ERROR SUMMARY: 0 errors
