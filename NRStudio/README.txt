@@ -1,11 +1,19 @@
-NR STUDIO 1.1 — COMPLETE EDITION
+NR STUDIO 1.1.1 — EXPERIMENTAL NR
+
+MODEL STATUS (2026-09-06)
+The bundled third-party-sourced NR model reports version 310.8.0.0. Windows
+reports Authenticode HashMismatch: its embedded NVIDIA signature does not
+validate. Matching the package hash confirms the tested file, not authenticity.
+Native evaluation was observed in STALKER 2 and 7 Days to Die, but full official
+DLSS 5 provenance and feature parity are not established. See MODEL-AUDIT.md.
+Check runtime reports signature and recent/historical evaluation separately.
 
 Standalone Windows app and native in-game NR Studio control panel.
 Tested runtime baseline: RTX 3090, NVIDIA driver 616.56, S.T.A.L.K.E.R. 2.
 New games need individual validation; performance is not guaranteed across games.
 
 ONE INSTALLER
-Run NRStudio-Setup-1.1.0-Complete.exe. No Swapper installation, manual model
+Run NRStudio-Setup-1.1.1-Experimental.exe. No Swapper installation, manual model
 import or CUDA toolkit is needed. The package contains:
  - NR Studio desktop manager and small independent uninstaller
  - Native NVIDIA NR model (validated SHA-256 8270b350...cc206)
@@ -46,7 +54,7 @@ These are starting values, not universal realism settings. 'auto' uses defaults.
 COMPATIBILITY AND RECOVERY
 The 7 Days to Die profile selects 7DaysToDie.exe with -force-d3d12, using the
 standard client rather than the separate EAC launcher. It is an experimental
-profile; NR rendering has not yet been validated in this game. EAC-required
+profile; native evaluation is logged, but broader validation remains incomplete. EAC-required
 servers are not a supported target. Adding this executable through Add game
 automatically selects the same launch profile.
 
@@ -77,9 +85,9 @@ Independent project, not an NVIDIA product. NR Studio source is in
 NRStudio-source.zip under GPL-3.0-or-later; COPYING.txt contains that license.
 The runtime is based on OptiScaler_DLSSNR commit
 433cc11d8a6b92dfe4977de4dd88ffe0afbec781, with the capture correction and
-NR Studio overlay changes. Corresponding source and pinned dependencies are in
-NRStudio-1.1.0-corresponding-source.zip beside the installer. Keep that source
-available with copies of the GPL runtime. Vendor software retains its own terms;
+NR Studio overlay changes. Current source, patch and build instructions are in
+the private review repository: https://github.com/MrdrMittenz/NRStudio
+Repository access is required. Vendor software retains its own terms;
 the NVIDIA driver license is included under Licenses and its installer presents
 the applicable terms. The model was copied from the existing local installation;
 this project has not established permission to redistribute that proprietary model

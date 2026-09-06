@@ -31,7 +31,7 @@ namespace NRStudio {
    root.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,245)); root.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100));
    root.RowStyles.Add(new RowStyle(SizeType.Absolute,74)); root.RowStyles.Add(new RowStyle(SizeType.Percent,100)); Controls.Add(root);
    var brand=new Label{Text="NR STUDIO",Font=new Font("Segoe UI",24,FontStyle.Bold),ForeColor=accent,Dock=DockStyle.Fill}; root.Controls.Add(brand,0,0);
-   root.Controls.Add(new Label{Text="Neural rendering, under your control\nLocal profiles  /  Native NR runtime  /  Insert for the in-game menu",Dock=DockStyle.Fill,Padding=new Padding(18,5,0,0)},1,0);
+   root.Controls.Add(new Label{Text="Experimental native neural rendering\nLocal profiles  /  Insert for the in-game menu",Dock=DockStyle.Fill,Padding=new Padding(18,5,0,0)},1,0);
    var left=new TableLayoutPanel{Dock=DockStyle.Fill,RowCount=5,ColumnCount=1,Padding=new Padding(0,0,16,0)};
    left.RowStyles.Add(new RowStyle(SizeType.Absolute,32)); left.RowStyles.Add(new RowStyle(SizeType.Percent,100)); left.RowStyles.Add(new RowStyle(SizeType.Absolute,48));left.RowStyles.Add(new RowStyle(SizeType.Absolute,48));left.RowStyles.Add(new RowStyle(SizeType.Absolute,92));root.Controls.Add(left,0,1);
    left.Controls.Add(new Label{Text="YOUR GAMES",ForeColor=accent,Dock=DockStyle.Fill});
@@ -76,7 +76,7 @@ namespace NRStudio {
     string known=@"C:\Program Files (x86)\Steam\steamapps\common\S.T.A.L.K.E.R. 2 Heart of Chornobyl\Stalker2\Binaries\Win64";
     if(Directory.Exists(known)) { string exe=Directory.GetFiles(known,"*Shipping.exe").FirstOrDefault(); if(exe!=null) { games.Add(new Game{Name="S.T.A.L.K.E.R. 2",Exe=exe});Core.SaveGames(games); } }
    }
-   Reload();Log("Complete runtime and model included. Press Insert in-game for NR Studio's live sliders. Desktop settings apply next launch.");
+   Reload();Log("Experimental NR integration. Check runtime reports model signature and native evaluation evidence. Press Insert in-game for live sliders. Desktop settings apply next launch.");
    Shown+=(s,e)=> { if(!File.Exists(Core.Model)) { string candidate=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),@"Programs\DLSS 5 Swapper\resources\payload\streamline\nvngx_dlssnr.dll");if(File.Exists(candidate)) Run("Importing your installed model",()=>Core.ImportModel(candidate)); } };
    FormClosing+=(s,e)=>{if(busy){e.Cancel=true;Log("Wait for the current operation to finish before closing.");}};
    using(var graphics=Graphics.FromHwnd(IntPtr.Zero)) ScaleLayout(this,graphics.DpiX/96F);
@@ -132,8 +132,9 @@ namespace NRStudio {
   void Launch() { var g=Selected();if(g.Exe.IndexOf("Stalker2",StringComparison.OrdinalIgnoreCase)>=0)Process.Start("steam://rungameid/1643320");else Process.Start(new ProcessStartInfo(g.Exe,g.LaunchArguments??""){WorkingDirectory=Core.Folder(g),UseShellExecute=true}); }
   void Diagnose() {
    var g=Selected();string dir=Core.Folder(g);Run("Checking runtime files",()=>{
-    var report=new List<string>();foreach(var kv in new Dictionary<string,string>{{"dxgi.dll",Core.ProxyHash},{"nvngx.dll_dlssnr.dll",Core.ForwardHash},{"nvngx_dlssnr.dll",Core.ModelHash}}){string p=Path.Combine(dir,kv.Key);report.Add(kv.Key+": "+(!File.Exists(p)?"missing":Core.Hash(p)==kv.Value?"verified":"different build"));}
-    string log=Path.Combine(dir,"dlssnr-native.log");report.Add(File.Exists(log)?"Native log last written: "+File.GetLastWriteTime(log)+". File presence alone does not confirm live NR or FPS.":"No native evaluation log yet.");
+    var report=new List<string>();foreach(var kv in new Dictionary<string,string>{{"dxgi.dll",Core.ProxyHash},{"nvngx.dll_dlssnr.dll",Core.ForwardHash},{"nvngx_dlssnr.dll",Core.ModelHash}}){string p=Path.Combine(dir,kv.Key);report.Add(kv.Key+": "+(!File.Exists(p)?"missing":Core.Hash(p)==kv.Value?"matches package SHA-256":"different build"));}
+    report.Add(RuntimeDiagnostics.Signature(Path.Combine(dir,"nvngx_dlssnr.dll")));
+    report.Add(RuntimeDiagnostics.Evaluation(g.Exe));
     BeginInvoke((Action)(()=>Log(string.Join(Environment.NewLine,report))));
    });
   }

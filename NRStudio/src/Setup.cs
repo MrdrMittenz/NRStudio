@@ -29,7 +29,7 @@ class Setup {
     if(File.Exists(Shortcut))File.Delete(Shortcut);Registry.CurrentUser.DeleteSubKeyTree(RegPath,false);
     if(!silent)MessageBox.Show("NR Studio removed. Game installations and user data are preserved.","NR Studio");return 0;
    }
-   if(!silent && MessageBox.Show("Install NR Studio for your Windows account?\n\n"+Target+"\n\nIncludes the NR model, live Insert overlay, runtime, Visual C++ installer and tested NVIDIA driver installer. No Swapper or separate model download is needed.","NR Studio setup",MessageBoxButtons.OKCancel)!=DialogResult.OK)return 0;
+   if(!silent && MessageBox.Show("Install experimental NR Studio for your Windows account?\n\n"+Target+"\n\nIncludes the NR model, live Insert overlay, runtime, Visual C++ installer and tested NVIDIA driver installer.\n\nThe bundled model's NVIDIA signature does not validate (HashMismatch). Native execution has been observed, but official DLSS 5 authenticity is not established. See MODEL-AUDIT.md.","NR Studio setup",MessageBoxButtons.OKCancel)!=DialogResult.OK)return 0;
    EnsureClosed();SafeTarget();Directory.CreateDirectory(Target);
    using(var stream=Assembly.GetExecutingAssembly().GetManifestResourceStream("app.zip"))using(var archive=new ZipArchive(stream,ZipArchiveMode.Read)) {
     var names=archive.Entries.Where(e=>!string.IsNullOrEmpty(e.Name)).Select(e=>e.FullName).ToList();
@@ -38,7 +38,7 @@ class Setup {
     names.Add("installed-files.txt");File.WriteAllLines(Path.Combine(Target,"installed-files.txt"),names);
    }
    dynamic shell=Activator.CreateInstance(Type.GetTypeFromProgID("WScript.Shell"));dynamic link=shell.CreateShortcut(Shortcut);link.TargetPath=Path.Combine(Target,"NRStudio.exe");link.WorkingDirectory=Target;link.Description="NR Studio — Neural rendering manager";link.Save();
-   using(var key=Registry.CurrentUser.CreateSubKey(RegPath)) {key.SetValue("DisplayName","NR Studio");key.SetValue("DisplayVersion","1.1.0");key.SetValue("Publisher","NR Studio (independent project)");key.SetValue("InstallLocation",Target);key.SetValue("DisplayIcon",Path.Combine(Target,"NRStudio.exe"));key.SetValue("UninstallString","\""+Path.Combine(Target,"Uninstall.exe")+"\" --uninstall");key.SetValue("NoModify",1);key.SetValue("NoRepair",1);}
+   using(var key=Registry.CurrentUser.CreateSubKey(RegPath)) {key.SetValue("DisplayName","NR Studio");key.SetValue("DisplayVersion","1.1.1");key.SetValue("Publisher","NR Studio (independent project)");key.SetValue("InstallLocation",Target);key.SetValue("DisplayIcon",Path.Combine(Target,"NRStudio.exe"));key.SetValue("UninstallString","\""+Path.Combine(Target,"Uninstall.exe")+"\" --uninstall");key.SetValue("NoModify",1);key.SetValue("NoRepair",1);}
    if(!silent) {
     if(NRStudio.Prerequisites.NeedsVC()) {int code=NRStudio.Prerequisites.InstallVC(Target);if(code!=0 && code!=3010 && code!=1638)throw new IOException("Visual C++ setup returned "+code+". Run prerequisites\\vc_redist.x64.exe before using NR.");}
     string gpu=NRStudio.Prerequisites.GpuInfo();

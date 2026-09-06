@@ -1,11 +1,14 @@
 # NR Studio — private engineering review
 
-Source snapshot of the local NR Studio 1.1 work, prepared 6 September 2026.
+Source snapshot of the local NR Studio 1.1.1 work, prepared 6 September 2026.
 This repository contains the desktop manager, installer/uninstaller, native NR
 forwarder, and the patch implementing the custom Insert overlay and capture fix.
 It includes compiled-code source; it does not contain the proprietary NVIDIA NR
 model, driver installers, redistributables, game files, or compiled release files.
 The NVIDIA model is a binary dependency and cannot be rebuilt from this repository.
+The current model fails Windows signature validation (HashMismatch). See
+[the audit](NRStudio/MODEL-AUDIT.md); a matching package hash does not establish
+official NVIDIA authenticity.
 
 The runtime is based on [OptiScaler_DLSSNR](https://github.com/Dagherbou/OptiScaler_DLSSNR)
 at commit `433cc11d8a6b92dfe4977de4dd88ffe0afbec781`. Our complete tracked changes
@@ -60,6 +63,10 @@ The second argument is a retained, unused placeholder. Tests create temporary
 game fixtures; they do not modify installed games. A source-only checkout can
 compile the tests but cannot execute them successfully without those binaries.
 
+`build\DiagnosticsTests.exe` runs seven additional source-only tests covering
+fresh versus historical native log evidence and failures. The app's Check
+runtime also queries Windows Authenticode separately from file hash matching.
+
 ## Installer packaging
 
 `NRStudio/build.py` is the original full packaging recipe, retained for inspection.
@@ -85,8 +92,8 @@ NRStudio describe earlier checks; they are not a new validation of every rebuild
 Native NR execution was observed on RTX 3090 with driver 616.56 in STALKER 2.
 A measured full-resolution 1440p scene ran about 19 FPS with NR and 69 FPS without;
 performance varies. This is not proof of official product parity or universal
-DX12 compatibility. The 7 Days to Die profile still needs native evaluation
-confirmation. Seeing sliders change the picture alone does not establish that.
+DX12 compatibility. The 7 Days to Die log now shows historical native evaluation
+success; broader visual and compatibility validation remain incomplete.
 
 GPL license text is in LICENSE; upstream dependencies retain their own licenses.
 Private repository access must be granted to the reviewing developer through

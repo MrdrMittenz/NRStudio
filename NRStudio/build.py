@@ -18,21 +18,23 @@ def compile(name, sources, target='winexe', extra=()):
                '/win32manifest:'+str(ROOT/'src/app.manifest')]
     subprocess.run(command + list(extra) + [str(ROOT/'src'/s) for s in sources], check=True)
 
-compile(APP/'NRStudio.exe', ['Core.cs','Prerequisites.cs','App.cs'])
+compile(APP/'NRStudio.exe', ['Core.cs','Prerequisites.cs','RuntimeDiagnostics.cs','App.cs'])
 compile(APP/'Uninstall.exe', ['Core.cs','Prerequisites.cs','Setup.cs'])
 compile(DIST/'Tests.exe', ['Core.cs','Tests.cs'], 'exe')
+compile(DIST/'DiagnosticsTests.exe', ['RuntimeDiagnostics.cs','DiagnosticsTests.cs'], 'exe')
 shutil.copy2(REF/'x64/Release/OptiScaler.dll', APP/'runtime/dxgi.dll')
 shutil.copy2(LAB/'native-nr-3090-v1/nvngx_dlssnr.dll', APP/'runtime/nvngx_dlssnr.dll')
 shutil.copy2(LAB/'native-nr-3090-v1/nvngx.dll_dlssnr.dll', APP/'runtime/nvngx.dll_dlssnr.dll')
 shutil.copy2(REF/'OptiScaler.ini', APP/'runtime/OptiScaler.ini')
 shutil.copy2(ROOT/'README.txt',APP/'README.txt')
+shutil.copy2(ROOT/'MODEL-AUDIT.md',APP/'MODEL-AUDIT.md')
 shutil.copy2(REF/'LICENSE',APP/'COPYING.txt')
 shutil.copytree(REF/'Licenses',APP/'Licenses',dirs_exist_ok=True)
 (APP/'prerequisites').mkdir(exist_ok=True)
 shutil.copy2(Path.home()/'Downloads/616.56-desktop-win10-win11-64bit-international-dch-whql.exe', APP/'prerequisites/NVIDIA-616.56.exe')
 shutil.copy2(r'C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\VC\Redist\MSVC\14.51.36231\vc_redist.x64.exe', APP/'prerequisites/vc_redist.x64.exe')
 shutil.copy2(ROOT.parent/'driver-transition/61656/EULA.txt', APP/'Licenses/NVIDIA-driver-EULA.txt')
-sourcezip=DIST/'NRStudio-1.1.0-corresponding-source.zip'
+sourcezip=DIST/'NRStudio-1.1.1-corresponding-source.zip'
 if (APP/'Source.zip').exists():
     shutil.move(str(APP/'Source.zip'), str(sourcezip))
 if not sourcezip.exists():
@@ -51,9 +53,9 @@ with zipfile.ZipFile(APP/'NRStudio-source.zip','w',zipfile.ZIP_DEFLATED) as z:
     for name in ['build.py','README.txt']: z.write(ROOT/name,name)
 manifest={str(p.relative_to(APP)).replace('\\','/'):hashlib.sha256(p.read_bytes()).hexdigest() for p in APP.rglob('*') if p.is_file() and p.name!='SHA256.json'}
 (APP/'SHA256.json').write_text(json.dumps(manifest,indent=2))
-portable=DIST/'NRStudio-1.1.0-complete-portable.zip'
+portable=DIST/'NRStudio-1.1.1-complete-portable.zip'
 with zipfile.ZipFile(portable,'w',zipfile.ZIP_DEFLATED,compresslevel=3) as z:
     for p in APP.rglob('*'):
         if p.is_file(): z.write(p,p.relative_to(APP),compress_type=zipfile.ZIP_STORED if p.parent.name=='prerequisites' else zipfile.ZIP_DEFLATED)
-compile(DIST/'NRStudio-Setup-1.1.0-Complete.exe',['Core.cs','Prerequisites.cs','Setup.cs'],extra=['/resource:'+str(portable)+',app.zip'])
-print('Built installer:', DIST/'NRStudio-Setup-1.1.0-Complete.exe',flush=True)
+compile(DIST/'NRStudio-Setup-1.1.1-Experimental.exe',['Core.cs','Prerequisites.cs','Setup.cs'],extra=['/resource:'+str(portable)+',app.zip'])
+print('Built installer:', DIST/'NRStudio-Setup-1.1.1-Experimental.exe',flush=True)
