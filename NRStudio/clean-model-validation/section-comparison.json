@@ -1,0 +1,44 @@
+[
+  {
+    "section": ".text",
+    "offset": "0x400",
+    "bytes": 699904,
+    "different_bytes": 25
+  },
+  {
+    "section": ".rdata",
+    "offset": "0xab200",
+    "bytes": 210944,
+    "different_bytes": 0
+  },
+  {
+    "section": ".data",
+    "offset": "0xdea00",
+    "bytes": 17180672,
+    "different_bytes": 16151311
+  },
+  {
+    "section": ".pdata",
+    "offset": "0x1141200",
+    "bytes": 34816,
+    "different_bytes": 0
+  },
+  {
+    "section": "_RDATA",
+    "offset": "0x1149a00",
+    "bytes": 512,
+    "different_bytes": 0
+  },
+  {
+    "section": ".rsrc",
+    "offset": "0x1149c00",
+    "bytes": 147697152,
+    "different_bytes": 0
+  },
+  {
+    "section": ".reloc",
+    "offset": "0x9e24a00",
+    "bytes": 5120,
+    "different_bytes": 0
+  }
+]

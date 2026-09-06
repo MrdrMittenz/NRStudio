@@ -1,5 +1,12 @@
 # NR model audit — 6 September 2026
 
+Update: the user supplied an NBA model with a **valid NVIDIA signature** and
+SHA-256 `e16bcf15e16e13f527491cdf7845b2fe6521a738d8f7c9c721866a8496e1fc8e`.
+It failed feature creation (`bad00001`) in the isolated probe on driver 616.56.
+The signed 616.64 driver installation is blocked by a pending Windows restart.
+The installed model described below remains unchanged. See
+[clean model validation](clean-model-validation/README.md) for the next test.
+
 The bundled file is an experimental third-party-sourced NVIDIA NR runtime.
 Native evaluation has been observed, but authenticity is not established.
 Do not describe this as a verified full official DLSS 5 implementation.
