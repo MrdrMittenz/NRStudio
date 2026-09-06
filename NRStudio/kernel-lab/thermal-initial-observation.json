@@ -1,0 +1,9 @@
+{
+  "source": "Transcribed from the initial exec tool output of nvidia-smi -q -d PERFORMANCE,TEMPERATURE,CLOCK; later thermal-check.txt is a separate cooled sample",
+  "timestamp_local": "2026-09-06 22:30:46",
+  "gpu_temperature_c": 85,
+  "sw_thermal_slowdown": "Active",
+  "sw_thermal_slowdown_counter_us": 11085558,
+  "gpu_target_temperature_c": 83,
+  "game_pid": 17996
+}
