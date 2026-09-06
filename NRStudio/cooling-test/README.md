@@ -34,3 +34,21 @@ The CPU diagnostic DLL is isolated here and must not be installed into the game
 or app. All deployed files remain unchanged. No additional speedup is claimed.
 Build CPU diagnostic with build_cpu.cmd; use the existing native_probe with the
 installed core/model and this directory's diagnostic forwarder for reproduction.
+
+## Fan-control smoke test, 2026-09-06
+
+The user authorized temporarily louder fans. Afterburner acknowledged manual
+80%, and its shared-memory readback showed fan_percent=80, fan_flags=0. After
+four seconds nvidia-smi reported 64% during the ramp (this sensor reports intended
+speed, not proof of physical RPM). Automatic mode was then restored and read
+back as fan_flags=1. Power limit remained 350 W. The GPU was at 46 C during this
+brief idle test. It does not establish performance or cooling under game load.
+
+STALKER was relaunched. game-benchmark/run_cooling.py prepares an automatic-fan
+30-second sample, then manual 80%, a 60-second cooling period and another
+30-second sample. It restores automatic fan mode in finally and verifies the
+mode readback. Fan/temperature/clock/thermal-slowdown telemetry is recorded.
+The loaded gameplay comparison is pending the user's ready signal.
+The earlier statement that write commands were untested describes the state
+before this smoke test; the commands have now completed with acknowledged
+manual and restored automatic mode.

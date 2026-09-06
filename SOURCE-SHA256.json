@@ -36,9 +36,14 @@
   "NRStudio/cooling-test/cpu-result.json": "2082da534f051a95328387c10a30d2114719f56442dcc15df81bb8308eacdb56",
   "NRStudio/cooling-test/cpu_forwarder.cpp": "50e419cda6b7fc82ad2a2323a1c5d2f257812f8c26d0214b137e664778a862fe",
   "NRStudio/cooling-test/dlssnr-native.log": "cc59acb8362c980a7f7ae71dc816d4f30fa87313818a214728d12e81af91c2d3",
+  "NRStudio/cooling-test/fan-80-command.txt": "9cd4ecd1285631fd79b55870d9c6ef3527fb9abfb73da13f56cd0db246ffdbc5",
+  "NRStudio/cooling-test/fan-80-readback.txt": "563d808816051590a49ad5e6bd92363c9c30c11ec1578fd6896b1775a2823516",
+  "NRStudio/cooling-test/fan-80-telemetry.csv": "2948554be4e3667a3d670465549639f713b7af374fbe82f7eb5f726bd9406619",
+  "NRStudio/cooling-test/fan-auto-readback.txt": "d81387a96b4d9ae804c7c4c1b1d849c9e60521acff2eccf751875292b4fde092",
+  "NRStudio/cooling-test/fan-auto-restore.txt": "b09f926852195eaeaa925dee1943dd890014626872ab9a407fb54f8b1c8f3ae8",
   "NRStudio/cooling-test/fanctl.cpp": "772f2e6e0cde7c75a49e347e797d5d7715964a8ee5e8a5b15785bb189d821c71",
   "NRStudio/cooling-test/initial-fan-state.txt": "666182ff2bf27a151948f462130fa61040913ab3cde493188c100558da0f13e4",
-  "NRStudio/cooling-test/README.md": "ed4a67c69845759514fbbba2e1c365176450b0c178901366188683355aab8cab",
+  "NRStudio/cooling-test/README.md": "9f4d629bd0f977317466636022987422a2ca936b5fc3ca9d79fa3770d8d5d721",
   "NRStudio/kernel-lab/analyze_post_instructions.py": "5d0d0d114558b4569549b2c32762b6540fd3bcd79cdcd2360e7b9040cd909b7d",
   "NRStudio/kernel-lab/arithmetic-variants-summary.json": "c7c4cac8bea61d81946270ade497a663a38b3c143c47cbf48f16767f6907828e",
   "NRStudio/kernel-lab/broad-kernel-comparison.json": "318caf57000990304c66b2614c7d4b54fff11eea7f03759607893102ab56807d",
@@ -354,5 +359,8 @@
   "NRStudio/kernel-lab/swin8-test-small/chain-timings.tsv": "8ef92f68105f4efd4cc457c89baee3d4df9e43a26ef72655ad94db00b6f6b5c5",
   "NRStudio/kernel-lab/swin8-test-small/kernel-counts.tsv": "c1bdbb246aab461ab3b6f5ce9980c836f4ede3aaa878b6be5f33613b8cad88b6",
   "NRStudio/kernel-lab/swin8-test-small/probe.txt": "ff28d2dff998a3f14d21d4697cda797a36fd6ed73e2846e590084a4b9052c7bf",
-  "NRStudio/kernel-lab/swin8-test-small/run.json": "e174e0be99494a7e4c81c5635259222078ed756edeb07251afd55fab9c18a2b7"
+  "NRStudio/kernel-lab/swin8-test-small/run.json": "e174e0be99494a7e4c81c5635259222078ed756edeb07251afd55fab9c18a2b7",
+  "NRStudio/cooling-test/game-benchmark/analyze.py": "adf3cb71d4ae82b58d05eb673143697c94ec112a4fd8074b5bfc067cf4f16079",
+  "NRStudio/cooling-test/game-benchmark/capture.py": "34729210a481a2024e90505db39721d6373da16dd18f568c793f44a62657a03e",
+  "NRStudio/cooling-test/game-benchmark/run_cooling.py": "21d8de0ab3922f1e9408b48680b580819278fb75a7171a4a7843af347c762409"
 }
