@@ -36,8 +36,15 @@ Inputs are synthetic; this does not establish equivalence in every game scene.
 
 Sustained isolated model tests measured approximately 4-5% lower summed GPU
 kernel time for the selected pair. This is not an in-game FPS measurement.
-See ../kernel-lab/direct-activation-results.json. Gameplay validation of this
-update is pending. The local STALKER forwarder and its installation journal
+See ../kernel-lab/direct-activation-results.json. The same-scene STALKER test
+measured 19.437 FPS previous versus 19.926 FPS new (+0.489 FPS, +2.51%). All
+24 logged evaluations succeeded at unchanged model/guide sizes. All trials
+held focus; the first two recorded input-timestamp changes. The last two were
+input-idle and showed a similar +2.55% difference. This remains one scene and
+two trials per mode, with presentation FPS rather than independently classified
+rendered/generated frames. See game-benchmark/direct01-REPORT.md. New mode was
+restored and acknowledged with subsequent candidate launches.
+The local STALKER forwarder and its installation journal
 were updated; the installed app's runtime and distributable installer have
 not yet been updated.
 

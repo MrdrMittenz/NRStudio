@@ -1,0 +1,184 @@
+{
+  "prefix": "direct01",
+  "pid": 13648,
+  "trials": [
+    {
+      "trial": "direct01-1-original",
+      "mode": "original",
+      "average_fps": 19.43446796259449,
+      "one_percent_low_fps": 16.024322785411883,
+      "mean_frame_ms": 51.45497175043328,
+      "frame_intervals": 577,
+      "controlled": false,
+      "foreground_valid": true,
+      "input_timestamp_changes": 1,
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "native_eval_samples": 6,
+      "native_failures": 0,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "gpu": {
+        "temperature.gpu": {
+          "min": 80.0,
+          "max": 82.0,
+          "mean": 80.3225806451613
+        },
+        "clocks.current.graphics [MHz]": {
+          "min": 1785.0,
+          "max": 1785.0,
+          "mean": 1785.0
+        },
+        "power.draw [W]": {
+          "min": 297.13,
+          "max": 309.6,
+          "mean": 302.74870967741936
+        }
+      }
+    },
+    {
+      "trial": "direct01-2-optimized",
+      "mode": "optimized",
+      "average_fps": 19.91657793304126,
+      "one_percent_low_fps": 18.82885760927484,
+      "mean_frame_ms": 50.209428716216216,
+      "frame_intervals": 592,
+      "controlled": false,
+      "foreground_valid": true,
+      "input_timestamp_changes": 2,
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "native_eval_samples": 6,
+      "native_failures": 0,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "gpu": {
+        "temperature.gpu": {
+          "min": 81.0,
+          "max": 82.0,
+          "mean": 81.35483870967742
+        },
+        "clocks.current.graphics [MHz]": {
+          "min": 1770.0,
+          "max": 1785.0,
+          "mean": 1784.032258064516
+        },
+        "power.draw [W]": {
+          "min": 304.42,
+          "max": 307.52,
+          "mean": 306.1
+        }
+      }
+    },
+    {
+      "trial": "direct01-3-optimized",
+      "mode": "optimized",
+      "average_fps": 19.93566783522402,
+      "one_percent_low_fps": 18.278121728025813,
+      "mean_frame_ms": 50.161349409780776,
+      "frame_intervals": 593,
+      "controlled": true,
+      "foreground_valid": true,
+      "input_timestamp_changes": 0,
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "native_eval_samples": 6,
+      "native_failures": 0,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "gpu": {
+        "temperature.gpu": {
+          "min": 82.0,
+          "max": 83.0,
+          "mean": 82.06451612903226
+        },
+        "clocks.current.graphics [MHz]": {
+          "min": 1770.0,
+          "max": 1785.0,
+          "mean": 1782.5806451612902
+        },
+        "power.draw [W]": {
+          "min": 303.23,
+          "max": 310.22,
+          "mean": 307.8583870967742
+        }
+      }
+    },
+    {
+      "trial": "direct01-4-original",
+      "mode": "original",
+      "average_fps": 19.440511627447364,
+      "one_percent_low_fps": 18.16632725911904,
+      "mean_frame_ms": 51.43897543252595,
+      "frame_intervals": 578,
+      "controlled": true,
+      "foreground_valid": true,
+      "input_timestamp_changes": 0,
+      "mode_acknowledged_before": true,
+      "mode_acknowledged_after": true,
+      "native_eval_samples": 6,
+      "native_failures": 0,
+      "model_sizes": [
+        "2560x1440"
+      ],
+      "guide_sizes": [
+        "1972x1108"
+      ],
+      "gpu": {
+        "temperature.gpu": {
+          "min": 81.0,
+          "max": 82.0,
+          "mean": 81.6
+        },
+        "clocks.current.graphics [MHz]": {
+          "min": 1770.0,
+          "max": 1785.0,
+          "mean": 1784.0
+        },
+        "power.draw [W]": {
+          "min": 304.06,
+          "max": 307.44,
+          "mean": 305.68766666666664
+        }
+      }
+    }
+  ],
+  "pooled": {
+    "original": {
+      "average_fps": 19.437491941539797,
+      "one_percent_low_fps": 17.022370373585705,
+      "mean_frame_ms": 51.44696666666667,
+      "frame_intervals": 1155
+    },
+    "optimized": {
+      "average_fps": 19.926126366751504,
+      "one_percent_low_fps": 18.549402701504093,
+      "mean_frame_ms": 50.18536877637131,
+      "frame_intervals": 1185
+    }
+  },
+  "observed_fps_difference": 0.48863442521170697,
+  "observed_percent_difference": 2.5138758986052556,
+  "all_trials_controlled": false,
+  "baseline": "Previous validated optimized post kernel and original swin8; NR remains enabled in both modes.",
+  "limitations": "Presentation intervals; generated frames not independently classified. Two trials per mode. Input timestamp changes cannot be attributed to a device or person by this monitor.",
+  "input_idle_pair": {
+    "previous_fps": 19.440511627447364,
+    "new_fps": 19.93566783522402,
+    "observed_percent_difference": 2.547032800708604,
+    "limitation": "One input-idle sample per mode; not an independent repeated benchmark."
+  },
+  "new_mode_restored_verified": true
+}

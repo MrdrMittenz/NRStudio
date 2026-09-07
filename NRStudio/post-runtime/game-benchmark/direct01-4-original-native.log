@@ -1,0 +1,21 @@
+pid=13648 tick=51763218 post-opt original launch=9600
+pid=13648 tick=51763937 evaluate frame=6240 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51765593 post-opt original launch=10200
+pid=13648 tick=51767968 post-opt original launch=10800
+pid=13648 tick=51770125 evaluate frame=6360 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51770328 post-opt original launch=11400
+pid=13648 tick=51772750 post-opt original launch=12000
+pid=13648 tick=51775109 post-opt original launch=12600
+pid=13648 tick=51776296 evaluate frame=6480 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51777484 post-opt original launch=13200
+pid=13648 tick=51779843 post-opt original launch=13800
+pid=13648 tick=51782203 post-opt original launch=14400
+pid=13648 tick=51782468 evaluate frame=6600 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51784578 post-opt original launch=15000
+pid=13648 tick=51786953 post-opt original launch=15600
+pid=13648 tick=51788640 evaluate frame=6720 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51789359 post-opt original launch=16200
+pid=13648 tick=51791718 post-opt original launch=16800
+pid=13648 tick=51794093 post-opt original launch=17400
+pid=13648 tick=51794812 evaluate frame=6840 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51796453 post-opt original launch=18000

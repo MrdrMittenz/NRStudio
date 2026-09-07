@@ -1,0 +1,22 @@
+pid=13648 tick=51690109 post-opt launch=52800 kernel=swin8 grid=21,12,1
+pid=13648 tick=51691609 evaluate frame=4800 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51692406 post-opt launch=53400 kernel=swin8 grid=20,12,1
+pid=13648 tick=51694718 post-opt launch=54000 kernel=swin8 grid=21,12,1
+pid=13648 tick=51697031 post-opt launch=54600 kernel=post grid=321,185,1
+pid=13648 tick=51697625 evaluate frame=4920 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51699375 post-opt launch=55200 kernel=swin8 grid=21,12,1
+pid=13648 tick=51701687 post-opt launch=55800 kernel=swin8 grid=20,12,1
+pid=13648 tick=51703640 evaluate frame=5040 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51703984 post-opt launch=56400 kernel=swin8 grid=21,12,1
+pid=13648 tick=51706296 post-opt launch=57000 kernel=swin8 grid=21,12,1
+pid=13648 tick=51708609 post-opt launch=57600 kernel=swin8 grid=20,12,1
+pid=13648 tick=51709671 evaluate frame=5160 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51710921 post-opt launch=58200 kernel=swin8 grid=21,12,1
+pid=13648 tick=51713281 post-opt launch=58800 kernel=swin8 grid=21,12,1
+pid=13648 tick=51715609 post-opt launch=59400 kernel=swin8 grid=20,12,1
+pid=13648 tick=51715703 evaluate frame=5280 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51717906 post-opt launch=60000 kernel=swin8 grid=21,12,1
+pid=13648 tick=51720218 post-opt launch=60600 kernel=swin8 grid=21,12,1
+pid=13648 tick=51721734 evaluate frame=5400 result=00000001 size=2560x1440 guides=1972x1108 reset=0
+pid=13648 tick=51722531 post-opt launch=61200 kernel=swin8 grid=20,12,1
+pid=13648 tick=51724843 post-opt launch=61800 kernel=swin8 grid=21,12,1

@@ -593,4 +593,7 @@ launches remain in original order; the rejected launch-grouping code is unused.
 The embedded runtime validation and STALKER deployment are in ../post-runtime.
 Every compared frame matched at 1080p, 1440p and 3072x1728; exports, disabled
 marker, function cleanup and live previous/candidate switch passed. The update
-awaits a same-scene game FPS comparison before installer rollout.
+was subsequently tested in STALKER: previous 19.437 FPS versus new 19.926 FPS
+(observed +2.51%). The final input-idle pair showed +2.55%; the first two samples
+had input timestamp changes. See ../post-runtime/game-benchmark/direct01-REPORT.md
+for limitations and measurements. Installer rollout remains pending.

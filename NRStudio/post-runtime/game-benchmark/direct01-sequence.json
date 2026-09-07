@@ -1,0 +1,30 @@
+[
+  {
+    "trial": "direct01-1-original",
+    "kernel_mode": "original",
+    "returncode": 1,
+    "input_idle": false,
+    "foreground_valid": true
+  },
+  {
+    "trial": "direct01-2-optimized",
+    "kernel_mode": "optimized",
+    "returncode": 1,
+    "input_idle": false,
+    "foreground_valid": true
+  },
+  {
+    "trial": "direct01-3-optimized",
+    "kernel_mode": "optimized",
+    "returncode": 0,
+    "input_idle": true,
+    "foreground_valid": true
+  },
+  {
+    "trial": "direct01-4-original",
+    "kernel_mode": "original",
+    "returncode": 0,
+    "input_idle": true,
+    "foreground_valid": true
+  }
+]
