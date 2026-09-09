@@ -4,6 +4,11 @@ using System.IO;
 using Microsoft.Win32;
 namespace NRStudio {
  public static class Prerequisites {
+  public static string SupportSummary(string info) {
+   bool ada=System.Text.RegularExpressions.Regex.IsMatch(info??"",@"\bRTX\s+40\d{2}\b",System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+   return ada ? "RTX 40-series: Ada runtime available; hardware validation pending. Performance versus RTX 3090 depends on GPU model, VRAM, resolution and game."
+    : "Runtime profiles: RTX 3090 and RTX 40-series (Ada). RTX 3090 tested with driver 616.64; Ada hardware validation pending.";
+  }
   public static string GpuInfo() {
    string smi=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),"nvidia-smi.exe");
    if(!File.Exists(smi))smi=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),@"NVIDIA Corporation\NVSMI\nvidia-smi.exe");
@@ -13,7 +18,7 @@ namespace NRStudio {
    }}catch(Exception e){return "NVIDIA driver check: "+e.Message;}
   }
   public static bool NeedsDriver(string info) {
-   foreach(string row in info.Split('\n')) {var columns=row.Split(',');Version version;if(columns.Length>1 && Version.TryParse(columns[1].Trim(),out version) && version>=new Version(616,56))return false;}
+   foreach(string row in info.Split('\n')) {var columns=row.Split(',');Version version;if(columns.Length>1 && Version.TryParse(columns[1].Trim(),out version) && version>=new Version(616,64))return false;}
    return true;
   }
   public static bool NeedsVC() {
@@ -22,6 +27,6 @@ namespace NRStudio {
    }
   }
   public static int InstallVC(string app) {using(var p=Process.Start(new ProcessStartInfo(Path.Combine(app,@"prerequisites\vc_redist.x64.exe"),"/install /passive /norestart"){UseShellExecute=true,Verb="runas"})) {p.WaitForExit();return p.ExitCode;}}
-  public static void InstallDriver(string app) {Process.Start(new ProcessStartInfo(Path.Combine(app,@"prerequisites\NVIDIA-616.56.exe")){UseShellExecute=true,Verb="runas"});}
+  public static void InstallDriver(string app) {Process.Start(new ProcessStartInfo(Path.Combine(app,@"prerequisites\NVIDIA-616.64.exe")){UseShellExecute=true,Verb="runas"});}
  }
 }

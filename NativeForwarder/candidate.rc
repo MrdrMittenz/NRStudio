@@ -1,0 +1,13 @@
+101 RCDATA "post.cubin"
+102 RCDATA "swin8.cubin"
+103 RCDATA "previous-post.cubin"
+201 RCDATA "post-ada.cubin"
+202 RCDATA "swin8-ada.cubin"
+
+104 RCDATA "baseline-swin8.cubin"
+105 RCDATA "baseline-post.cubin"
+
+106 RCDATA "prepared-post.cubin"
+107 RCDATA "prepare-weights.cubin"
+
+108 RCDATA "pre.cubin"

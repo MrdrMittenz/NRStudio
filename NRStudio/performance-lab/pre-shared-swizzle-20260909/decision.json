@@ -1,0 +1,26 @@
+{
+  "decision": "reject",
+  "reason": "No repeatable full-model gain; all three median comparisons slower",
+  "timings": [
+    {
+      "run": "alternate-timing01",
+      "control_model_ms": 39.034368,
+      "candidate_model_ms": 39.207936000000004,
+      "regression_percent": 0.4446543107858192
+    },
+    {
+      "run": "alternate-timing02",
+      "control_model_ms": 37.80403200000001,
+      "candidate_model_ms": 38.025216,
+      "regression_percent": 0.5850804485616701
+    },
+    {
+      "run": "alternate-timing03",
+      "control_model_ms": 38.06464,
+      "candidate_model_ms": 38.079488,
+      "regression_percent": 0.03900733068800122
+    }
+  ],
+  "candidate_sha256": "f28a232809d7167905d3199f57104d3356649c3b70dcd58e6275cf6eb3b9c56b",
+  "deployed": false
+}

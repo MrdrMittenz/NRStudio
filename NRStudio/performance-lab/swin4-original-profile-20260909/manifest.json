@@ -1,0 +1,21 @@
+{
+  "kernel": "cc_tinlayout_fused_swin_4h_128_4_chained_fp8",
+  "module": "C:\\Users\\ReviOSGaming\\AI-Work\\fp8-ampere-candidate\\tools\\nr_recovery\\modules\\module-2.2.sm_86.cubin",
+  "sha256": "38003c8804723e654fad73987c66f9676ee98d6bcb59625be637d4f16076cc3f",
+  "grid": [
+    41,
+    24,
+    1
+  ],
+  "block": [
+    32,
+    4,
+    1
+  ],
+  "param_bytes": 88,
+  "status": "Guarded multi-seed validation, memcheck and final Nsight profile completed",
+  "synthetic": true,
+  "harness_sha256": "f45d5d4cdb3a8defd6186eff7f44c6de83bf75a47bcacead80e094b7585fe4da",
+  "final_profile": "swin4-final.ncu-rep",
+  "candidate_deployed": false
+}

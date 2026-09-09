@@ -10,14 +10,57 @@ using System.Web.Script.Serialization;
 
 namespace NRStudio {
  public class Game { public string Name; public string Exe; public string LaunchArguments; public string Compatibility; public override string ToString() { return Name; } }
- public class Entry { public string Name; public string Original; public string Installed; }
- public class Journal { public string State; public List<Entry> Files = new List<Entry>(); }
+ public class Entry { public string Name; public string Original; public string Installed; public string PreviousInstalled; }
+ public class Journal { public string State; public List<Entry> Files = new List<Entry>(); public List<Entry> Options = new List<Entry>(); }
  public static class Core {
   public static string Home = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "NRStudio");
   public static string Payload = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runtime");
   public const string ModelHash = "8270b350cd82de5ce89806872cdd6b6a9249b80836b91bbeb3573470744cc206";
-  public const string ProxyHash = "8f085b570745b2a1577d39b8b9338bea76172fe3d4709899b1a3fb2b00063466";
-  public const string ForwardHash = "575cd0b5087bff6a9b97d32656c33f9a9d24533cf8f2b5b1810b3baf67b2074a";
+  public const string ProxyHash = "116df4a09899236f90862919475b0c4756fae0381a2d2378c48f047701354c5e";
+  public const string ForwardHash = "fd5ded22a0435303c60df26ce130411afe6c2fe2d99c6990a6c9ed0d70bc0950";
+  public const string BeforeMarker = "nr-before-upscale.enable", OptimizedMarker = "nr-post-opt.enable", PreparedMarker = "nr-prepared-post.enable", TimingMarker = "nr-gpu-timing.enable";
+  static byte[] MarkerBytes { get { return Encoding.UTF8.GetBytes("NR Studio per-game setting; applied at game launch\n"); } }
+  public static bool BeforeUpscaling(Game g) { return File.Exists(Path.Combine(Folder(g),BeforeMarker)); }
+  public static bool SupportsPlacement(Game g) {
+   string p=Path.Combine(Folder(g),"dxgi.dll"), f=Path.Combine(Folder(g),"nvngx.dll_dlssnr.dll");
+   return File.Exists(p) && File.Exists(f) && Hash(p)==ProxyHash && Hash(f)==ForwardHash;
+  }
+  static void CheckFile(string p) {
+   if(Directory.Exists(p) || (File.Exists(p) && (File.GetAttributes(p)&FileAttributes.ReparsePoint)!=0))
+    throw new IOException("Linked files or directories cannot be used as runtime settings: "+p);
+  }
+  // Option files are editable settings. Record their original state before the
+  // desktop or Insert UI changes them, including an originally absent marker.
+  static void TrackOption(Game g,Journal j,string name) {
+   if(j.Options==null)j.Options=new List<Entry>();
+   string p=Path.Combine(Folder(g),name);CheckFile(p);
+   if(j.Options.Any(e=>e.Name==name))return;
+   var e=new Entry{Name=name,Original=File.Exists(p)?Hash(p):null,Installed=File.Exists(p)?Hash(p):null};
+   if(e.Original!=null)Atomic(Path.Combine(Backup(g),name+".original"),File.ReadAllBytes(p));
+   j.Options.Add(e);
+  }
+  static void ConfigureFeeder(Game g,Journal j) {
+   string folder=Folder(g),p=Path.Combine(folder,"ReShade.ini");
+   if(!File.Exists(Path.Combine(folder,"dlss5-feed.addon64")) || !File.Exists(Path.Combine(folder,"renodx-dlss5.addon64")) || !File.Exists(p))return;
+   TrackOption(g,j,"ReShade.ini");Write(Record(g),j);
+   string ini=File.ReadAllText(p);
+   var disabled=GetIni(ini,"ADDON","DisabledAddons","").Split(',').Where(x=>!string.IsNullOrWhiteSpace(x)).ToList();
+   const string addon="@renodx-dlss5.addon64";
+   if(!disabled.Contains(addon))disabled.Add(addon);
+   Atomic(p,Encoding.UTF8.GetBytes(SetIni(ini,"ADDON","DisabledAddons",string.Join(",",disabled))));
+   j.Options.Single(e=>e.Name=="ReShade.ini").Installed=Hash(p);Write(Record(g),j);
+   string feed=Path.Combine(folder,"dlss5-feed.cfg");
+   if(File.Exists(feed)) {
+    TrackOption(g,j,"dlss5-feed.cfg");Write(Record(g),j);
+    string config=File.ReadAllText(feed);
+    foreach(string key in new[]{"create_delay","warmup_rebuild"}) {
+     string pattern="(?m)^"+key+"=[^\\r\\n]*";
+     if(System.Text.RegularExpressions.Regex.IsMatch(config,pattern))config=System.Text.RegularExpressions.Regex.Replace(config,pattern,key+"=0");
+     else config+="\r\n"+key+"=0\r\n";
+    }
+    Atomic(feed,Encoding.UTF8.GetBytes(config));j.Options.Single(e=>e.Name=="dlss5-feed.cfg").Installed=Hash(feed);Write(Record(g),j);
+   }
+  }
   public static string Model { get { string bundled=Path.Combine(Payload,"nvngx_dlssnr.dll");return File.Exists(bundled)?bundled:Path.Combine(Home,"model", "nvngx_dlssnr.dll"); } }
   public static string Hash(string p) { using(var s=File.OpenRead(p)) using(var h=SHA256.Create()) return BitConverter.ToString(h.ComputeHash(s)).Replace("-", "").ToLowerInvariant(); }
   public static T Read<T>(string p) { return new JavaScriptSerializer().Deserialize<T>(File.ReadAllText(p)); }
@@ -36,7 +79,15 @@ namespace NRStudio {
    SafePath(Folder(g)); SafePath(Backup(g));
    if(!File.Exists(g.Exe)) throw new IOException("Game executable was not found.");
    using(var r=new BinaryReader(File.OpenRead(g.Exe))) { if(r.ReadUInt16()!=0x5a4d) throw new IOException("Choose a Windows game executable."); r.BaseStream.Position=0x3c; int offset=r.ReadInt32(); if(offset<64 || offset>r.BaseStream.Length-6) throw new IOException("Invalid executable."); r.BaseStream.Position=offset; if(r.ReadUInt32()!=0x4550 || r.ReadUInt16()!=0x8664) throw new IOException("This runtime requires a 64-bit Windows game."); }
-   foreach(var p in Process.GetProcesses()) using(p) { try { string path=p.MainModule.FileName; if(path.StartsWith(Folder(g)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)) throw new InvalidOperationException("Close the game before changing its installation or settings."); } catch(System.ComponentModel.Win32Exception) {} catch(NotSupportedException) {} }
+   foreach(var p in Process.GetProcesses()) using(p) {
+    string path;
+    try { path=p.MainModule.FileName; }
+    catch(System.ComponentModel.Win32Exception) { continue; }
+    catch(NotSupportedException) { continue; }
+    catch(InvalidOperationException) { continue; } // process exited between enumeration and inspection
+    if(path.StartsWith(Folder(g)+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
+     throw new InvalidOperationException("Close the game before changing its installation or settings.");
+   }
   }
   public static void ImportModel(string p) {
    if(Hash(p)!=ModelHash) throw new IOException("This model does not match the validated runtime. Expected SHA-256 "+ModelHash+".");
@@ -58,10 +109,15 @@ namespace NRStudio {
    return string.Join("\r\n",lines);
   }
   public static string Defaults(string ini) {
-   foreach(var kv in new Dictionary<string,string>{{"Enabled","true"},{"TransferStrength","0.75"},{"ColourStrength","0.50"},{"WorkingScale","1.0"},{"AutoCapture","false"}}) ini=SetIni(ini,"DlssNr",kv.Key,kv.Value);
+   foreach(var kv in new Dictionary<string,string>{{"Enabled","true"},{"TransferStrength","0.75"},{"ColourStrength","0.50"},{"WorkingScale","1.0"},{"ComposeMode","0"},{"ResidualTone","1.0"},{"ResidualDetail","1.0"},{"AutoCapture","false"}}) ini=SetIni(ini,"DlssNr",kv.Key,kv.Value);
    ini=SetIni(ini,"Menu","OverlayMenu","true"); return SetIni(ini,"Menu","ShortcutKey","0x2D");
   }
-  static void ValidateJournal(Journal j) { string[] allowed={"dxgi.dll","nvngx.dll_dlssnr.dll","nvngx_dlssnr.dll","OptiScaler.ini"}; if(j==null || j.Files==null || j.Files.Count!=4 || j.Files.Select(e=>e.Name).Distinct().Count()!=4 || j.Files.Any(e=>!allowed.Contains(e.Name))) throw new IOException("Invalid installation record. Backups have been preserved."); }
+  static void ValidateJournal(Journal j) {
+   string[] allowed={"dxgi.dll","nvngx.dll_dlssnr.dll","nvngx_dlssnr.dll","OptiScaler.ini"};
+   if(j==null || j.Files==null || j.Files.Any(e=>e==null) || j.Files.Select(e=>e.Name).Distinct().Count()!=j.Files.Count || allowed.Any(n=>!j.Files.Any(e=>e.Name==n)) || j.Files.Any(e=>!allowed.Contains(e.Name) && e.Name!="ReShade64.dll")) throw new IOException("Invalid installation record. Backups have been preserved.");
+   if(j.Options==null)j.Options=new List<Entry>();
+   if(j.Options.Any(e=>e==null || (e.Name!=BeforeMarker && e.Name!=OptimizedMarker && e.Name!=PreparedMarker && e.Name!=TimingMarker && e.Name!="ReShade.ini" && e.Name!="dlss5-feed.cfg")) || j.Options.Select(e=>e.Name).Distinct().Count()!=j.Options.Count)throw new IOException("Invalid option record. Backups have been preserved.");
+  }
   public static string Status(Game g) { if(!File.Exists(Record(g))) return "Not managed"; return Read<Journal>(Record(g)).State; }
   public static void Install(Game g) {
    CheckGame(g);
@@ -71,44 +127,106 @@ namespace NRStudio {
    string proxy=Path.Combine(Payload,"dxgi.dll"), forward=Path.Combine(Payload,"nvngx.dll_dlssnr.dll");
    if(Hash(proxy)!=ProxyHash || Hash(forward)!=ForwardHash) throw new IOException("Runtime integrity check failed. Reinstall NR Studio.");
    var sources=new Dictionary<string,string>{{"dxgi.dll",proxy},{"nvngx.dll_dlssnr.dll",forward},{"nvngx_dlssnr.dll",Model},{"OptiScaler.ini",Path.Combine(Payload,"OptiScaler.ini")}};
-   foreach(var name in sources.Keys) { string p=Path.Combine(Folder(g),name); if(File.Exists(p) && (File.GetAttributes(p)&FileAttributes.ReparsePoint)!=0) throw new IOException("Linked runtime files are not supported."); }
+   foreach(var name in sources.Keys) CheckFile(Path.Combine(Folder(g),name));
    string existing=Path.Combine(Folder(g),"dxgi.dll");
-   if(File.Exists(existing) && Hash(existing)!=ProxyHash && FileVersionInfo.GetVersionInfo(existing).OriginalFilename!="OptiScaler.dll") throw new IOException("An existing dxgi.dll belongs to another or unidentified mod. Resolve that proxy conflict before installing NR.");
+   bool chainReshade=false;
+   if(File.Exists(existing) && Hash(existing)!=ProxyHash) {
+    var version=FileVersionInfo.GetVersionInfo(existing);
+    chainReshade=string.Equals(version.OriginalFilename,"ReShade64.dll",StringComparison.OrdinalIgnoreCase) && string.Equals(version.ProductName,"ReShade",StringComparison.OrdinalIgnoreCase);
+    if(!chainReshade && version.OriginalFilename!="OptiScaler.dll") throw new IOException("An existing dxgi.dll belongs to another or unidentified mod. Resolve that proxy conflict before installing NR.");
+    if(chainReshade) {
+     string chained=Path.Combine(Folder(g),"ReShade64.dll");CheckFile(chained);
+     if(File.Exists(chained) && Hash(chained)!=Hash(existing))throw new IOException("A different ReShade64.dll already exists. Installation stopped to preserve both ReShade versions.");
+     sources.Add("ReShade64.dll",existing);
+    }
+   }
    Directory.CreateDirectory(Backup(g)); var j=new Journal{State="Installing"};
    // Save every original and every desired file before changing anything in the game folder.
    foreach(var kv in sources) {
     string dest=Path.Combine(Folder(g),kv.Key); var e=new Entry{Name=kv.Key,Original=File.Exists(dest)?Hash(dest):null};
     if(e.Original!=null) File.Copy(dest,Path.Combine(Backup(g),kv.Key+".original"));
     byte[] data=kv.Key=="OptiScaler.ini"?Encoding.UTF8.GetBytes(File.Exists(dest)?File.ReadAllText(dest):Defaults(File.ReadAllText(kv.Value))):File.ReadAllBytes(kv.Value);
+    if(chainReshade && kv.Key=="OptiScaler.ini")data=Encoding.UTF8.GetBytes(SetIni(Encoding.UTF8.GetString(data),"Plugins","LoadReshade","true"));
     string stage=Path.Combine(Backup(g),kv.Key+".new"); Atomic(stage,data); e.Installed=Hash(stage); j.Files.Add(e);
    }
+   TrackOption(g,j,BeforeMarker);TrackOption(g,j,OptimizedMarker);TrackOption(g,j,PreparedMarker);TrackOption(g,j,TimingMarker);
    Write(Record(g),j);
    foreach(var e in j.Files) Atomic(Path.Combine(Folder(g),e.Name),File.ReadAllBytes(Path.Combine(Backup(g),e.Name+".new")));
+   Atomic(Path.Combine(Folder(g),OptimizedMarker),MarkerBytes);
+   j.Options.Single(e=>e.Name==OptimizedMarker).Installed=Hash(Path.Combine(Folder(g),OptimizedMarker));
+   Atomic(Path.Combine(Folder(g),PreparedMarker),MarkerBytes);
+   j.Options.Single(e=>e.Name==PreparedMarker).Installed=Hash(Path.Combine(Folder(g),PreparedMarker));
+   ConfigureFeeder(g,j);
    j.State="Installed"; Write(Record(g),j);
+  }
+  public static void InstallOrUpdate(Game g) { if(File.Exists(Record(g)))UpdateRuntime(g);else Install(g); }
+  public static void UpdateRuntime(Game g) {
+   CheckGame(g);var j=Read<Journal>(Record(g));ValidateJournal(j);
+   if(j.State!="Installed")throw new IOException("Restore the incomplete installation before updating.");
+   var expected=new Dictionary<string,string>{{"dxgi.dll",ProxyHash},{"nvngx.dll_dlssnr.dll",ForwardHash},{"nvngx_dlssnr.dll",ModelHash}};
+   foreach(var pair in expected) {
+    string target=Path.Combine(Folder(g),pair.Key),source=pair.Key=="nvngx_dlssnr.dll"?Model:Path.Combine(Payload,pair.Key);
+    CheckFile(target);
+    if(!File.Exists(source) || Hash(source)!=pair.Value)throw new IOException("Runtime integrity check failed. Reinstall NR Studio.");
+    if(!File.Exists(target) || Hash(target)!=j.Files.Single(e=>e.Name==pair.Key).Installed)throw new IOException(pair.Key+" changed outside NR Studio. Update stopped to preserve that change.");
+   }
+   TrackOption(g,j,BeforeMarker);TrackOption(g,j,OptimizedMarker);TrackOption(g,j,PreparedMarker);TrackOption(g,j,TimingMarker);
+   foreach(var pair in expected) {
+    var e=j.Files.Single(x=>x.Name==pair.Key);e.PreviousInstalled=e.Installed;e.Installed=pair.Value;
+    string source=pair.Key=="nvngx_dlssnr.dll"?Model:Path.Combine(Payload,pair.Key);
+    Atomic(Path.Combine(Backup(g),pair.Key+".new"),File.ReadAllBytes(source));
+   }
+   j.State="Updating";Write(Record(g),j);
+   foreach(var pair in expected)if(Hash(Path.Combine(Folder(g),pair.Key))!=pair.Value)
+    Atomic(Path.Combine(Folder(g),pair.Key),File.ReadAllBytes(Path.Combine(Backup(g),pair.Key+".new")));
+   Atomic(Path.Combine(Folder(g),OptimizedMarker),MarkerBytes);
+   j.Options.Single(e=>e.Name==OptimizedMarker).Installed=Hash(Path.Combine(Folder(g),OptimizedMarker));
+   Atomic(Path.Combine(Folder(g),PreparedMarker),MarkerBytes);
+   j.Options.Single(e=>e.Name==PreparedMarker).Installed=Hash(Path.Combine(Folder(g),PreparedMarker));
+   foreach(var e in j.Files)e.PreviousInstalled=null;
+   ConfigureFeeder(g,j);
+   j.State="Installed";Write(Record(g),j);
   }
   public static void Restore(Game g) {
    CheckGame(g); var j=Read<Journal>(Record(g)); ValidateJournal(j);
-   foreach(var e in j.Files) {
+   foreach(var e in j.Files.Concat(j.Options)) {
     string p=Path.Combine(Folder(g),e.Name); if(File.Exists(p) && (File.GetAttributes(p)&FileAttributes.ReparsePoint)!=0) throw new IOException("Linked runtime files are not supported.");
     if(e.Original!=null && Hash(Path.Combine(Backup(g),e.Name+".original"))!=e.Original) throw new IOException("Backup integrity failed: "+e.Name);
-    if(File.Exists(p) && e.Name!="OptiScaler.ini") { string h=Hash(p); if(h!=e.Installed && h!=e.Original) throw new IOException(e.Name+" changed outside NR Studio. Restore was stopped to preserve that change."); }
+    CheckFile(p);
+    if(File.Exists(p) && e.Name.EndsWith(".dll",StringComparison.OrdinalIgnoreCase)) { string h=Hash(p); if(h!=e.Installed && h!=e.Original && !((j.State=="Updating" || j.State=="Restoring") && h==e.PreviousInstalled)) throw new IOException(e.Name+" changed outside NR Studio. Restore was stopped to preserve that change."); }
    }
    j.State="Restoring"; Write(Record(g),j);
-   foreach(var e in j.Files) {
+   foreach(var e in j.Files.Concat(j.Options)) {
     string p=Path.Combine(Folder(g),e.Name);
     if(e.Name=="OptiScaler.ini" && File.Exists(p)) File.Copy(p,Path.Combine(Backup(g),"settings-at-restore-"+Guid.NewGuid().ToString("N")+".ini"));
+    if(j.Options.Contains(e) && File.Exists(p))File.Copy(p,Path.Combine(Backup(g),"option-at-restore-"+Guid.NewGuid().ToString("N")+"-"+e.Name));
     if(e.Original!=null) Atomic(p,File.ReadAllBytes(Path.Combine(Backup(g),e.Name+".original"))); else if(File.Exists(p)) File.Delete(p);
    }
    j.State="Restored"; Write(Record(g),j);
    Directory.Move(Backup(g),Backup(g)+"-restored-"+DateTime.UtcNow.ToString("yyyyMMddHHmmssfff"));
   }
-  public static void SaveSettings(Game g,Dictionary<string,string> values) {
+  public static void SaveSettings(Game g,Dictionary<string,string> values,bool? beforeUpscaling=null) {
    CheckGame(g); string p=Path.Combine(Folder(g),"OptiScaler.ini"); if(!File.Exists(p)) throw new IOException("Install NR first.");
+   CheckFile(p);string marker=Path.Combine(Folder(g),BeforeMarker);CheckFile(marker);
    if(File.Exists(Record(g)) && Status(g)!="Installed") throw new IOException("Restore the incomplete installation first.");
+   if(beforeUpscaling==true && !SupportsPlacement(g))throw new IOException("Click Install / update NR for this game before selecting Before upscaling.");
+   Journal journal=null;
+   if(beforeUpscaling.HasValue && File.Exists(Record(g))) {
+    journal=Read<Journal>(Record(g));ValidateJournal(journal);TrackOption(g,journal,BeforeMarker);Write(Record(g),journal);
+   }
    string text=File.ReadAllText(p); foreach(var kv in values) text=SetIni(text,"DlssNr",kv.Key,kv.Value);
    text=SetIni(text,"Menu","OverlayMenu","true"); text=SetIni(text,"Menu","ShortcutKey","0x2D");
    string backups=Path.Combine(Home,"settings-backups"); Directory.CreateDirectory(backups);
-   File.Copy(p,Path.Combine(backups,Guid.NewGuid().ToString("N")+".ini")); Atomic(p,Encoding.UTF8.GetBytes(text));
+   string id=Guid.NewGuid().ToString("N");byte[] oldIni=File.ReadAllBytes(p),oldMarker=File.Exists(marker)?File.ReadAllBytes(marker):null;
+   Atomic(Path.Combine(backups,id+".ini"),oldIni);
+   if(beforeUpscaling.HasValue)Write(Path.Combine(backups,id+".placement.json"),new {Game=g.Exe,BeforeUpscaling=oldMarker!=null,MarkerBytes=oldMarker==null?null:Convert.ToBase64String(oldMarker)});
+   try {
+    Atomic(p,Encoding.UTF8.GetBytes(text));
+    if(beforeUpscaling==true)Atomic(marker,MarkerBytes);else if(beforeUpscaling==false && File.Exists(marker))File.Delete(marker);
+    if(journal!=null){journal.Options.Single(e=>e.Name==BeforeMarker).Installed=File.Exists(marker)?Hash(marker):null;Write(Record(g),journal);}
+   } catch {
+    Atomic(p,oldIni);if(beforeUpscaling.HasValue){if(oldMarker!=null)Atomic(marker,oldMarker);else if(File.Exists(marker))File.Delete(marker);}throw;
+   }
   }
  }
 }

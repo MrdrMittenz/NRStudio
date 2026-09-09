@@ -1,0 +1,22 @@
+[
+  {
+    "name": "default-o3",
+    "loads_changed": 0,
+    "optimization_level": 3
+  },
+  {
+    "name": "schedule-o2",
+    "loads_changed": 0,
+    "optimization_level": 2
+  },
+  {
+    "name": "l2-loads",
+    "loads_changed": 65,
+    "optimization_level": 3
+  },
+  {
+    "name": "stream-loads",
+    "loads_changed": 65,
+    "optimization_level": 3
+  }
+]

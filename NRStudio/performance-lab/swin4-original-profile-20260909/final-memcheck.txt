@@ -1,0 +1,14 @@
+========= COMPUTE-SANITIZER
+attribute=4 value=168
+attribute=3 value=56
+attribute=1 value=8192
+run=0 gpu_ms=3.794944
+run=1 gpu_ms=4.594688
+run=2 gpu_ms=3.769344
+run=3 gpu_ms=3.763136
+run=4 gpu_ms=3.696640
+run=5 gpu_ms=3.980032
+run=6 gpu_ms=3.689472
+run=7 gpu_ms=3.707904
+guards and completion flags PASS
+========= ERROR SUMMARY: 0 errors

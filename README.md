@@ -1,6 +1,6 @@
 # NR Studio — private engineering review
 
-Source snapshot of the local NR Studio 1.1.1 work, prepared 6 September 2026.
+Source snapshot of the local NR Studio 1.3.4 Experimental work, updated 9 September 2026.
 This repository contains the desktop manager, installer/uninstaller, native NR
 forwarder, and the patch implementing the custom Insert overlay and capture fix.
 It includes compiled-code source; it does not contain the proprietary NVIDIA NR
@@ -15,13 +15,20 @@ at commit `433cc11d8a6b92dfe4977de4dd88ffe0afbec781`. Our complete tracked chang
 are in `patches/optiscaler.patch`. `UPSTREAM.txt` records dependency commits.
 NR Studio is independent of NVIDIA and the upstream maintainers.
 
+## Latest measured status
+
+The installed cumulative runtime is 1.3.4. Previous gains remain enabled. See
+[the September 9 update](NRStudio/ENGINEERING-20260909.md) for current evidence,
+frame-generation latency measurements, rejected experiments and remaining work.
+No new installer or GitHub release is published by this source update.
+
 ## Build the review code
 
 Use Windows x64, Python 3, Git, Visual Studio Build Tools with C++ tools, Windows
 SDK, Roslyn C# compiler and .NET Framework 4.8 development support. The local
 OptiScaler build used MSVC v145; the forwarder used MSVC 14.38 (v143).
 
-1. Clone this private repository. Run `python prepare_upstream.py` from its root.
+1. Clone this repository. Run `python prepare_upstream.py` from its root.
    This obtains the pinned upstream and submodules and applies our patch.
 2. In an x64 Visual Studio developer command prompt with v145 available, run:
 
@@ -38,14 +45,13 @@ OptiScaler build used MSVC v145; the forwarder used MSVC 14.38 (v143).
    python build_review.py --csc "C:\Program Files (x86)\Microsoft Visual Studio\18\BuildTools\MSBuild\Current\Bin\Roslyn\csc.exe"
    ```
 
-4. In an x64 developer prompt configured for MSVC 14.38, compile the saved
-   forwarder directly (do not regenerate it from an older upstream template):
-
-   ```bat
-   cd build
-   cl /nologo /EHsc /O2 /LD ..\NativeForwarder\native_forwarder.cpp /Fe:nvngx.dll_dlssnr.dll /link d3d12.lib
-   cd ..
-   ```
+4. The current forwarder source and resource manifest are in `NativeForwarder`.
+   It requires separately supplied matching cubins listed in `candidate.rc`,
+   the pinned upstream NVAPI headers and Detours library, and MSVC 14.38.
+   Adjust workstation paths in `build.cmd` before using it on another machine.
+   The proprietary/recovered kernel binaries and PTX are excluded from this
+   source repository; a fresh clone cannot build the complete native runtime.
+   The previous single-file forwarder build command is no longer sufficient.
 
 The output `nvngx.dll_dlssnr.dll` is the forwarder. The separately obtained
 `nvngx_dlssnr.dll` is the original model. They are different files.

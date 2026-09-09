@@ -1,3 +1,79 @@
+diff --git a/OptiScaler/Config.cpp b/OptiScaler/Config.cpp
+index 690cdab..19cb9a2 100644
+--- a/OptiScaler/Config.cpp
++++ b/OptiScaler/Config.cpp
+@@ -320,6 +320,9 @@ bool Config::Reload(std::filesystem::path iniPath)
+             DlssNrToggleKey.set_from_config(readInt("DlssNr", "ToggleKey"));
+             DlssNrTransferStrength.set_from_config(readFloat("DlssNr", "TransferStrength"));
+             DlssNrColourStrength.set_from_config(readFloat("DlssNr", "ColourStrength"));
++            DlssNrComposeMode.set_from_config(readUInt("DlssNr", "ComposeMode"));
++            DlssNrResidualTone.set_from_config(readFloat("DlssNr", "ResidualTone"));
++            DlssNrResidualDetail.set_from_config(readFloat("DlssNr", "ResidualDetail"));
+             DlssNrMaxRatio.set_from_config(readFloat("DlssNr", "MaxRatio"));
+             DlssNrDebugView.set_from_config(readUInt("DlssNr", "DebugView"));
+             DlssNrCompare.set_from_config(readUInt("DlssNr", "Compare"));
+@@ -1192,6 +1195,9 @@ bool Config::SaveIni()
+     ini.SetValue("DlssNr", "TagScale",
+                  GetFloatValue(Instance()->DlssNrTagScale.value_for_config()).c_str());
+     ini.SetValue("DlssNr", "WorkingScale", GetFloatValue(Instance()->DlssNrWorkingScale.value_for_config()).c_str());
++    ini.SetValue("DlssNr", "ComposeMode", GetIntValue(Instance()->DlssNrComposeMode.value_for_config()).c_str());
++    ini.SetValue("DlssNr", "ResidualTone", GetFloatValue(Instance()->DlssNrResidualTone.value_for_config()).c_str());
++    ini.SetValue("DlssNr", "ResidualDetail", GetFloatValue(Instance()->DlssNrResidualDetail.value_for_config()).c_str());
+     ini.SetValue("DlssNr", "AutoCapture", GetBoolValue(Instance()->DlssNrAutoCapture.value_for_config()).c_str());
+     ini.SetValue("DlssNr", "WhitePointScale",
+                  GetFloatValue(Instance()->DlssNrWhitePointScale.value_for_config()).c_str());
+diff --git a/OptiScaler/Config.h b/OptiScaler/Config.h
+index 5fce41d..bac5353 100644
+--- a/OptiScaler/Config.h
++++ b/OptiScaler/Config.h
+@@ -275,6 +275,9 @@ class Config
+     // exaggerating an edit is the only honest way to see whether there is one.
+     CustomOptional<float> DlssNrTransferStrength { 1.0f };
+     CustomOptional<float> DlssNrColourStrength { 1.0f };
++    CustomOptional<uint32_t> DlssNrComposeMode { 0 };
++    CustomOptional<float> DlssNrResidualTone { 1.0f };
++    CustomOptional<float> DlssNrResidualDetail { 1.0f };
+ 
+ 
+     // The most the pass may multiply or divide a pixel by. A detail pass has no business restyling a
+diff --git a/OptiScaler/dlssnr/DlssNrFeature_Dx12.h b/OptiScaler/dlssnr/DlssNrFeature_Dx12.h
+index 4443a44..18163de 100644
+--- a/OptiScaler/dlssnr/DlssNrFeature_Dx12.h
++++ b/OptiScaler/dlssnr/DlssNrFeature_Dx12.h
+@@ -1,6 +1,7 @@
+ #pragma once
+ 
+ #include <d3d12.h>
++#include <mutex>
+ 
+ #include <shaders/dlssnr/DlssNr_Common.h>
+ #include <nvsdk_ngx.h>
+@@ -41,6 +42,25 @@ void EvaluateAfterUpscale(ID3D12GraphicsCommandList* cmdList, NVSDK_NGX_Paramete
+ 
+ 
+ 
++
++// Experimental placement, fixed for the process lifetime. The menu writes a
++// next-launch marker so changing the pipeline never invalidates DLSS history live.
++bool BeforeUpscaleActive();
++bool BeforeUpscaleRequested();
++bool SetBeforeUpscaleRequested(bool enabled);
++class ScopedBeforeUpscale {
++    std::unique_lock<std::mutex> lock_;
++    NVSDK_NGX_Parameter* params_ = nullptr;
++    ID3D12Resource* original_ = nullptr;
++    unsigned originalX_ = 0, originalY_ = 0;
++    bool applied_ = false;
++public:
++    ScopedBeforeUpscale(ID3D12GraphicsCommandList* cmd, NVSDK_NGX_Parameter* params,
++                       unsigned featureHandle, bool superSampling);
++    ~ScopedBeforeUpscale();
++    bool Applied() const { return applied_; }
++};
++
+ // The settings panel, drawn inside OptiScaler's menu.
+ void RenderMenu(::Config* config, float menuResScale);
+ 
 diff --git a/OptiScaler/dlssnr/DlssNr_Capture.h b/OptiScaler/dlssnr/DlssNr_Capture.h
 index 196a724..18c337a 100644
 --- a/OptiScaler/dlssnr/DlssNr_Capture.h
@@ -20,10 +96,10 @@ index 196a724..18c337a 100644
              std::fprintf(f, "Consecutive frames, same run, so the pair is a control.\n");
              std::fclose(f);
 diff --git a/OptiScaler/dlssnr/DlssNr_Menu.cpp b/OptiScaler/dlssnr/DlssNr_Menu.cpp
-index b212414..c7b1920 100644
+index b212414..909224d 100644
 --- a/OptiScaler/dlssnr/DlssNr_Menu.cpp
 +++ b/OptiScaler/dlssnr/DlssNr_Menu.cpp
-@@ -65,6 +65,95 @@ static bool DeferredSlider(const char* label, CustomOptional<float>* opt, float
+@@ -65,6 +65,113 @@ static bool DeferredSlider(const char* label, CustomOptional<float>* opt, float
      return false;
  }
  
@@ -93,6 +169,24 @@ index b212414..c7b1920 100644
 +            if (ImGui::Checkbox("Label original and NR", &tags)) config->DlssNrCompareTags = tags;
 +        }
 +
++        ImGui::SeparatorText("Experimental performance");
++        const char* composeModes[] = { "Current composition", "Matched residual (experimental)" };
++        int composeMode = config->DlssNrComposeMode.value_or_default() == 1 ? 1 : 0;
++        if (ImGui::Combo("Composition", &composeMode, composeModes, 2))
++            config->DlssNrComposeMode = static_cast<uint32_t>(composeMode);
++        if (composeMode == 1)
++        {
++            live("Residual tone", &config->DlssNrResidualTone, 0.0f, 2.0f);
++            live("Residual detail", &config->DlssNrResidualDetail, 0.0f, 2.0f);
++            ImGui::TextWrapped("Adds the model's matched edit to the original frame. Tone controls broad changes; detail controls finer changes. Lower resolution can change the result: compare fine patterns and motion before choosing a scale.");
++        }
++        bool upstreamRequested = BeforeUpscaleRequested();
++        if (ImGui::Checkbox("NR before upscaling (restart required)", &upstreamRequested))
++            SetBeforeUpscaleRequested(upstreamRequested);
++        ImGui::TextWrapped("Runs NR on the smaller image before DLSS. Compare detail and motion quality. NR still runs every frame.");
++        ImGui::TextDisabled("Requested placement: %s", BeforeUpscaleActive() ? "before upscaling" : "after upscaling");
++        if (BeforeUpscaleActive() != BeforeUpscaleRequested())
++            ImGui::TextWrapped("Restart the game to apply the new placement.");
 +        ImGui::SeparatorText("Model quality and cost");
 +        ImGui::TextWrapped("These changes rebuild the model. Sliders apply when released to avoid rebuilding on every drag step.");
 +        DeferredSlider("Resolution scale (1 = 100%)", &config->DlssNrWorkingScale, 0.25f, 1.0f);
@@ -119,6 +213,49 @@ index b212414..c7b1920 100644
  void RenderMenu(Config* config, float menuResScale)
  {
  
+diff --git a/OptiScaler/inputs/NVNGX_DLSS_Dx12.cpp b/OptiScaler/inputs/NVNGX_DLSS_Dx12.cpp
+index a0c4ed2..963743a 100644
+--- a/OptiScaler/inputs/NVNGX_DLSS_Dx12.cpp
++++ b/OptiScaler/inputs/NVNGX_DLSS_Dx12.cpp
+@@ -689,7 +689,7 @@ static NVSDK_NGX_Result TryCreateOptiFeature(ID3D12GraphicsCommandList* InCmdLis
+ 
+         D3D12Hooks::SetRootSignatureTracking(true);
+ 
+-        // Partial cleanup � handle is allocated but context is incomplete
++        // Partial cleanup ï¿½ handle is allocated but context is incomplete
+         Dx12Contexts.erase(handleId);
+         return NVSDK_NGX_Result_Fail;
+     }
+@@ -1149,6 +1149,7 @@ NVSDK_NGX_API NVSDK_NGX_Result NVSDK_NGX_D3D12_EvaluateFeature(ID3D12GraphicsCom
+         {
+             LOG_DEBUG("Passthrough to native DLSS EvaluateFeature for handle {}", handleId);
+ 
++            DlssNr::ScopedBeforeUpscale nrBefore(InCmdList, InParameters, handleId, feature == NVSDK_NGX_Feature_SuperSampling);
+             NVSDK_NGX_Result result =
+                 NVNGXProxy::D3D12_EvaluateFeature()(InCmdList, InFeatureHandle, InParameters, InCallback);
+             LOG_DEBUG("Native DLSS EvaluateFeature result: 0x{:X}", (uint32_t) result);
+@@ -1158,7 +1159,7 @@ NVSDK_NGX_API NVSDK_NGX_Result NVSDK_NGX_D3D12_EvaluateFeature(ID3D12GraphicsCom
+             // rendered frame. The feature check is the point: frame generation is handed depth and
+             // motion vectors too, and its handle can reach here because the branch above does not
+             // return, so filtering on the parameter block alone would run the model twice a frame.
+-            if (result == NVSDK_NGX_Result_Success && feature != NVSDK_NGX_Feature_FrameGeneration)
++            if (result == NVSDK_NGX_Result_Success && feature != NVSDK_NGX_Feature_FrameGeneration && !nrBefore.Applied())
+                 DlssNr::EvaluateAfterUpscale(InCmdList, InParameters);
+ 
+             return result;
+@@ -1182,10 +1183,11 @@ NVSDK_NGX_API NVSDK_NGX_Result NVSDK_NGX_D3D12_EvaluateFeature(ID3D12GraphicsCom
+         InParameters->Set("DLSSG.CameraFar", lastDlssgCameraFar.value());
+ 
+     // OptiScaler internal handling
++    DlssNr::ScopedBeforeUpscale nrBefore(InCmdList, InParameters, handleId, feature == NVSDK_NGX_Feature_SuperSampling);
+     const NVSDK_NGX_Result optiResult = TryEvaluateOptiFeature(InCmdList, InFeatureHandle, InParameters, InCallback);
+ 
+     // Same pass, for OptiScaler's own upscalers rather than native DLSS.
+-    if (optiResult == NVSDK_NGX_Result_Success && feature != NVSDK_NGX_Feature_FrameGeneration)
++    if (optiResult == NVSDK_NGX_Result_Success && feature != NVSDK_NGX_Feature_FrameGeneration && !nrBefore.Applied())
+         DlssNr::EvaluateAfterUpscale(InCmdList, InParameters);
+ 
+     return optiResult;
 diff --git a/OptiScaler/menu/menu_common.cpp b/OptiScaler/menu/menu_common.cpp
 index fb01aa4..1bdcbf0 100644
 --- a/OptiScaler/menu/menu_common.cpp
@@ -173,11 +310,330 @@ index fb01aa4..1bdcbf0 100644
          // Header/status messages shown above the two-column settings table.
          RenderMainMenuHeaderMessages(ctx);
  
+diff --git a/OptiScaler/shaders/dlssnr/DlssNr_Common.h b/OptiScaler/shaders/dlssnr/DlssNr_Common.h
+index 21a35be..88c931f 100644
+--- a/OptiScaler/shaders/dlssnr/DlssNr_Common.h
++++ b/OptiScaler/shaders/dlssnr/DlssNr_Common.h
+@@ -18,7 +18,8 @@ enum DlssNrMode : uint32_t
+ {
+     DlssNrMode_Encode = 0,    // the frame -> a tone-mapped proxy, plus an untouched copy
+     DlssNrMode_Resolve = 1,   // proxy + the model's answer + the untouched copy -> the edited frame
+-    DlssNrMode_Downsample = 2 // the proxy -> a smaller proxy, when the model works below full size
++    DlssNrMode_Downsample = 2, // the proxy -> a smaller proxy, when the model works below full size
++    DlssNrMode_Residual = 3    // matched model - proxy, decoded before interpolation, signed FP16
+ };
+ 
+ // What the composition shader reads.
+@@ -36,8 +37,7 @@ enum DlssNrMode : uint32_t
+ // choices -- preset, intensity, strengths, paper white -- stay in Config, so a caller placing this
+ // pass in a new pipeline does not have to plumb a dozen sliders through it.
+ //
+-// Sizes are deliberately absent. The output's dimensions come from its own descriptor and the guide
+-// sizes from theirs, so there is one less thing for a call site to get wrong.
++// Explicit guide regions are optional. Legacy callers retain their original behaviour.
+ struct DlssNrFrameInfo
+ {
+     // Which way round depth runs. The game states this when it creates its own upscaler.
+@@ -56,6 +56,11 @@ struct DlssNrFrameInfo
+     // through a tonemapper. Getting this wrong encodes an encoded frame a second time, which looks
+     // washed out and banded.
+     bool ColourIsLinearHdr = true;
++    // Depth x,y,w,h followed by motion x,y,w,h. These describe active regions,
++    // not allocations. Explicit motion scales are in motion-region pixels.
++    bool ExplicitGuideRects = false;
++    unsigned GuideRects[8] = {};
++
+ };
+ 
+ struct alignas(256) DlssNrConstants
+@@ -104,6 +109,10 @@ struct alignas(256) DlssNrConstants
+     // Which side the edited frame is on. Swapping matters because the eye is not even-handed about
+     // left and right, so a difference can look like an improvement purely from where it sits.
+     uint32_t CompareSwap;
++
++    uint32_t ComposeMode; // 0: existing ratio composition, 1: experimental matched residual
++    float ResidualTone;   // low spatial frequencies of the edit; not a semantic lighting mask
++    float ResidualDetail; // remaining spatial frequencies of the edit
+ };
+ 
+ class DlssNr_Common
 diff --git a/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp b/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp
-index 00c7f28..dddef0b 100644
+index 00c7f28..82aa5da 100644
 --- a/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp
 +++ b/OptiScaler/shaders/dlssnr/DlssNr_Dx12.cpp
-@@ -1357,13 +1357,13 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+@@ -3,6 +3,7 @@
+ #include <set>
+ 
+ #include <dlssnr/DlssNr.h>
++#include <dlssnr/NRStudioUpstreamSurface.h>
+ 
+ 
+ #include <dlssnr/DlssNr_Codec.h>
+@@ -23,6 +24,7 @@
+ #include <algorithm>
+ #include <cstring>
+ #include "precompile/DlssNr_Shader.h"
++#include "precompile/DlssNrResidual_Shader.h"
+ 
+ namespace
+ {
+@@ -155,6 +157,14 @@ using PFN_NrEvaluate = int(__cdecl*) (ID3D12GraphicsCommandList*, void*, void*,
+                                       ID3D12Resource*, ID3D12Resource*, ID3D12Resource*, unsigned int,
+                                       unsigned int, unsigned int, unsigned int, int, int, float, int,
+                                       float, float, float, int, float, float);
++using PFN_NrEvaluateRects = int(__cdecl*) (ID3D12GraphicsCommandList*, void*, void*, ID3D12Resource*,
++                                      ID3D12Resource*, ID3D12Resource*, ID3D12Resource*, unsigned int,
++                                      unsigned int, unsigned int, unsigned int, int, int, float, int,
++                                      float, float, float, int, float, float, const unsigned*);
++using PFN_NrGpuBegin = int(__cdecl*)(ID3D12GraphicsCommandList*,unsigned,unsigned);
++using PFN_NrGpuMark = void(__cdecl*)(unsigned);
++using PFN_NrGpuEnd = void(__cdecl*)();
++using PFN_NrGpuLatest = double(__cdecl*)();
+ using PFN_NrRelease = void(__cdecl*) (void*);
+ using PFN_NrSetExtras = void(__cdecl*) (void*, float, ID3D12Resource*, ID3D12Resource*, ID3D12Resource*,
+                                         unsigned int, unsigned int, unsigned int, unsigned int);
+@@ -168,6 +178,11 @@ struct NrState
+     HMODULE forwarder = nullptr;
+     PFN_NrCreate create = nullptr;
+     PFN_NrEvaluate evaluate = nullptr;
++    PFN_NrEvaluateRects evaluateRects = nullptr;
++    PFN_NrGpuBegin gpuBegin = nullptr;
++    PFN_NrGpuMark gpuMark = nullptr;
++    PFN_NrGpuEnd gpuEnd = nullptr;
++    PFN_NrGpuLatest gpuLatest = nullptr;
+     PFN_NrRelease release = nullptr;
+     PFN_NrSetExtras setExtras = nullptr;
+     PFN_NrSetFloatSlot setFloatSlot = nullptr;
+@@ -190,6 +205,9 @@ struct NrState
+ 
+     // The frame shrunk for the model, when it is working below full resolution.
+     ID3D12Resource* colorSmall = nullptr;
++    // Signed, unlike R11G11B10: darkening edits must survive intermediate storage.
++    ID3D12Resource* residual = nullptr;
++    bool lastResidualMode = false;
+ 
+     unsigned int workWidth = 0;
+     unsigned int workHeight = 0;
+@@ -350,6 +368,11 @@ bool EnsureForwarder()
+ 
+     g_nr.create = (PFN_NrCreate) GetProcAddress(g_nr.forwarder, "dlssnr_call_create");
+     g_nr.evaluate = (PFN_NrEvaluate) GetProcAddress(g_nr.forwarder, "dlssnr_call_evaluate");
++    g_nr.evaluateRects = (PFN_NrEvaluateRects) GetProcAddress(g_nr.forwarder, "dlssnr_call_evaluate_rects");
++    g_nr.gpuBegin = (PFN_NrGpuBegin)GetProcAddress(g_nr.forwarder,"dlssnr_gpu_begin");
++    g_nr.gpuMark = (PFN_NrGpuMark)GetProcAddress(g_nr.forwarder,"dlssnr_gpu_mark");
++    g_nr.gpuEnd = (PFN_NrGpuEnd)GetProcAddress(g_nr.forwarder,"dlssnr_gpu_end");
++    g_nr.gpuLatest = (PFN_NrGpuLatest)GetProcAddress(g_nr.forwarder,"dlssnr_gpu_latest");
+     g_nr.release = (PFN_NrRelease) GetProcAddress(g_nr.forwarder, "dlssnr_call_release");
+     // Optional: an older forwarder simply lacks it, and the model runs as before.
+     g_nr.setExtras = (PFN_NrSetExtras) GetProcAddress(g_nr.forwarder, "dlssnr_call_set_extras");
+@@ -510,7 +533,7 @@ void ReleaseSurfacesIfFormatChanged(DXGI_FORMAT needed)
+     ParkNrFeature(g_nr.feature);
+ 
+     for (ID3D12Resource** r :
+-         { &g_nr.output, &g_nr.colorCopy, &g_nr.hdrCopy, &g_nr.colorSmall })
++         { &g_nr.output, &g_nr.colorCopy, &g_nr.hdrCopy, &g_nr.colorSmall, &g_nr.residual })
+         ParkNrResource(*r);
+ 
+     g_nr.reset = true;
+@@ -844,6 +867,14 @@ DlssNr_Dx12::DlssNr_Dx12(std::string InName, ID3D12Device* InDevice)
+         return;
+     }
+ 
++    // Keep the accepted shader bytecode for mode zero. Adding branches can change even unrelated
++    // FXC floating-point instruction ordering; the old encode must not be recompiled implicitly.
++    if (!CreateComputePipeline(InDevice, &_residualPipelineState, DlssNrResidual_cso,
++                               sizeof(DlssNrResidual_cso), nullptr))
++    {
++        LOG_ERROR("[{0}] Failed to create the residual pipeline", _name);
++        return;
++    }
+     _init = InitHeaps(InDevice, _frameHeaps, DLSSNR_NUM_OF_HEAPS);
+ }
+ 
+@@ -892,7 +923,7 @@ bool DlssNr_Dx12::DispatchPass(ID3D12GraphicsCommandList* InCmdList, const DlssN
+     ID3D12DescriptorHeap* heaps[] = { currentHeap.GetHeapCSU() };
+     InCmdList->SetDescriptorHeaps(_countof(heaps), heaps);
+     InCmdList->SetComputeRootSignature(_rootSignature);
+-    InCmdList->SetPipelineState(_pipelineState);
++    InCmdList->SetPipelineState(InConstants.ComposeMode == 1 ? _residualPipelineState : _pipelineState);
+     InCmdList->SetComputeRootDescriptorTable(0, currentHeap.GetTableGPUStart());
+ 
+     // Sized from the constants rather than from a resource, because the pass that shrinks the proxy
+@@ -906,6 +937,8 @@ bool DlssNr_Dx12::DispatchPass(ID3D12GraphicsCommandList* InCmdList, const DlssN
+ 
+ DlssNr_Dx12::~DlssNr_Dx12()
+ {
++    if (_residualPipelineState != nullptr)
++        _residualPipelineState->Release();
+     for (auto& buffer : _constantBuffers)
+     {
+         if (buffer != nullptr)
+@@ -934,9 +967,12 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+ 
+     ID3D12Device* device = nullptr;
+ 
+-    if (FAILED(target->GetDevice(IID_PPV_ARGS(&device))) || device == nullptr)
++    // ReShade resources can return a wrapped device even when the feeder gives
++    // us a native command list. Create heaps and NR state through the command
++    // list's device so native SetDescriptorHeaps never receives proxy heaps.
++    if (FAILED(cmdList->GetDevice(IID_PPV_ARGS(&device))) || device == nullptr)
+     {
+-        ReportSkipOnce("the output texture belongs to no D3D12 device");
++        ReportSkipOnce("the command list belongs to no D3D12 device");
+         return;
+     }
+ 
+@@ -961,6 +997,9 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+         guideHeight = height;
+     }
+ 
++    if (frame.ExplicitGuideRects) {
++        guideWidth = frame.GuideRects[2]; guideHeight = frame.GuideRects[3];
++    }
+     g_nr.guideWidth = guideWidth;
+     g_nr.guideHeight = guideHeight;
+     g_nr.guideDepthInverted = frame.DepthInverted;
+@@ -1002,6 +1041,12 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+     const auto workWidth = (unsigned int) (width * workScale + 0.5f);
+     const auto workHeight = (unsigned int) (height * workScale + 0.5f);
+     const bool reduced = workWidth != width || workHeight != height;
++    const bool matchedResidual = cfg.DlssNrComposeMode.value_or_default() == 1;
++    // At reduced scale this toggle changes the teacher's input filter. Its previous history
++    // belongs to the other preparation; reset once without rebuilding for a compose-only slider.
++    if (reduced && g_nr.lastResidualMode != matchedResidual)
++        g_nr.reset = true;
++    g_nr.lastResidualMode = matchedResidual;
+ 
+     ReleaseSurfacesIfFormatChanged(desc.Format);
+ 
+@@ -1028,6 +1073,7 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+             ParkNrResource(g_nr.colorCopy);
+             ParkNrResource(g_nr.hdrCopy);
+             ParkNrResource(g_nr.colorSmall);
++            ParkNrResource(g_nr.residual);
+         }
+     }
+ 
+@@ -1043,6 +1089,17 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+     if (reduced && g_nr.colorSmall == nullptr)
+         g_nr.colorSmall = CreateScratch(device, desc.Format, workWidth, workHeight);
+ 
++    if (matchedResidual && g_nr.residual == nullptr)
++        g_nr.residual = CreateScratch(device, DXGI_FORMAT_R16G16B16A16_FLOAT, workWidth, workHeight);
++
++    if ((reduced && g_nr.colorSmall == nullptr) || (matchedResidual && g_nr.residual == nullptr))
++    {
++        g_nr.failed = true;
++        g_nr.reason = "the reduced-resolution or residual surface could not be allocated";
++        device->Release();
++        return;
++    }
++
+     if (g_nr.feature == nullptr && g_nr.output != nullptr && g_nr.colorCopy != nullptr &&
+         g_nr.hdrCopy != nullptr)
+     {
+@@ -1188,14 +1245,23 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+     // inside the envelope so the game's compute state is restored no matter which way this returns.
+     ScopedNrStateEnvelope stateEnvelope(cmdList);
+ 
+-    if (g_gpuTime == nullptr)
++    const bool modernTiming = g_nr.gpuBegin && g_nr.gpuMark && g_nr.gpuEnd;
++    const bool trackedTiming = modernTiming && g_nr.gpuBegin(cmdList,width,height) != 0;
++    struct CompletionTimingScope {
++        bool active; PFN_NrGpuEnd end;
++        ~CompletionTimingScope(){if(active)end();}
++    } completionTimingScope {trackedTiming,g_nr.gpuEnd};
++    if (modernTiming && g_nr.gpuLatest) {
++        double ms=g_nr.gpuLatest();if(ms>0)g_lastGpuTime=ms;else g_lastGpuTime.reset();
++    }
++    if (!modernTiming && g_gpuTime == nullptr)
+         g_gpuTime = std::make_unique<GpuTime_Dx12>(device);
+-
+-    if (g_gpuTime != nullptr)
++    if (!modernTiming && g_gpuTime != nullptr)
+         g_gpuTime->Start(cmdList);
+ 
+     DlssNrConstants encodeParams {};
+     encodeParams.Mode = DlssNrMode_Encode;
++    encodeParams.ComposeMode = matchedResidual ? 1u : 0u;
+     // A frame that is already display-referred is handed over untouched: the encode becomes a copy and
+     // the resolve adds the model's edit back at full scale.
+     encodeParams.Passthrough = isHdrBuffer ? 0u : 1u;
+@@ -1226,6 +1292,8 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+     {
+         DlssNrConstants down {};
+         down.Mode = DlssNrMode_Downsample;
++        down.ComposeMode = matchedResidual ? 1u : 0u;
++        down.Passthrough = encodeParams.Passthrough;
+         down.Width = workWidth;
+         down.Height = workHeight;
+         DispatchPass(cmdList, down, modelInput, nullptr, nullptr, nullptr, nullptr,
+@@ -1235,6 +1303,7 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+         modelInput = g_nr.colorSmall;
+     }
+ 
++    if(trackedTiming)g_nr.gpuMark(1);
+     ID3D12Resource* depthIn = ReadableGuide(device, cmdList, depth, &g_nr.depthClone);
+     ID3D12Resource* motionIn = ReadableGuide(device, cmdList, motion, &g_nr.motionClone);
+ 
+@@ -1248,7 +1317,11 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+     }
+ 
+     // The vectors were scaled to full-frame pixels; the image the model reprojects is the working size.
+-    const float mvToWork = width != 0 ? (float) workWidth / (float) width : 1.0f;
++    // The explicit-region NR contract normalizes motion by the motion
++    // region size internally. Its scale stays fixed when the model size changes.
++    const float mvToWork = frame.ExplicitGuideRects ? 1.0f
++        : (width != 0 ? (float)workWidth / (float)width : 1.0f);
++    const float mvToWorkY = mvToWork;
+ 
+     SetExtras(cfg, nullptr, nullptr, 0, 0, 0, 0);
+ 
+@@ -1278,7 +1351,16 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+         return;
+     }
+ 
+-    const int result = g_nr.evaluate(
++    const int result = frame.ExplicitGuideRects
++        ? (g_nr.evaluateRects ? g_nr.evaluateRects(
++        cmdList, g_nr.feature, g_nr.capabilityParams, modelInput, depthIn, motionIn, g_nr.output,
++        workWidth, workHeight, guideWidth, guideHeight, g_nr.guideDepthInverted ? 1 : 0,
++        g_nr.reset ? 1 : 0, cfg.DlssNrIntensity.value_or_default(),
++        (int) cfg.DlssNrStyle.value_or_default(), cfg.DlssNrLocalStructure.value_or_default(),
++        cfg.DlssNrLocalTone.value_or_default(), cfg.DlssNrSkinStructure.value_or_default(),
++        cfg.DlssNrAutoMask.value_or_default() ? 1 : 0, g_nr.guideMvScaleX * mvToWork,
++        g_nr.guideMvScaleY * mvToWorkY, frame.GuideRects) : 0)
++        : g_nr.evaluate(
+         cmdList, g_nr.feature, g_nr.capabilityParams, modelInput, depthIn, motionIn, g_nr.output,
+         workWidth, workHeight, guideWidth, guideHeight, g_nr.guideDepthInverted ? 1 : 0,
+         g_nr.reset ? 1 : 0, cfg.DlssNrIntensity.value_or_default(),
+@@ -1349,21 +1431,38 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+         resolveParams.CompareSplit = cfg.DlssNrCompareSplit.value_or_default();
+         resolveParams.CompareZoom = std::max(1.0f, cfg.DlssNrCompareZoom.value_or_default());
+         resolveParams.CompareSwap = cfg.DlssNrCompareSwap.value_or_default() ? 1u : 0u;
++        resolveParams.ComposeMode = matchedResidual ? 1u : 0u;
++        resolveParams.ResidualTone = std::clamp(cfg.DlssNrResidualTone.value_or_default(), 0.0f, 2.0f);
++        resolveParams.ResidualDetail = std::clamp(cfg.DlssNrResidualDetail.value_or_default(), 0.0f, 2.0f);
+ 
+         Barrier(cmdList, g_nr.output, D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
+                 D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
++        if (matchedResidual)
++        {
++            DlssNrConstants residualParams = resolveParams;
++            residualParams.Mode = DlssNrMode_Residual;
++            residualParams.Width = workWidth;
++            residualParams.Height = workHeight;
++            DispatchPass(cmdList, residualParams, modelInput, g_nr.output, nullptr, nullptr, nullptr,
++                g_nr.residual, nullptr);
++            Barrier(cmdList, g_nr.residual, D3D12_RESOURCE_STATE_UNORDERED_ACCESS,
++                D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE);
++        }
+         DispatchPass(cmdList, resolveParams, modelInput, g_nr.output, g_nr.hdrCopy, motionIn,
+-                            nullptr, target, nullptr);
++                            matchedResidual ? g_nr.residual : nullptr, target, nullptr);
++        if (matchedResidual)
++            Barrier(cmdList, g_nr.residual, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
++                D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
          Barrier(cmdList, g_nr.output, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
                  D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
  
@@ -194,3 +650,213 @@ index 00c7f28..dddef0b 100644
                               D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, target,
                               D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
  
+@@ -1382,7 +1481,7 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+     Barrier(cmdList, g_nr.hdrCopy, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE,
+             D3D12_RESOURCE_STATE_UNORDERED_ACCESS);
+ 
+-    if (g_gpuTime != nullptr)
++    if (!modernTiming && g_gpuTime != nullptr)
+     {
+         g_gpuTime->End(cmdList);
+ 
+@@ -1423,6 +1522,144 @@ void DlssNr_Dx12::Dispatch(ID3D12GraphicsCommandList* cmdList, ID3D12Resource* c
+ 
+ namespace DlssNr
+ {
++
++namespace {
++std::mutex g_upstreamMutex;
++NRStudioUpstream::Surface g_upstreamSurface;
++unsigned g_upstreamOwner = 0;
++bool g_upstreamHaveOwner = false;
++uint64_t g_upstreamCalls = 0;
++std::filesystem::path UpstreamMarker() {
++    return Util::DllPath().remove_filename() / "nr-before-upscale.enable";
++}
++}
++bool BeforeUpscaleRequested() {
++    return GetFileAttributesW(UpstreamMarker().c_str()) != INVALID_FILE_ATTRIBUTES;
++}
++bool BeforeUpscaleActive() {
++    static const bool enabled = BeforeUpscaleRequested();
++    return enabled;
++}
++bool SetBeforeUpscaleRequested(bool enabled) {
++    if (!enabled) return DeleteFileW(UpstreamMarker().c_str()) != FALSE
++        || GetLastError() == ERROR_FILE_NOT_FOUND;
++    HANDLE file = CreateFileW(UpstreamMarker().c_str(), GENERIC_WRITE, FILE_SHARE_READ,
++                              nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
++    if (file == INVALID_HANDLE_VALUE) return false;
++    const char text[] = "NRStudio experimental NR before DLSS; applied at game launch\n";
++    DWORD written = 0;
++    bool ok = WriteFile(file, text, sizeof(text)-1, &written, nullptr) != FALSE
++              && written == sizeof(text)-1;
++    CloseHandle(file);
++    return ok;
++}
++ScopedBeforeUpscale::ScopedBeforeUpscale(ID3D12GraphicsCommandList* cmd,
++    NVSDK_NGX_Parameter* params, unsigned featureHandle, bool superSampling)
++    : lock_(g_upstreamMutex, std::defer_lock) {
++    if (!BeforeUpscaleActive() || !superSampling || !cmd || !params
++        || !Config::Instance()->DlssNrEnabled.value_or_default()) return;
++    lock_.lock();
++    if (g_upstreamHaveOwner && g_upstreamOwner != featureHandle) return;
++    auto* colour = GetResource(params, NVSDK_NGX_Parameter_Color, "DLSSD.Color");
++    auto* depth = GetResource(params, NVSDK_NGX_Parameter_Depth, "DLSSD.Depth");
++    auto* motion = GetResource(params, NVSDK_NGX_Parameter_MotionVectors, "DLSSD.MotionVectors");
++    if (!colour || !depth || !motion) return;
++    unsigned w = 0, h = 0;
++    params->Get(NVSDK_NGX_Parameter_DLSS_Render_Subrect_Dimensions_Width, &w);
++    params->Get(NVSDK_NGX_Parameter_DLSS_Render_Subrect_Dimensions_Height, &h);
++    const auto cd = colour->GetDesc(), dd = depth->GetDesc(), md = motion->GetDesc();
++    unsigned cx = 0, cy = 0, dx = 0, dy = 0, mx = 0, my = 0;
++    params->Get("DLSS.Input.Color.Subrect.Base.X", &cx);
++    params->Get("DLSS.Input.Color.Subrect.Base.Y", &cy);
++    params->Get("DLSS.Input.Depth.Subrect.Base.X", &dx);
++    params->Get("DLSS.Input.Depth.Subrect.Base.Y", &dy);
++    params->Get("DLSS.Input.MV.Subrect.Base.X", &mx);
++    params->Get("DLSS.Input.MV.Subrect.Base.Y", &my);
++    unsigned flags = 0;
++    params->Get(NVSDK_NGX_Parameter_DLSS_Feature_Create_Flags, &flags);
++    auto* srOutput = GetResource(params, NVSDK_NGX_Parameter_Output, "DLSSD.Output");
++    if (!srOutput) return;
++    unsigned outW = 0, outH = 0;
++    params->Get(NVSDK_NGX_Parameter_OutWidth, &outW);
++    params->Get(NVSDK_NGX_Parameter_OutHeight, &outH);
++    // A missing output extent cannot establish a display-resolution MV region.
++    unsigned mw = (flags & NVSDK_NGX_DLSS_Feature_Flags_MVLowRes) ? w : outW;
++    unsigned mh = (flags & NVSDK_NGX_DLSS_Feature_Flags_MVLowRes) ? h : outH;
++    auto fits = [](const D3D12_RESOURCE_DESC& d, unsigned x, unsigned y, unsigned rw, unsigned rh) {
++        return rw && rh && d.Dimension == D3D12_RESOURCE_DIMENSION_TEXTURE2D
++            && d.DepthOrArraySize == 1 && d.MipLevels == 1 && d.SampleDesc.Count == 1
++            && x <= d.Width && rw <= d.Width-x && y <= d.Height && rh <= d.Height-y;
++    };
++    if (!NRStudioUpstream::Surface::supported(cd, w, h, cx, cy)
++        || !fits(dd, dx, dy, w, h) || !fits(md, mx, my, mw, mh)
++        || Config::Instance()->DlssNrUseProxy.value_or_default()) {
++        static bool reported = false;
++        if (!reported) {
++            reported = true;
++            LOG_WARN("NRStudio upstream v2 declined: colour {}x{} format {}, active {}x{}, depth {}x{}, motion {}x{} ROI {}x{}, flags {}; using post-upscale",
++                cd.Width, cd.Height, static_cast<unsigned>(cd.Format), w, h,
++                dd.Width, dd.Height, md.Width, md.Height, mw, mh, flags);
++        }
++        return;
++    }
++    if (!EnsureForwarder() || !g_nr.evaluateRects) {
++        ReportSkipOnce("pre-upscale requires the explicit guide-region forwarder");
++        return;
++    }
++    HRESULT copied;
++    {
++        ScopedNrStateEnvelope stateEnvelope(cmd);
++        copied = g_upstreamSurface.prepare(cmd, colour, w, h, cx, cy);
++    }
++    if (FAILED(copied)) {
++        static bool reported = false;
++        if (!reported) { reported = true; LOG_WARN("NRStudio upstream conversion unavailable: 0x{:X}; using post-upscale", static_cast<unsigned>(copied)); }
++        return;
++    }
++    ID3D12Device* device = nullptr;
++    if (FAILED(cmd->GetDevice(IID_PPV_ARGS(&device)))) return;
++    if (!g_compose) g_compose = std::make_unique<DlssNr_Dx12>("Neural Rendering", device);
++    device->Release();
++    if (!g_compose) return;
++
++    DlssNrFrameInfo frame{};
++    frame.DepthInverted = (flags & NVSDK_NGX_DLSS_Feature_Flags_DepthInverted) != 0;
++    frame.ColourIsLinearHdr = (flags & NVSDK_NGX_DLSS_Feature_Flags_IsHDR) != 0;
++    params->Get(NVSDK_NGX_Parameter_MV_Scale_X, &frame.MvScaleX);
++    params->Get(NVSDK_NGX_Parameter_MV_Scale_Y, &frame.MvScaleY);
++    int reset = 0; params->Get(NVSDK_NGX_Parameter_Reset, &reset); frame.Reset = reset != 0;
++    frame.ExplicitGuideRects = true;
++    // NGX SR: render-pixel units. NR: motion-region-pixel units (verified by
++    // byte-exact reprojection probes with 2x motion buffers and nonzero vectors).
++    frame.MvScaleX *= (float)mw / w;
++    frame.MvScaleY *= (float)mh / h;
++    const unsigned rects[] = {dx, dy, w, h, mx, my, mw, mh};
++    std::copy(std::begin(rects), std::end(rects), frame.GuideRects);
++    auto* privateColour = g_upstreamSurface.get();
++    g_compose->Dispatch(cmd, privateColour, depth, motion, privateColour, frame);
++    g_upstreamSurface.readable(cmd);
++    params_ = params;
++    original_ = colour; originalX_ = cx; originalY_ = cy;
++    params->Set("DLSS.Input.Color.Subrect.Base.X", 0u);
++    params->Set("DLSS.Input.Color.Subrect.Base.Y", 0u);
++    params->Set(NVSDK_NGX_Parameter_Color, privateColour);
++    applied_ = true;
++    if (g_upstreamCalls == 0)
++        LOG_INFO("NRStudio upstream v2: active {}x{}, allocation {}x{}, format {} -> RGBA16F; depth {},{}/{}x{}; motion {},{}/{}x{}; scales {},{}; flags {}",
++            w,h,cd.Width,cd.Height,(unsigned)cd.Format,dx,dy,w,h,mx,my,mw,mh,frame.MvScaleX,frame.MvScaleY,flags);
++    g_upstreamOwner = featureHandle; g_upstreamHaveOwner = true;
++    if (++g_upstreamCalls <= 3 || g_upstreamCalls % 120 == 0)
++        LOG_INFO("NRStudio upstream: evaluate {}, handle {}, render {}x{}, NR running {}, original {:p}, DLSS input {:p}",
++            g_upstreamCalls, featureHandle, w, h, IsRunning(), static_cast<void*>(colour), static_cast<void*>(privateColour));
++}
++ScopedBeforeUpscale::~ScopedBeforeUpscale() {
++    if (params_) {
++        params_->Set(NVSDK_NGX_Parameter_Color, original_);
++        params_->Set("DLSS.Input.Color.Subrect.Base.X", originalX_);
++        params_->Set("DLSS.Input.Color.Subrect.Base.Y", originalY_);
++    }
++}
++
+ void RetryAfterFailure()
+ {
+     g_nr.failed = false;
+@@ -1471,6 +1708,9 @@ void EvaluateAfterUpscale(ID3D12GraphicsCommandList* cmdList, NVSDK_NGX_Paramete
+     DlssNrFrameInfo frame {};
+     frame.DepthInverted = (createFlags & NVSDK_NGX_DLSS_Feature_Flags_DepthInverted) != 0;
+     frame.ColourIsLinearHdr = (createFlags & NVSDK_NGX_DLSS_Feature_Flags_IsHDR) != 0;
++    int historyReset = 0;
++    if (params->Get(NVSDK_NGX_Parameter_Reset, &historyReset) == NVSDK_NGX_Result_Success)
++        frame.Reset = historyReset != 0;
+ 
+     if (params->Get(NVSDK_NGX_Parameter_MV_Scale_X, &frame.MvScaleX) != NVSDK_NGX_Result_Success)
+         frame.MvScaleX = 1.0f;
+@@ -1483,9 +1723,9 @@ void EvaluateAfterUpscale(ID3D12GraphicsCommandList* cmdList, NVSDK_NGX_Paramete
+     // resources themselves.
+     ID3D12Device* device = nullptr;
+ 
+-    if (FAILED(target->GetDevice(IID_PPV_ARGS(&device))) || device == nullptr)
++    if (FAILED(cmdList->GetDevice(IID_PPV_ARGS(&device))) || device == nullptr)
+     {
+-        ReportSkipOnce("the output texture belongs to no D3D12 device");
++        ReportSkipOnce("the command list belongs to no D3D12 device");
+         return;
+     }
+ 
+@@ -1564,6 +1804,12 @@ void Shutdown()
+         g_nr.colorSmall = nullptr;
+     }
+ 
++    if (g_nr.residual != nullptr)
++    {
++        g_nr.residual->Release();
++        g_nr.residual = nullptr;
++    }
++
+     if (g_nr.depthClone != nullptr)
+     {
+         g_nr.depthClone->Release();
+diff --git a/OptiScaler/shaders/dlssnr/DlssNr_Dx12.h b/OptiScaler/shaders/dlssnr/DlssNr_Dx12.h
+index e972e3c..ea5d7d8 100644
+--- a/OptiScaler/shaders/dlssnr/DlssNr_Dx12.h
++++ b/OptiScaler/shaders/dlssnr/DlssNr_Dx12.h
+@@ -27,7 +27,7 @@
+ // Three dispatches are recorded per frame and several frames can be in flight at once, more so with
+ // frame generation. Each dispatch needs descriptors and constants the GPU is not still reading, so
+ // there has to be enough for three passes times the deepest pipeline we might sit behind.
+-#define DLSSNR_NUM_OF_HEAPS 16
++#define DLSSNR_NUM_OF_HEAPS 32 // residual mode adds a fourth dispatch; preserve descriptor headroom
+ 
+ class DlssNr_Dx12 : public Shader_Dx12, public DlssNr_Common
+ {
+@@ -43,6 +43,7 @@ class DlssNr_Dx12 : public Shader_Dx12, public DlssNr_Common
+     ID3D12Resource* _constantBuffers[DLSSNR_NUM_OF_HEAPS] = {};
+ 
+     uint32_t _heapIndex = 0;
++    ID3D12PipelineState* _residualPipelineState = nullptr;
+ 
+     // The shader reads five inputs and writes two, and not every mode uses all of them. Unused slots
+     // still need a view bound -- an unbound descriptor is not an empty read, it is a read from

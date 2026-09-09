@@ -1,0 +1,16 @@
+[
+  {
+    "trial": "reflex-off-stationary1",
+    "samples": 312,
+    "latency_mean_ms": 57.06690256410256,
+    "latency_p95_ms": 58.7845,
+    "display_fps": 21.143056236097678
+  },
+  {
+    "trial": "reflex-on-stationary1",
+    "samples": 294,
+    "latency_mean_ms": 59.14458571428571,
+    "latency_p95_ms": 60.5909,
+    "display_fps": 39.75825039721799
+  }
+]

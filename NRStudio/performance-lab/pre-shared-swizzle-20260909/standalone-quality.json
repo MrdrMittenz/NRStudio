@@ -1,0 +1,22 @@
+[
+  {
+    "seed": 1,
+    "hash": "2793ea7b46d24f2578e763e5578b31bf6ce4e560f5fc139a489ce1027cb696dd",
+    "exact": true
+  },
+  {
+    "seed": 2,
+    "hash": "1b61a32b807dd9bccc4a04f75c29060d9bbfa74765f27aadc33eee3bc3f17743",
+    "exact": true
+  },
+  {
+    "seed": 3,
+    "hash": "5793cd94f975ff6d66907bdc52f79d25a4dce7b09d1c4a65b470f9de8dae158c",
+    "exact": true
+  },
+  {
+    "seed": 4,
+    "hash": "490c5350d85a5559aa2ef1dc9dbe1590ca832bdecdf0209d092ee9cc3a6f8304",
+    "exact": true
+  }
+]

@@ -34,6 +34,8 @@ static void native_log(const char* format, ...) {
 }
 
 
+#include "post_runtime.h"
+
 namespace {
 
 // Slot indices confirmed by round-tripping values through the live block: a setter at N is read back by
@@ -762,6 +764,8 @@ __declspec(dllexport) void *dlssnr_call_create(const wchar_t *snippetPath, const
     if (!loadSnippet(snippetPath) || !capabilityParams) {
         return nullptr;
     }
+    NRPost::Install(device,cmd,snippetPath);
+    NRPost::Scope postScope;
     if (!g_snip.initialised && g_snip.init) {
         // OptiScaler's own generic application id, the one it already hands DLSS when a game's id is
         // not wanted. What was here before was 0x4350324B -- "CP2K" -- so every game that ever loaded
@@ -800,7 +804,7 @@ __declspec(dllexport) void *dlssnr_call_create(const wchar_t *snippetPath, const
 
 // Colour and output are display resolution; depth and motion come from the game's own DLSS evaluation and
 // may be render resolution, so each resource carries its own subrect and motion scales by the ratio.
-__declspec(dllexport) int dlssnr_call_evaluate(ID3D12GraphicsCommandList *cmd, void *feature,
+static int evaluateWithRects(ID3D12GraphicsCommandList *cmd, void *feature,
                                                void *capabilityParams, ID3D12Resource *color,
                                                ID3D12Resource *depth, ID3D12Resource *motion,
                                                ID3D12Resource *output, unsigned int width,
@@ -808,7 +812,7 @@ __declspec(dllexport) int dlssnr_call_evaluate(ID3D12GraphicsCommandList *cmd, v
                                                unsigned int guideHeight, int depthInverted, int reset,
                                                float intensity, int style, float localStructure,
                                                float localTone, float skinStructure, int useAutoMask,
-                                               float mvScaleX, float mvScaleY) {
+                                               float mvScaleX, float mvScaleY, const unsigned* rects) {
     if (!feature || !capabilityParams || !g_snip.evaluate) {
         return 0;
     }
@@ -833,14 +837,14 @@ __declspec(dllexport) int dlssnr_call_evaluate(ID3D12GraphicsCommandList *cmd, v
     setUInt(capabilityParams, "DLSSNR.OutputSubrectBaseY", 0);
     setUInt(capabilityParams, "DLSSNR.OutputSubrectWidth", width);
     setUInt(capabilityParams, "DLSSNR.OutputSubrectHeight", height);
-    setUInt(capabilityParams, "DLSSNR.DepthSubrectBaseX", 0);
-    setUInt(capabilityParams, "DLSSNR.DepthSubrectBaseY", 0);
-    setUInt(capabilityParams, "DLSSNR.DepthSubrectWidth", guideWidth);
-    setUInt(capabilityParams, "DLSSNR.DepthSubrectHeight", guideHeight);
-    setUInt(capabilityParams, "DLSSNR.MVecSubrectBaseX", 0);
-    setUInt(capabilityParams, "DLSSNR.MVecSubrectBaseY", 0);
-    setUInt(capabilityParams, "DLSSNR.MVecSubrectWidth", guideWidth);
-    setUInt(capabilityParams, "DLSSNR.MVecSubrectHeight", guideHeight);
+    setUInt(capabilityParams, "DLSSNR.DepthSubrectBaseX", rects ? rects[0] : 0);
+    setUInt(capabilityParams, "DLSSNR.DepthSubrectBaseY", rects ? rects[1] : 0);
+    setUInt(capabilityParams, "DLSSNR.DepthSubrectWidth", rects ? rects[2] : guideWidth);
+    setUInt(capabilityParams, "DLSSNR.DepthSubrectHeight", rects ? rects[3] : guideHeight);
+    setUInt(capabilityParams, "DLSSNR.MVecSubrectBaseX", rects ? rects[4] : 0);
+    setUInt(capabilityParams, "DLSSNR.MVecSubrectBaseY", rects ? rects[5] : 0);
+    setUInt(capabilityParams, "DLSSNR.MVecSubrectWidth", rects ? rects[6] : guideWidth);
+    setUInt(capabilityParams, "DLSSNR.MVecSubrectHeight", rects ? rects[7] : guideHeight);
 
     // The game's own encoding, passed through. Deriving this from the resolutions was a guess, and at
     // native resolution it came out as exactly 1.0 -- so a game using normalised vectors was telling
@@ -859,10 +863,44 @@ __declspec(dllexport) int dlssnr_call_evaluate(ID3D12GraphicsCommandList *cmd, v
     // jmp rather than a call, which leaves this module's frame behind: the snippet then resolves its
     // caller to whoever called us and rejects it. Keeping the value in a volatile forces a real call and
     // a return through this module, which is the whole reason this file exists.
+    NRGpuWork::ModelScope gpuScope(cmd,width,height);
     volatile int result = g_snip.evaluate(cmd, feature, capabilityParams, nullptr);
     LONG frame = InterlockedIncrement(&native_frames);
     if (frame <= 4 || frame % 120 == 0 || result != 1) native_log("evaluate frame=%ld result=%08x size=%ux%u guides=%ux%u reset=%d", frame, (int)result, width, height, guideWidth, guideHeight, reset);
+    if (rects && (frame <= 4 || frame % 120 == 0 || result != 1))
+        native_log("guide-regions depth=%u,%u/%ux%u motion=%u,%u/%ux%u scale=%g,%g", rects[0],rects[1],rects[2],rects[3],rects[4],rects[5],rects[6],rects[7],mvScaleX,mvScaleY);
     return result;
+}
+
+__declspec(dllexport) int dlssnr_call_evaluate(ID3D12GraphicsCommandList *cmd, void *feature,
+                                               void *capabilityParams, ID3D12Resource *color,
+                                               ID3D12Resource *depth, ID3D12Resource *motion,
+                                               ID3D12Resource *output, unsigned int width,
+                                               unsigned int height, unsigned int guideWidth,
+                                               unsigned int guideHeight, int depthInverted, int reset,
+                                               float intensity, int style, float localStructure,
+                                               float localTone, float skinStructure, int useAutoMask,
+                                               float mvScaleX, float mvScaleY) {
+    return evaluateWithRects(cmd, feature, capabilityParams, color, depth, motion, output, width, height, guideWidth, guideHeight, depthInverted, reset, intensity, style, localStructure, localTone, skinStructure, useAutoMask, mvScaleX, mvScaleY, nullptr);
+}
+
+__declspec(dllexport) int dlssnr_call_evaluate_rects(ID3D12GraphicsCommandList *cmd, void *feature,
+                                               void *capabilityParams, ID3D12Resource *color,
+                                               ID3D12Resource *depth, ID3D12Resource *motion,
+                                               ID3D12Resource *output, unsigned int width,
+                                               unsigned int height, unsigned int guideWidth,
+                                               unsigned int guideHeight, int depthInverted, int reset,
+                                               float intensity, int style, float localStructure,
+                                               float localTone, float skinStructure, int useAutoMask,
+                                               float mvScaleX, float mvScaleY, const unsigned* rects) {
+    if (!rects || !depth || !motion) return 0;
+    const D3D12_RESOURCE_DESC dims[] = {depth->GetDesc(), motion->GetDesc()};
+    for (unsigned i=0; i<2; ++i) {
+        const auto& d = dims[i]; const unsigned* r = rects+4*i;
+        if (!r[2] || !r[3] || r[0] > d.Width || r[2] > d.Width-r[0]
+            || r[1] > d.Height || r[3] > d.Height-r[1]) return 0;
+    }
+    return evaluateWithRects(cmd, feature, capabilityParams, color, depth, motion, output, width, height, guideWidth, guideHeight, depthInverted, reset, intensity, style, localStructure, localTone, skinStructure, useAutoMask, mvScaleX, mvScaleY, rects);
 }
 
 // Inputs NVIDIA's own Streamline plugin sets that the positional exports predate: the model's global
@@ -909,3 +947,10 @@ __declspec(dllexport) void dlssnr_call_release(void *feature) {
 }
 
 } // extern "C"
+
+extern "C" __declspec(dllexport) int dlssnr_gpu_begin(ID3D12GraphicsCommandList*c,unsigned w,unsigned h){return NRGpuWork::Begin(c,w,h,true)?1:0;}
+extern "C" __declspec(dllexport) void dlssnr_gpu_mark(unsigned phase){NRGpuWork::Mark(phase);}
+extern "C" __declspec(dllexport) void dlssnr_gpu_end(){NRGpuWork::End();}
+extern "C" __declspec(dllexport) void dlssnr_gpu_flush(){NRGpuWork::Flush();}
+
+extern "C" __declspec(dllexport) double dlssnr_gpu_latest(){std::lock_guard<std::mutex> guard(NRGpuWork::mutex);return NRGpuWork::latestTotal;}

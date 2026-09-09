@@ -1,0 +1,7 @@
+{
+  "rewritten_accesses": 18,
+  "bijection_bytes": 2048,
+  "vector_contiguity": true,
+  "lane_banks_before": 16,
+  "lane_banks_after": 32
+}
